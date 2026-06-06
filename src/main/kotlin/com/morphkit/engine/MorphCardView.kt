@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import android.view.View
 import android.widget.FrameLayout
 import com.google.android.material.card.MaterialCardView
+import com.morphkit.R
 
 /**
  * MorphKit iOS 17 风格卡片容器。
@@ -51,7 +52,7 @@ import com.google.android.material.card.MaterialCardView
 class MorphCardView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = com.google.android.material.R.attr.materialCardViewStyle
+    defStyleAttr: Int = R.attr.morphCardStyle
 ) : MaterialCardView(context, attrs, defStyleAttr) {
 
     // ═══════════════════════════════════════════════════════════════════════

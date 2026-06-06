@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
+import com.morphkit.R
 
 /**
  * MorphKit iOS 字重规范 TextView。
@@ -39,7 +40,7 @@ import androidx.appcompat.widget.AppCompatTextView
 class MorphTextView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = android.R.attr.textAppearance
+    defStyleAttr: Int = R.attr.morphTextViewStyle
 ) : AppCompatTextView(context, attrs, defStyleAttr) {
 
     // ═══════════════════════════════════════════════════════════════════════

@@ -6,6 +6,7 @@ import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
+import com.morphkit.R
 import androidx.core.view.doOnLayout
 
 /**
@@ -40,7 +41,7 @@ import androidx.core.view.doOnLayout
 class MorphEditText @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
-    defStyleAttr: Int = androidx.appcompat.R.attr.editTextStyle
+    defStyleAttr: Int = R.attr.morphEditTextStyle
 ) : AppCompatEditText(context, attrs, defStyleAttr) {
 
     /**

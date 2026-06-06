@@ -100,6 +100,82 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ╚════════════════════════════════════════════════════════════════════════════╝
  */
 
+/*
+ * ╔════════════════════════════════════════════════════════════════════════════╗
+ * ║                MorphKit 多风格扩展指南                                     ║
+ * ║             (Multi-Style Extension Guide)                                 ║
+ * ╠════════════════════════════════════════════════════════════════════════════╣
+ * ║                                                                          ║
+ * ║  MorphKit 采用「引擎与皮肤分离」架构，内置 iOS 极简风和 Pixel 原生风        ║
+ * ║  两套完整皮肤。宿主 App 可一行代码切换，也可扩展第三套自定义皮肤。           ║
+ * ║                                                                          ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
+ * ║  │ 1. 切换内置皮肤                                                    │  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
+ * ║  │                                                                    │  ║
+ * ║  │  在 AndroidManifest.xml 的 <application> 或 <activity> 中设置：     │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  iOS 极简风：                                                      │  ║
+ * ║  │    android:theme="@style/Theme.MorphKit.iOS"                       │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  Pixel 原生风：                                                    │  ║
+ * ║  │    android:theme="@style/Theme.MorphKit.Pixel"                     │  ║
+ * ║  │                                                                    │  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
+ * ║                                                                          ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
+ * ║  │ 2. 扩展第三套自定义皮肤（如公司大促皮肤）                            │  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
+ * ║  │                                                                    │  ║
+ * ║  │  步骤 1：宿主 App 继承一个内置 Theme                               │  ║
+ * ║  │                                                                    │  ║
+ * ║  │    <style name="Theme.MyApp.Promotion"                             │  ║
+ * ║  │        parent="Theme.MorphKit.iOS">                                │  ║
+ * ║  │    </style>                                                        │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  步骤 2：在宿主 styles.xml 中重写 morph*Style 属性                  │  ║
+ * ║  │                                                                    │  ║
+ * ║  │    <style name="Theme.MyApp.Promotion"                             │  ║
+ * ║  │        parent="Theme.MorphKit.iOS">                                │  ║
+ * ║  │        <item name="morphButtonStyle">                              │  ║
+ * ║  │            @style/Widget.MyApp.Button.Promotion                    │  ║
+ * ║  │        </item>                                                     │  ║
+ * ║  │    </style>                                                        │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  步骤 3：定义自定义 Style，覆写背景色、圆角、交互模式等               │  ║
+ * ║  │                                                                    │  ║
+ * ║  │    <style name="Widget.MyApp.Button.Promotion"                     │  ║
+ * ║  │        parent="Widget.MorphKit.Button.iOS">                        │  ║
+ * ║  │        <item name="morphCornerRadius">20dp</item>                  │  ║
+ * ║  │        <item name="morphInteractionMode">material</item>           │  ║
+ * ║  │        <item name="android:background">#FF6200EE</item>            │  ║
+ * ║  │    </style>                                                        │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  步骤 4：在 AndroidManifest.xml 中应用自定义 Theme                  │  ║
+ * ║  │                                                                    │  ║
+ * ║  │    android:theme="@style/Theme.MyApp.Promotion"                    │  ║
+ * ║  │                                                                    │  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
+ * ║                                                                          ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
+ * ║  │ 3. 可覆写的属性清单                                                │  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
+ * ║  │                                                                    │  ║
+ * ║  │  Theme 级属性（在 Theme 中覆写，影响全局）：                        │  ║
+ * ║  │  - morphButtonStyle     → 按钮默认样式                             │  ║
+ * ║  │  - morphTextViewStyle   → 文本默认样式                             │  ║
+ * ║  │  - morphEditTextStyle   → 输入框默认样式                           │  ║
+ * ║  │  - morphCardStyle       → 卡片默认样式                             │  ║
+ * ║  │                                                                    │  ║
+ * ║  │  Style 级属性（在 Style 中覆写，影响单个控件类型）：                 │  ║
+ * ║  │  - morphInteractionMode → ios(0) / material(1)                     │  ║
+ * ║  │  - morphCornerRadius    → 圆角半径 (dimension)                     │  ║
+ * ║  │                                                                    │  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
+ * ║                                                                          ║
+ * ╚════════════════════════════════════════════════════════════════════════════╝
+ */
+
 /**
  * MorphKit 控件动态替换框架核心引擎。
  *
