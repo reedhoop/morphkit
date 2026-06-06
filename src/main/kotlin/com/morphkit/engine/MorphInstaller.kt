@@ -120,8 +120,10 @@ object MorphInstaller {
 
             // ═══════════════════════════════════════════════════
             // 2. 创建 MorphFactory2 包装当前 Factory2
+            //    传入 MorphKit 解析出的 finalThemeResId，
+            //    用于 ContextThemeWrapper 无侵入式皮肤注入
             // ═══════════════════════════════════════════════════
-            val morphFactory = MorphFactory2(currentFactory2)
+            val morphFactory = MorphFactory2(currentFactory2, MorphKit.finalThemeResId)
 
             // ═══════════════════════════════════════════════════
             // 3. 反射设置 mFactory2 与 mFactory

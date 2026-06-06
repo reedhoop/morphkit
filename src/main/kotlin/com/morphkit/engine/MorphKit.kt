@@ -226,11 +226,28 @@ object MorphKit {
     private var initialized = false
 
     /**
+     * MorphKit 解析出的最终 Theme 资源 ID。
+     *
+     * 由 [MorphStyleResolver] 在 [init] 时根据 [StylePolicy] 计算得出，
+     * 传递给 [MorphFactory2] 用于 [ContextThemeWrapper] 主题包装。
+     *
+     * - 非 0：表示需要通过 [ContextThemeWrapper] 注入此 Theme
+     * - 为 0：表示宿主已完全接管，无需 MorphKit 注入主题
+     *
+     * @see MorphStyleResolver
+     * @see MorphFactory2
+     */
+    var finalThemeResId: Int = 0
+        private set
+
+    /**
      * 初始化 MorphKit 引擎。
      *
      * 完成以下操作（原子性，不可部分执行）：
      * 1. 创建 [MorphConfig] 并执行 DSL 配置块，注册所有 replace / groupReplace / modify 规则
-     * 2. 调用 [MorphInstaller.install] 注册 Activity 生命周期回调，在每个 Activity 启动前
+     * 2. 根据 [StylePolicy] 通过 [MorphStyleResolver] 解析最终 Theme，
+     *    缓存到 [finalThemeResId]，并打印策略日志
+     * 3. 调用 [MorphInstaller.install] 注册 Activity 生命周期回调，在每个 Activity 启动前
      *    自动注入 [MorphFactory2]
      *
      * 应在 [Application.onCreate] 中尽早调用，
@@ -245,6 +262,10 @@ object MorphKit {
         check(!initialized) { "MorphKit 已初始化，禁止重复调用 init()" }
         config = MorphConfig().apply(block)
         initialized = true
+
+        // ── 根据 StylePolicy 解析最终 Theme ──
+        finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
+
         // 自动安装全局 Factory2 注入，在每个 Activity 启动前拦截 LayoutInflater
         MorphInstaller.install(application)
     }

@@ -5,6 +5,8 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.view.ContextThemeWrapper
+import com.morphkit.R
 
 /**
  * MorphKit 的 LayoutInflater.Factory2 代理拦截器。
@@ -17,24 +19,32 @@ import android.view.View
  * - **AppCompat 保留**：[originalFactory] 负责创建 AppCompat 系控件（如 AppCompatTextView），
  *   本类仅做拦截/透传，不破坏 AppCompat 的兼容性处理。
  * - **软修改兜底**：即使硬替换未命中，对原生控件仍可执行 modify 规则统一色调/字体。
+ * - **无侵入式皮肤注入**：通过 [ContextThemeWrapper] 将 MorphKit 解析出的 Theme
+ *   注入到控件创建的 Context 中，即使宿主 Activity 未设置 MorphKit 主题，
+ *   控件仍能读取到正确的 iOS 或 Pixel 风格属性。
  *
- * ## 集成方式
- * 在 `Activity.onCreate` 的 `super.onCreate()` 之前安装：
- * ```kotlin
- * override fun onCreate(savedInstanceState: Bundle?) {
- *     val originalFactory = layoutFactory  // 获取 AppCompat 已设置的 Factory2
- *     LayoutInflater.from(this).factory2 = MorphFactory2(originalFactory)
- *     super.onCreate(savedInstanceState)
- * }
+ * ## Context 主题包装机制
+ *
+ * ```
+ * MorphFactory2.onCreateView(name, context, attrs)
+ *   └─ 1. 检查宿主 Theme 是否已包含 morphButtonStyle 等属性
+ *        ├─ 已包含 → 尊重宿主选择，不包装 Context
+ *        └─ 未包含 → 用 ContextThemeWrapper(context, finalThemeResId) 包装
+ *   └─ 2. 将包装后的 Context 传递给 MorphKit.createView
+ *        └─ 控件构造函数中的 obtainStyledAttributes 可正确读取 MorphKit 主题属性
  * ```
  *
- * @param originalFactory 被代理的原始 Factory2，通常为 AppCompatDelegateImpl 内置的 Factory2。
- *                        允许为 null（非 AppCompat 场景），此时降级路径将返回 null 交由系统处理。
+ * @param originalFactory   被代理的原始 Factory2，通常为 AppCompatDelegateImpl 内置的 Factory2。
+ *                          允许为 null（非 AppCompat 场景），此时降级路径将返回 null 交由系统处理。
+ * @param finalThemeResId   MorphKit 解析出的最终 Theme 资源 ID，
+ *                          由 [MorphKit.init] 通过 [MorphStyleResolver] 计算并缓存。
+ *                          为 0 表示不进行 Context 主题包装。
  *
  * @constructor 创建 MorphFactory2 实例
  */
 class MorphFactory2(
-    private val originalFactory: LayoutInflater.Factory2?
+    private val originalFactory: LayoutInflater.Factory2?,
+    private val finalThemeResId: Int = 0
 ) : LayoutInflater.Factory2 {
 
     companion object {
@@ -48,6 +58,10 @@ class MorphFactory2(
      *
      * ```
      * ┌──────────────────────────────────────────────────┐
+     * │ 0. Context 主题包装                               │
+     * │    若宿主未设置 MorphKit 主题属性，                  │
+     * │    则用 ContextThemeWrapper 注入 finalThemeResId  │
+     * ├──────────────────────────────────────────────────┤
      * │ 1. 硬替换阶段                                     │
      * │    MorphKit.createView(name, context, attrs)     │
      * │    ├─ 返回非 null → 应用 modify → 返回替换控件    │
@@ -78,10 +92,15 @@ class MorphFactory2(
     ): View? {
 
         // ═══════════════════════════════════════════════════
+        // 阶段 0：Context 主题包装 — 无侵入式皮肤注入
+        // ═══════════════════════════════════════════════════
+        val themedContext = wrapContextIfNeeded(context)
+
+        // ═══════════════════════════════════════════════════
         // 阶段 1：硬替换 — 尝试用 MorphKit 规则替换原始控件
         // ═══════════════════════════════════════════════════
         try {
-            val replacedView = MorphKit.createView(name, context, attrs)
+            val replacedView = MorphKit.createView(name, themedContext, attrs)
             if (replacedView != null) {
                 // 硬替换成功：对替换控件执行后置属性修改
                 // 若 modifyView 抛异常，意味着替换控件虽已创建但属性修改失败，
@@ -134,5 +153,71 @@ class MorphFactory2(
      */
     override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
         return onCreateView(null, name, context, attrs)
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Context 主题包装 — 核心技术点
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * 根据条件对 Context 进行主题包装。
+     *
+     * 核心逻辑：
+     * 1. 若 [finalThemeResId] 为 0，说明无需包装（策略未激活或宿主已完全接管）。
+     * 2. 若宿主 Activity 的 Theme 已经包含了 `morphButtonStyle` 等 MorphKit 属性，
+     *    说明宿主 App 已在自己的 Theme 中显式指定了 MorphKit 的样式，尊重宿主选择。
+     * 3. 否则，使用 [ContextThemeWrapper] 将 [finalThemeResId] 叠加到 Context 上，
+     *    确保控件构造函数中的 `obtainStyledAttributes` 可正确读取 MorphKit 主题属性。
+     *
+     * ## 为什么需要这一步？
+     *
+     * MorphKit 控件（如 [MorphButton]）的 `defStyleAttr` 为 `R.attr.morphButtonStyle`，
+     * 这个属性定义在 `Theme.MorphKit.iOS` / `Theme.MorphKit.Pixel` 中。
+     * 如果宿主 Activity 的 Theme 没有继承 MorphKit 的 Theme，
+     * `obtainStyledAttributes` 将找不到 `morphButtonStyle` 的值，导致控件回退到默认样式。
+     *
+     * 通过 [ContextThemeWrapper] 注入，MorphKit 可以在**不修改宿主 Activity Theme** 的前提下，
+     * 让控件正确读取到 iOS 或 Pixel 风格属性，实现「无侵入式皮肤注入」。
+     *
+     * @param context 原始上下文
+     * @return 包装后的上下文，或原始上下文（若无需包装）
+     */
+    private fun wrapContextIfNeeded(context: Context): Context {
+        // finalThemeResId 为 0 → 无需包装
+        if (finalThemeResId == 0) return context
+
+        // 检查宿主 Theme 是否已包含 MorphKit 属性
+        if (hostThemeHasMorphAttributes(context)) {
+            return context
+        }
+
+        // 宿主未设置 MorphKit 主题属性 → 用 ContextThemeWrapper 注入
+        return ContextThemeWrapper(context, finalThemeResId)
+    }
+
+    /**
+     * 检查宿主 Activity 的 Theme 是否已包含 MorphKit 的样式属性。
+     *
+     * 通过尝试从 Context 的 Theme 中解析 `morphButtonStyle` 属性来判断：
+     * - 若解析成功（返回有效资源 ID），说明宿主 Theme 已声明了 MorphKit 属性，
+     *   可能是宿主 App 继承了 `Theme.MorphKit.iOS` / `Pixel`，
+     *   或在自己的 Theme 中显式指定了 `morphButtonStyle`，此时尊重宿主选择。
+     * - 若解析失败（返回 0 或抛异常），说明宿主 Theme 未涉及 MorphKit，
+     *   需要由 MorphKit 通过 [ContextThemeWrapper] 注入主题。
+     *
+     * @param context 上下文
+     * @return true 表示宿主 Theme 已包含 MorphKit 属性，无需强制注入
+     */
+    private fun hostThemeHasMorphAttributes(context: Context): Boolean {
+        return try {
+            val a = context.theme.obtainStyledAttributes(intArrayOf(R.attr.morphButtonStyle))
+            val hasMorphAttr = a.hasValue(0)
+            a.recycle()
+            hasMorphAttr
+        } catch (e: Exception) {
+            // 解析异常，保守起见认为宿主未设置 MorphKit 属性
+            Log.d(TAG, "检测宿主 Theme morphButtonStyle 属性异常，视为未设置", e)
+            false
+        }
     }
 }

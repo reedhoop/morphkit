@@ -14,15 +14,50 @@ import android.view.View
 val unifiedPrefix = "Morph"
 
 /**
+ * 自适应风格策略枚举。
+ *
+ * 决定 MorphKit 在运行时选择哪套内置皮肤，由 [MorphConfig.stylePolicy] 配置。
+ *
+ * | 策略 | 行为 | 适用场景 |
+ * |------|------|---------|
+ * | [AUTO] | 根据设备是否支持 Dynamic Color 自动选择 | 默认策略，零配置 |
+ * | [FORCE_IOS] | 强制使用 iOS 极简风格 | 需要确定性强、不依赖系统取色的场景 |
+ * | [FORCE_PIXEL] | 强制使用 Pixel (Material You) 风格 | 需要原生 M3 体验的场景 |
+ *
+ * ## AUTO 策略判定逻辑
+ *
+ * ```
+ * 设备支持 Dynamic Color (Android 12+ 且壁纸引擎可用)
+ *   └─ → Pixel (将色彩控制权交给系统壁纸引擎)
+ * 设备不支持 Dynamic Color
+ *   └─ → iOS (回退到确定性强、不依赖系统取色的极简风格)
+ * ```
+ *
+ * @see MorphConfig.stylePolicy
+ * @see MorphStyleResolver
+ */
+enum class StylePolicy {
+    /** 自动检测：支持 Dynamic Color → Pixel，否则 → iOS */
+    AUTO,
+    /** 强制 iOS 极简风格，无视设备环境 */
+    FORCE_IOS,
+    /** 强制 Pixel (Material You) 风格，无视设备环境 */
+    FORCE_PIXEL
+}
+
+/**
  * MorphKit 控件替换规则配置类。
  *
  * 通过 DSL 方式声明控件的替换规则（[replace] / [groupReplace]）
- * 与属性修改规则（[modify]）。
+ * 与属性修改规则（[modify]），以及自适应风格策略（[stylePolicy]）。
  * 配置完成后由 [MorphKit] 引擎在 LayoutInflater 回调中消费。
  *
  * 典型用法：
  * ```kotlin
  * MorphKit.init(application) {
+ *     // 自适应策略（默认 AUTO，可省略）
+ *     stylePolicy(StylePolicy.AUTO)
+ *
  *     replace("TextView") { ctx, attrs ->
  *         MorphTextView(ctx, attrs)
  *     }
@@ -52,6 +87,18 @@ class MorphConfig internal constructor() {
     val modifyMap: Map<String, (View) -> Unit> get() = _modifyMap
 
     /**
+     * 自适应风格策略，默认 [StylePolicy.AUTO]。
+     *
+     * 由 [stylePolicy] DSL 方法设置，在 [MorphKit.init] 完成后
+     * 由 [MorphStyleResolver] 消费，计算出最终的 Theme ResId。
+     *
+     * @see StylePolicy
+     * @see MorphStyleResolver
+     */
+    var policy: StylePolicy = StylePolicy.AUTO
+        private set
+
+    /**
      * 统一前缀，委托至顶层常量 [unifiedPrefix]。
      *
      * 用于运行时类名规范校验：替换控件的 `simpleName` 应以此前缀开头，
@@ -59,6 +106,29 @@ class MorphConfig internal constructor() {
      */
     val unifiedPrefix: String
         get() = com.morphkit.engine.unifiedPrefix
+
+    /**
+     * 设置自适应风格策略。
+     *
+     * 决定 MorphKit 在运行时选择 iOS 极简风还是 Pixel 原生风：
+     * - [StylePolicy.AUTO]（默认）：根据设备是否支持 Dynamic Color 自动选择
+     * - [StylePolicy.FORCE_IOS]：强制 iOS 极简风格
+     * - [StylePolicy.FORCE_PIXEL]：强制 Pixel (Material You) 风格
+     *
+     * 示例：
+     * ```kotlin
+     * MorphKit.init(application) {
+     *     stylePolicy(StylePolicy.FORCE_IOS)  // 强制 iOS 风格
+     *     // ...
+     * }
+     * ```
+     *
+     * @param policy 风格策略，默认 [StylePolicy.AUTO]
+     * @see StylePolicy
+     */
+    fun stylePolicy(policy: StylePolicy) {
+        this.policy = policy
+    }
 
     /**
      * 注册单个控件替换规则。
