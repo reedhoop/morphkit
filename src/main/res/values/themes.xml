@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphKit iOS 主题 — 极简按压变色风格
+         宿主 App 在 AndroidManifest.xml 中设置 android:theme="@style/Theme.MorphKit.iOS"
+         即可全局启用 iOS 皮肤
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <style name="Theme.MorphKit.iOS" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="morphButtonStyle">@style/Widget.MorphKit.Button.iOS</item>
+        <item name="morphTextViewStyle">@style/Widget.MorphKit.TextView.iOS</item>
+        <item name="morphEditTextStyle">@style/Widget.MorphKit.EditText.iOS</item>
+        <item name="morphCardStyle">@style/Widget.MorphKit.Card.iOS</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphKit Pixel 主题 — Material You 原生风格
+         宿主 App 在 AndroidManifest.xml 中设置 android:theme="@style/Theme.MorphKit.Pixel"
+         即可全局启用 Pixel 皮肤
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <style name="Theme.MorphKit.Pixel" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="morphButtonStyle">@style/Widget.MorphKit.Button.Pixel</item>
+        <item name="morphTextViewStyle">@style/Widget.MorphKit.TextView.Pixel</item>
+        <item name="morphEditTextStyle">@style/Widget.MorphKit.EditText.Pixel</item>
+        <item name="morphCardStyle">@style/Widget.MorphKit.Card.Pixel</item>
+    </style>
+
+</resources>

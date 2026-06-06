@@ -41,7 +41,9 @@ captures/
 .idea/
 *.ipr
 *.iws
-*.xml
+
+# IntelliJ project XML (but NOT Android resource XML)
+/*.xml
 
 # Keystore files
 *.jks
