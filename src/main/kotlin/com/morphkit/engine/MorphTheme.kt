@@ -4,25 +4,31 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.util.TypedValue
+import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
 import androidx.annotation.Px
+import com.google.android.material.color.MaterialColors
 
 /**
- * MorphKit 设计系统基座。
+ * MorphKit 设计系统基座（M3 重构版）。
  *
- * 提取 iOS 17 最新设计语言的核心视觉特征，供所有 Morph 控件统一消费。
- * 涵盖三大体系：
+ * 彻底废弃硬编码色彩，完美集成 Material Design 3 (M3) 语义色系统，
+ * 同时保留 iOS 极简交互视觉风格。核心变更：
  *
- * 1. **颜色体系**：模拟 iOS 系统语义色，自动适配暗黑模式
- * 2. **形状体系**：模拟 iOS 连续性圆角（Continuity Corners），用统一大圆角近似
- * 3. **排版体系**：模拟 SF Pro 视觉权重，将 Android Roboto 的字重对齐到 iOS 风格
+ * 1. **颜色体系**：所有颜色从 M3 语义属性解析，支持 Android 12+ 动态壁纸取色
+ * 2. **形状体系**：保留 iOS 风格圆角定义，通过主题属性可配置
+ * 3. **排版体系**：保留 SF Pro 视觉权重对齐，独立于颜色系统
  *
- * ## 设计哲学
+ * ## iOS ↔ M3 语义映射
  *
- * iOS 17 的视觉语言有三个核心特征：
- * - **纯净对比**：系统背景纯白/纯黑，无灰色杂质；分组背景用极浅灰做层次分离
- * - **连续曲率**：所有圆角使用连续性曲率（Squircle），视觉上比标准圆角更柔和
- * - **权重对齐**：SF Pro 的字重在视觉上比同号数 Roboto 偏细，需要提升一级补偿
+ * | iOS 语义          | M3 语义属性                     | 用途                     |
+ * |------------------|--------------------------------|--------------------------|
+ * | tintColor        | colorPrimary                   | 主色、按钮、链接         |
+ * | systemBackground | colorSurface / colorBackground | 页面背景                 |
+ * | secondarySystemBackground | colorSurfaceVariant | 分组背景、卡片           |
+ * | separator        | colorOutlineVariant            | 分割线、边框             |
+ * | label            | colorOnSurface                 | 主文字                   |
+ * | secondaryLabel   | colorOnSurfaceVariant          | 次级文字                 |
  *
  * ## 使用方式
  *
@@ -35,7 +41,7 @@ import androidx.annotation.Px
  *
  *     init {
  *         background = MorphTheme.createShapeDrawable(context, MorphTheme.cornerMedium)
- *         setTextColor(MorphTheme.tintColor(context))
+ *         setTextColor(context.morphColorOnPrimary())
  *         textSize = MorphTheme.typography.body.fontSize
  *         typeface = MorphTheme.typography.body.weight.toTypeface()
  *     }
@@ -45,130 +51,205 @@ import androidx.annotation.Px
 object MorphTheme {
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 颜色体系 — iOS 系统语义色
+    // 颜色体系 — M3 语义色解析（废弃硬编码）
     // ═══════════════════════════════════════════════════════════════════════
 
     /**
-     * iOS 系统主背景色。
+     * 获取 M3 主色（对应 iOS tintColor）。
      *
-     * - 浅色模式：纯白 `#FFFFFF`（极简无灰色杂质）
-     * - 深色模式：纯黑 `#000000`（OLED 纯黑，零灰度偏移）
+     * 使用 MaterialColors.getColor() 从主题解析，支持 Android 12+ 动态壁纸取色。
+     * 对应 M3 attr: com.google.android.material.R.attr.colorPrimary
      *
-     * 对应 iOS UIColor.systemBackground。
-     * 适用于页面主背景、全屏容器。
-     *
-     * @param context 上下文，用于读取当前系统 Configuration
+     * @receiver Context 上下文，用于读取主题
      * @return 颜色值
      */
     @ColorInt
-    fun systemBackground(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_PURE_BLACK else COLOR_LIGHT_PURE_WHITE
+    fun Context.morphColorPrimary(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimary, 0)
     }
 
     /**
-     * iOS 分组背景灰。
+     * 获取 M3 主色容器色。
      *
-     * - 浅色模式：`#F2F2F7`（iOS 标志性分组背景灰，略带蓝调冷灰）
-     * - 深色模式：`#1C1C1E`（深灰而非纯黑，提供层次分离）
-     *
-     * 对应 iOS UIColor.secondarySystemBackground。
-     * 适用于分组列表背景、卡片容器背景、输入框底色。
-     *
-     * @param context 上下文
-     * @return 颜色值
+     * 对应 M3 attr: com.google.android.material.R.attr.colorPrimaryContainer
      */
     @ColorInt
-    fun secondarySystemBackground(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_SECONDARY_BG else COLOR_LIGHT_SECONDARY_BG
+    fun Context.morphColorPrimaryContainer(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorPrimaryContainer, 0)
     }
 
     /**
-     * iOS 标志性高亮蓝。
+     * 获取 M3 主色上的文字/图标色。
      *
-     * - 浅色模式：`#007AFF`（iOS 系统蓝，用于按钮/链接/开关/Tab 高亮）
-     * - 深色模式：`#0A84FF`（深色模式下略微提亮，保证暗背景上的可读性）
-     *
-     * 对应 iOS UIColor.systemBlue / tintColor。
-     * 适用于所有可交互元素的高亮态、选中态、链接色。
-     *
-     * @param context 上下文
-     * @return 颜色值
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOnPrimary
      */
     @ColorInt
-    fun tintColor(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_TINT else COLOR_LIGHT_TINT
+    fun Context.morphColorOnPrimary(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimary, 0)
     }
 
     /**
-     * iOS 主文字颜色。
+     * 获取 M3 主色容器上的文字/图标色。
      *
-     * - 浅色模式：纯黑 `#000000`
-     * - 深色模式：纯白 `#FFFFFF`
-     *
-     * 对应 iOS UIColor.label。
-     * 适用于所有主文字、标题、正文。
-     *
-     * @param context 上下文
-     * @return 颜色值
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOnPrimaryContainer
      */
     @ColorInt
-    fun labelColor(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_LIGHT_PURE_WHITE else COLOR_DARK_PURE_BLACK
+    fun Context.morphColorOnPrimaryContainer(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnPrimaryContainer, 0)
     }
 
     /**
-     * iOS 次级文字颜色。
+     * 获取 M3 表面色（对应 iOS systemBackground）。
      *
-     * - 浅色模式：`#3C3C43`（带 60% 不透明度的深灰）
-     * - 深色模式：`#EBEBF5`（带 60% 不透明度的浅灰）
-     *
-     * 对应 iOS UIColor.secondaryLabel。
-     * 适用于副标题、辅助说明。
-     *
-     * @param context 上下文
-     * @return 颜色值
+     * 对应 M3 attr: com.google.android.material.R.attr.colorSurface
      */
     @ColorInt
-    fun secondaryLabelColor(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_SECONDARY_LABEL else COLOR_LIGHT_SECONDARY_LABEL
+    fun Context.morphColorSurface(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurface, 0)
     }
 
     /**
-     * iOS 三级文字颜色。
+     * 获取 M3 表面变体色（对应 iOS secondarySystemBackground）。
      *
-     * - 浅色模式：`#8A8A8E`（iOS 标志性淡灰）
-     * - 深色模式：`#636366`（深灰模式下更深的灰）
-     *
-     * 对应 iOS UIColor.tertiaryLabel。
-     * 适用于占位符、时间戳、最弱层级的辅助文字。
-     *
-     * @param context 上下文
-     * @return 颜色值
+     * 对应 M3 attr: com.google.android.material.R.attr.colorSurfaceVariant
      */
     @ColorInt
-    fun tertiaryLabelColor(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_TERTIARY_LABEL else COLOR_LIGHT_TERTIARY_LABEL
+    fun Context.morphColorSurfaceVariant(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorSurfaceVariant, 0)
     }
 
     /**
-     * iOS 分组分割线颜色。
+     * 获取 M3 表面色上的文字/图标色（对应 iOS label）。
      *
-     * - 浅色模式：`#C6C6C8`（极浅灰，iOS 表格分割线标准色）
-     * - 深色模式：`#38383A`（深灰，保证暗背景下的微妙存在感）
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOnSurface
+     */
+    @ColorInt
+    fun Context.morphColorOnSurface(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurface, 0)
+    }
+
+    /**
+     * 获取 M3 表面变体色上的文字/图标色（对应 iOS secondaryLabel）。
      *
-     * 对应 iOS UIColor.separator / opaqueSeparator。
-     * 适用于列表分割线、卡片边框、分组边界线。
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOnSurfaceVariant
+     */
+    @ColorInt
+    fun Context.morphColorOnSurfaceVariant(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnSurfaceVariant, 0)
+    }
+
+    /**
+     * 获取 M3 轮廓变体色（对应 iOS separator）。
      *
-     * 设计要点：iOS 分割线的核心特征是「存在但克制」——
-     * 用户能感知到分组边界的存在，但分割线本身不抢夺视觉注意力。
-     * 这与 Material Design 的强对比分割线风格截然不同。
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOutlineVariant
+     */
+    @ColorInt
+    fun Context.morphColorOutlineVariant(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOutlineVariant, 0)
+    }
+
+    /**
+     * 获取 M3 背景色。
      *
-     * @param context 上下文
+     * 对应 M3 attr: com.google.android.material.R.attr.colorBackground
+     */
+    @ColorInt
+    fun Context.morphColorBackground(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorBackground, 0)
+    }
+
+    /**
+     * 获取 M3 背景色上的文字/图标色。
+     *
+     * 对应 M3 attr: com.google.android.material.R.attr.colorOnBackground
+     */
+    @ColorInt
+    fun Context.morphColorOnBackground(): Int {
+        return MaterialColors.getColor(this, com.google.android.material.R.attr.colorOnBackground, 0)
+    }
+
+    /**
+     * 通用主题属性颜色解析方法。
+     *
+     * @receiver Context 上下文
+     * @param attr 主题属性资源 ID
      * @return 颜色值
      */
     @ColorInt
-    fun separatorColor(context: Context): Int {
-        return if (isDarkMode(context)) COLOR_DARK_SEPARATOR else COLOR_LIGHT_SEPARATOR
+    fun Context.morphColor(@AttrRes attr: Int): Int {
+        return MaterialColors.getColor(this, attr, 0)
+    }
+
+    /**
+     * 创建带状态的颜色列表（ColorStateList）。
+     *
+     * 基于主色，自动生成不同状态下的颜色变体：
+     * - 正常态：原始颜色
+     * - 按下态：叠加 20% 遮罩（深色模式叠加白色，浅色模式叠加黑色）
+     * - 禁用态：降低不透明度
+     *
+     * @param baseColor 基础颜色
+     * @param isDarkMode 是否为暗黑模式
+     * @return ColorStateList 实例
+     */
+    fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList {
+        val pressedColor = overlayColor(baseColor, if (isDarkMode) Color.WHITE else Color.BLACK, 0.2f)
+        val disabledColor = adjustAlpha(baseColor, 0.38f)
+
+        return android.content.res.ColorStateList(
+            arrayOf(
+                intArrayOf(-android.R.attr.state_enabled),
+                intArrayOf(android.R.attr.state_pressed),
+                intArrayOf()
+            ),
+            intArrayOf(
+                disabledColor,
+                pressedColor,
+                baseColor
+            )
+        )
+    }
+
+    /**
+     * 给颜色叠加遮罩。
+     *
+     * @param baseColor 基础颜色
+     * @param overlayColor 遮罩颜色
+     * @param alpha 遮罩透明度 [0f, 1f]
+     * @return 叠加后的颜色
+     */
+    fun overlayColor(baseColor: Int, overlayColor: Int, alpha: Float): Int {
+        val baseA = Color.alpha(baseColor)
+        val baseR = Color.red(baseColor)
+        val baseG = Color.green(baseColor)
+        val baseB = Color.blue(baseColor)
+
+        val overlayA = (Color.alpha(overlayColor) * alpha).toInt()
+        val overlayR = Color.red(overlayColor)
+        val overlayG = Color.green(overlayColor)
+        val overlayB = Color.blue(overlayColor)
+
+        val ratio = overlayA / 255f
+        val inverseRatio = 1f - ratio
+
+        val newA = baseA
+        val newR = (baseR * inverseRatio + overlayR * ratio).toInt()
+        val newG = (baseG * inverseRatio + overlayG * ratio).toInt()
+        val newB = (baseB * inverseRatio + overlayB * ratio).toInt()
+
+        return Color.argb(newA, newR.coerceIn(0, 255), newG.coerceIn(0, 255), newB.coerceIn(0, 255))
+    }
+
+    /**
+     * 调整颜色的不透明度。
+     *
+     * @param color 原始颜色
+     * @param alpha 新的不透明度 [0f, 1f]
+     * @return 调整后的颜色
+     */
+    fun adjustAlpha(color: Int, alpha: Float): Int {
+        val newAlpha = (Color.alpha(color) * alpha).toInt().coerceIn(0, 255)
+        return Color.argb(newAlpha, Color.red(color), Color.green(color), Color.blue(color))
     }
 
     /**
@@ -184,44 +265,6 @@ object MorphTheme {
         val nightModeFlags = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
     }
-
-    // ── 颜色常量 ──
-
-    /** 浅色模式：纯白背景 #FFFFFF */
-    private val COLOR_LIGHT_PURE_WHITE = 0xFFFFFFFFL.toInt()
-
-    /** 深色模式：纯黑背景 #000000（OLED 纯黑） */
-    private val COLOR_DARK_PURE_BLACK = 0xFF000000L.toInt()
-
-    /** 浅色模式：iOS 分组背景灰 #F2F2F7 */
-    private val COLOR_LIGHT_SECONDARY_BG = 0xFFF2F2F7L.toInt()
-
-    /** 深色模式：iOS 分组深灰 #1C1C1E */
-    private val COLOR_DARK_SECONDARY_BG = 0xFF1C1C1EL.toInt()
-
-    /** 浅色模式：iOS 系统蓝 #007AFF */
-    private val COLOR_LIGHT_TINT = 0xFF007AFFL.toInt()
-
-    /** 深色模式：iOS 系统蓝（提亮）#0A84FF */
-    private val COLOR_DARK_TINT = 0xFF0A84FFL.toInt()
-
-    /** 浅色模式：iOS 次级文字 #3C3C43（60% 不透明度） */
-    private val COLOR_LIGHT_SECONDARY_LABEL = 0x993C3C43L.toInt()
-
-    /** 深色模式：iOS 次级文字 #EBEBF5（60% 不透明度） */
-    private val COLOR_DARK_SECONDARY_LABEL = 0x99EBEBF5L.toInt()
-
-    /** 浅色模式：iOS 三级文字 #8A8A8E */
-    private val COLOR_LIGHT_TERTIARY_LABEL = 0xFF8A8A8EL.toInt()
-
-    /** 深色模式：iOS 三级文字 #636366 */
-    private val COLOR_DARK_TERTIARY_LABEL = 0xFF636366L.toInt()
-
-    /** 浅色模式：iOS 分组分割线 #C6C6C8 */
-    private val COLOR_LIGHT_SEPARATOR = 0xFFC6C6C8L.toInt()
-
-    /** 深色模式：iOS 分组分割线 #38383A */
-    private val COLOR_DARK_SEPARATOR = 0xFF38383AL.toInt()
 
     // ═══════════════════════════════════════════════════════════════════════
     // 形状体系 — iOS 连续性圆角（Continuity Corners 近似）
