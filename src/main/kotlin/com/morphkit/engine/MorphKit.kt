@@ -271,6 +271,22 @@ object MorphKit {
     }
 
     /**
+     * 自动初始化 MorphKit 引擎（使用默认配置）。
+     *
+     * 与 [init] 不同，此方法无需手动配置替换/修改规则，
+     * 仅完成引擎的基础初始化（主题解析、注入器安装等），
+     * 适用于仅需使用 MorphKit 主题能力而不需要控件替换的场景。
+     *
+     * 重复调用将抛出 [IllegalStateException]。
+     *
+     * @param application 应用实例，用于注册 ActivityLifecycleCallbacks
+     * @throws IllegalStateException 若重复初始化
+     */
+    fun autoInit(application: Application) {
+        init(application) {}
+    }
+
+    /**
      * 创建替换控件。
      *
      * 查找 [originalName] 是否命中 [MorphConfig.replaceMap] 中的替换规则：
