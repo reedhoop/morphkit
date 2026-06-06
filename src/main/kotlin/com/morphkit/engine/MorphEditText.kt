@@ -91,13 +91,13 @@ class MorphEditText @JvmOverloads constructor(
     }
 
     /** 缓存：搜索栏原始背景色 */
-    private var searchBackgroundColor: Int = MorphTheme.secondarySystemBackground(context)
+    private var searchBackgroundColor: Int = MorphTheme.morphColorSurfaceVariant(context)
 
     /** 焦点态背景色（基于原始色微调透明度） */
     private var searchBackgroundFocusedColor: Int = 0
 
     /** 缓存：tintColor 用于光标着色 */
-    private var tintColor: Int = MorphTheme.tintColor(context)
+    private var tintColor: Int = MorphTheme.morphColorPrimary(context)
 
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
@@ -118,10 +118,10 @@ class MorphEditText @JvmOverloads constructor(
         applyCursorColor()
 
         // ── 提示文字颜色 ──
-        setHintTextColor(MorphTheme.tertiaryLabelColor(context))
+        setHintTextColor(MorphTheme.morphColorOnSurfaceVariant(context))
 
         // ── 默认文字颜色 ──
-        setTextColor(MorphTheme.labelColor(context))
+        setTextColor(MorphTheme.morphColorOnSurface(context))
 
         // ── 应用样式 ──
         applyStyle()
@@ -147,8 +147,8 @@ class MorphEditText @JvmOverloads constructor(
      * 刷新与暗黑模式相关的颜色缓存。
      */
     private fun refreshColors() {
-        searchBackgroundColor = MorphTheme.secondarySystemBackground(context)
-        tintColor = MorphTheme.tintColor(context)
+        searchBackgroundColor = MorphTheme.morphColorSurfaceVariant(context)
+        tintColor = MorphTheme.morphColorPrimary(context)
 
         // 焦点态背景色：在原始色基础上微调透明度
         // 浅色模式：略提亮（叠加少量白色）
@@ -160,8 +160,8 @@ class MorphEditText @JvmOverloads constructor(
         )
 
         // 刷新提示文字颜色（暗黑模式切换后）
-        setHintTextColor(MorphTheme.tertiaryLabelColor(context))
-        setTextColor(MorphTheme.labelColor(context))
+        setHintTextColor(MorphTheme.morphColorOnSurfaceVariant(context))
+        setTextColor(MorphTheme.morphColorOnSurface(context))
     }
 
     /** 应用裸输入样式 */

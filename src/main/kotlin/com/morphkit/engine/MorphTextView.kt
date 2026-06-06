@@ -164,10 +164,10 @@ class MorphTextView @JvmOverloads constructor(
      * | [isTertiaryText] | [MorphTheme.tertiaryLabelColor] | UIColor.tertiaryLabel | 占位符、时间戳 |
      */
     private fun applyTextColor() {
-        val color = when {
-            isTertiaryText -> MorphTheme.tertiaryLabelColor(context)
-            isSecondaryText -> MorphTheme.secondaryLabelColor(context)
-            else -> MorphTheme.labelColor(context)
+        val color: Int = when {
+            isTertiaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
+            isSecondaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
+            else -> MorphTheme.morphColorOnSurface(context)
         }
         setTextColor(color)
     }

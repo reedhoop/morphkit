@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.library")
-    id("org.jetbrains.kotlin.android")
+    id("com.android.library") version "8.5.2"
+    id("org.jetbrains.kotlin.android") version "1.9.24"
 }
 
 android {
@@ -41,21 +41,11 @@ android {
 }
 
 dependencies {
-    // ═══════════════════════════════════════════════════════════════════════
-    //  核心依赖 — AppCompat 兼容层 + Material Design 组件
-    // ═══════════════════════════════════════════════════════════════════════
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
-
-    // ═══════════════════════════════════════════════════════════════════════
-    //  注解支持
-    // ═══════════════════════════════════════════════════════════════════════
     implementation("androidx.annotation:annotation:1.7.1")
 
-    // ═══════════════════════════════════════════════════════════════════════
-    //  测试依赖
-    // ═══════════════════════════════════════════════════════════════════════
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.1")
     testImplementation("io.mockk:mockk:1.13.8")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.22")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.24")
 }

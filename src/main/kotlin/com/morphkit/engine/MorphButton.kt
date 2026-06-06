@@ -143,9 +143,9 @@ class MorphButton @JvmOverloads constructor(
 
     /** 应用 FILLED 样式 - 使用 M3 主色 */
     private fun applyFilledState() {
-        val primaryColor = context.morphColorPrimary()
-        val onPrimaryColor = context.morphColorOnPrimary()
-        
+        val primaryColor: Int = MorphTheme.morphColorPrimary(context)
+        val onPrimaryColor: Int = MorphTheme.morphColorOnPrimary(context)
+
         shapeDrawable.setColor(primaryColor)
         setTextColor(onPrimaryColor)
         alpha = 1f
@@ -153,8 +153,8 @@ class MorphButton @JvmOverloads constructor(
 
     /** 应用 PLAIN 样式 - 透明背景，主色文字 */
     private fun applyPlainState() {
-        val primaryColor = context.morphColorPrimary()
-        
+        val primaryColor: Int = MorphTheme.morphColorPrimary(context)
+
         shapeDrawable.setColor(Color.TRANSPARENT)
         setTextColor(primaryColor)
         alpha = 1f
@@ -163,13 +163,13 @@ class MorphButton @JvmOverloads constructor(
     /** 应用禁用态 - 降低不透明度 */
     private fun applyDisabledState() {
         // 根据当前样式获取基础色
-        val baseColor = when (style) {
-            Style.FILLED -> context.morphColorPrimary()
+        val baseColor: Int = when (style) {
+            Style.FILLED -> MorphTheme.morphColorPrimary(context)
             Style.PLAIN -> Color.TRANSPARENT
         }
-        val baseTextColor = when (style) {
-            Style.FILLED -> context.morphColorOnPrimary()
-            Style.PLAIN -> context.morphColorPrimary()
+        val baseTextColor: Int = when (style) {
+            Style.FILLED -> MorphTheme.morphColorOnPrimary(context)
+            Style.PLAIN -> MorphTheme.morphColorPrimary(context)
         }
         
         // 降低不透明度至 38%（Material Design 标准禁用态透明度）
@@ -256,15 +256,15 @@ class MorphButton @JvmOverloads constructor(
      * PLAIN 样式：在透明背景上叠加遮罩
      */
     private fun applyPressOverlay() {
-        val baseColor = when (style) {
-            Style.FILLED -> context.morphColorPrimary()
+        val baseColor: Int = when (style) {
+            Style.FILLED -> MorphTheme.morphColorPrimary(context)
             Style.PLAIN -> Color.TRANSPARENT
         }
 
         val isDark = MorphTheme.isDarkMode(context)
         val overlayColor = if (isDark) Color.WHITE else Color.BLACK
 
-        val blended = MorphTheme.overlayColor(baseColor, overlayColor, pressOverlayAlpha)
+        val blended: Int = MorphTheme.overlayColor(baseColor, overlayColor, pressOverlayAlpha)
         shapeDrawable.setColor(blended)
     }
 

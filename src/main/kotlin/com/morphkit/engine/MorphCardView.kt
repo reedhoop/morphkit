@@ -80,10 +80,10 @@ class MorphCardView @JvmOverloads constructor(
     private val strokeWidthPx: Float = STROKE_WIDTH_DP.dp
 
     /** 缓存：极简模式背景色 */
-    private var cardBackgroundColor: Int = MorphTheme.systemBackground(context)
+    private var cardBackgroundColor: Int = MorphTheme.morphColorSurface(context)
 
     /** 缓存：极简模式边框色（极浅灰，模拟 iOS 分组分割线） */
-    private var strokeColor: Int = MorphTheme.separatorColor(context)
+    private var strokeColor: Int = MorphTheme.morphColorOutlineVariant(context)
 
     /** 缓存：毛玻璃模式背景色（浅色） */
     private var glassmorphismLightBg: Int = COLOR_GLASSMORPHISM_LIGHT_BG
@@ -149,8 +149,8 @@ class MorphCardView @JvmOverloads constructor(
      * 刷新与暗黑模式相关的颜色缓存。
      */
     private fun refreshColors() {
-        cardBackgroundColor = MorphTheme.systemBackground(context)
-        strokeColor = MorphTheme.separatorColor(context)
+        cardBackgroundColor = MorphTheme.morphColorSurface(context)
+        strokeColor = MorphTheme.morphColorOutlineVariant(context)
     }
 
     /**
