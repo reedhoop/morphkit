@@ -10,23 +10,37 @@
 
 MorphKit 是 **OEM 级 UI 基础设施库**，以 AAR 形式交付，面向预装 App 场景。其核心能力是在零代码侵入的前提下，将宿主 App 的原生控件静默替换为 Morph 增强控件，实现 iOS 极简风 / Pixel 原生风的动态换肤。
 
-### 1.2 架构核心：引擎与皮肤分离
+### 1.2 架构核心：引擎、皮肤与控件分层
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    MorphKit Engine                   │
-│  MorphFactory2 → MorphKit.createView → MorphKit.modifyView  │
-│  MorphInstaller → MorphStyleResolver → MorphConfig  │
-├──────────────────────┬──────────────────────────────┤
-│     iOS Skin         │       Pixel Skin             │
-│  Theme.MorphKit.iOS  │  Theme.MorphKit.Pixel        │
-│  StateListAnimator   │  Ripple + M3 defaults        │
-│  morphInteractionMode=0 │ morphInteractionMode=1    │
-└──────────────────────┴──────────────────────────────┘
+┌────────────────────────────────────────────────────────────────────┐
+│  com.morphkit.core — 引擎层                                        │
+│  MorphKit → MorphFactory2 → MorphInstaller → MorphConfig          │
+│  MorphInitProvider → MorphClickListener                            │
+├────────────────────────────────────────────────────────────────────┤
+│  com.morphkit.theme — 皮肤层                                       │
+│  MorphStyleResolver → MorphTheme → MorphTokens → MorphKitIOSConfig│
+│  compose/ → MorphComposeTheme + MorphButton (Compose)             │
+├──────────────────────────┬─────────────────────────────────────────┤
+│  com.morphkit.widget     │  com.morphkit.internal                  │
+│  .button  → MorphButton  │  ReflectionHelper (反射工具)            │
+│           → MorphRadio...│                                         │
+│  .text    → MorphText... │                                         │
+│           → MorphEdit... │                                         │
+│  .container→ MorphCard..│                                         │
+│  .selection→ MorphCheck.│                                         │
+├──────────────────────────┴─────────────────────────────────────────┤
+│     iOS Skin (morphInteractionMode=0)  │  Pixel Skin (mode=1)      │
+│  Theme.MorphKit.iOS                    │  Theme.MorphKit.Pixel     │
+│  StateListAnimator                     │  Ripple + M3 defaults     │
+└────────────────────────────────────────┴───────────────────────────┘
 ```
 
-- **引擎层**（`MorphFactory2`, `MorphKit`, `MorphInstaller`）：负责 Hook 注入、控件替换、属性修改，与皮肤无关。
-- **皮肤层**（`themes.xml`, `styles.xml`, `StateListAnimator`）：通过 `morphInteractionMode` 枚举分发交互行为，引擎层不硬编码任何视觉逻辑。
+- **引擎层**（`com.morphkit.core`）：负责 Hook 注入、控件替换、属性修改，与皮肤无关。
+- **皮肤层**（`com.morphkit.theme`）：风格解析、设计 Token、Context 包装、Compose 主题。
+- **控件层**（`com.morphkit.widget.*`）：按控件类型分子包（button/text/container/selection）。
+- **内部层**（`com.morphkit.internal`）：不对外暴露的反射工具类等。
+- **皮肤资源**（`themes.xml`, `styles.xml`, `StateListAnimator`）：通过 `morphInteractionMode` 枚举分发交互行为，引擎层不硬编码任何视觉逻辑。
 
 ### 1.3 三大核心原则
 
@@ -125,7 +139,7 @@ private fun applyIOSInteraction() {
     // 1. 剥离 Ripple
     // 2. 必须提供 StateListAnimator 补偿（包含 state_pressed 和 state_focused）
     stateListAnimator = AnimatorInflater.loadStateListAnimator(
-        context, R.animator.morph_seekbar_ios_state
+        context, R.animator.morph_widget_seekbar_ios_state
     )
 }
 
@@ -138,7 +152,7 @@ private fun applyMaterialInteraction() {
 - `state_pressed` → 按压反馈（如 alpha 变化）
 - `state_focused` → 焦点补偿（如 translationZ 提升）
 
-参考现有实现：`src/main/res/animator/morph_button_ios_state.xml`
+参考现有实现：`src/main/res/animator/morph_widget_button_ios_state.xml`
 
 ### Step 5: 防抖包装
 
@@ -192,7 +206,7 @@ MorphKit.config {
 
 ```proguard
 # MorphSeekBar — 保持 (Context, AttributeSet) 构造函数签名
--keepclassmembers class com.morphkit.engine.MorphSeekBar {
+-keepclassmembers class com.morphkit.widget.seekbar.MorphSeekBar {
     public <init>(android.content.Context, android.util.AttributeSet);
 }
 ```
@@ -248,13 +262,13 @@ if (interactionMode == 0) {
 // ✅ 正确：移除 Ripple 后，通过 StateListAnimator 提供焦点补偿
 if (interactionMode == 0) {
     stateListAnimator = AnimatorInflater.loadStateListAnimator(
-        context, R.animator.morph_button_ios_state
+        context, R.animator.morph_widget_button_ios_state
     )
     // StateListAnimator 包含 state_focused → translationZ 提升
 }
 ```
 
-**参考**：`src/main/res/animator/morph_button_ios_state.xml`
+**参考**：`src/main/res/animator/morph_widget_button_ios_state.xml`
 
 ### 🔴 红线 4：MorphStyleResolver 不允许无 try-catch 读取系统设置
 
@@ -372,21 +386,37 @@ try {
 
 ## 5. 关键文件索引
 
-| 文件 | 职责 | 关键模式 |
-|------|------|----------|
-| `MorphFactory2.kt` | LayoutInflater.Factory2 责任链代理 | 三阶段：先 originalFactory → 再替换 → 最后软修改 |
-| `MorphInstaller.kt` | Activity 生命周期 Hook 注入 | `onActivityPreCreated` 注入 + `onActivityCreated` 补充 AppCompat delegate |
-| `MorphKit.kt` | 控件替换与修改引擎 | `createView` try-catch + `modifyView` try-catch |
-| `MorphStyleResolver.kt` | 智能风格解析 | OEM 设置 > StylePolicy > AUTO 检测 Dynamic Color |
-| `MorphInitProvider.kt` | ContentProvider 零代码初始化 | 多进程保护 + AtomicBoolean 防重入 |
-| `MorphConfig.kt` | 替换规则 DSL | `StylePolicy` 枚举 + `replace()` / `modify()` |
-| `MorphButton.kt` | 参考实现 | 双模式分发 + hasCustomBackground + StateListAnimator |
-| `MorphClickListener.kt` | 防抖点击 | 时间戳冷却，默认 300ms |
-| `MorphTokens.kt` | 统一设计 Token | iOS 模式颜色/形状/排版常量 |
-| `consumer-rules.pro` | R8 混淆防御 | 构造函数签名级 `-keep` + LayoutInflater 字段反射 keep |
-| `attrs.xml` | 自定义属性 | `morph*Style` + `morphInteractionMode` |
-| `themes.xml` | 主题定义 | 透明 overlay，仅声明 `morph*Style` 属性分配 |
-| `styles.xml` | 控件样式 | iOS / Pixel 双套，通过 `morphInteractionMode` 分发 |
+### 5.1 包结构映射
+
+| 包名 | 职责 | 包含类 |
+|------|------|--------|
+| `com.morphkit.core` | 引擎、注入、降级、防抖 | `MorphKit`, `MorphConfig`, `MorphFactory2`, `MorphInstaller`, `MorphInitProvider`, `MorphClickListener` |
+| `com.morphkit.theme` | 风格解析、Token、Context 包装 | `MorphStyleResolver`, `MorphTheme`, `MorphTokens`, `MorphKitIOSConfig` |
+| `com.morphkit.theme.compose` | Compose 主题 | `MorphComposeTheme`, `MorphButton` (Compose) |
+| `com.morphkit.widget.button` | 按钮类控件 | `MorphButton`, `MorphRadioButton` |
+| `com.morphkit.widget.text` | 文本类控件 | `MorphTextView`, `MorphEditText` |
+| `com.morphkit.widget.container` | 容器类控件 | `MorphCardView` |
+| `com.morphkit.widget.selection` | 选择类控件 | `MorphCheckBox` |
+| `com.morphkit.internal` | 内部工具（不对外暴露） | `ReflectionHelper` |
+
+### 5.2 文件职责
+
+| 文件 | 包 | 关键模式 |
+|------|-----|----------|
+| `MorphFactory2.kt` | `core` | 三阶段：先 originalFactory → 再替换 → 最后软修改 |
+| `MorphInstaller.kt` | `core` | `onActivityPreCreated` 注入 + `onActivityCreated` 补充 AppCompat delegate |
+| `MorphKit.kt` | `core` | `createView` try-catch + `modifyView` try-catch |
+| `MorphStyleResolver.kt` | `theme` | OEM 设置 > StylePolicy > AUTO 检测 Dynamic Color |
+| `MorphInitProvider.kt` | `core` | ContentProvider 零代码初始化 + 多进程保护 |
+| `MorphConfig.kt` | `core` | `StylePolicy` 枚举 + `replace()` / `modify()` |
+| `MorphButton.kt` | `widget.button` | 参考实现：双模式分发 + hasCustomBackground + StateListAnimator |
+| `MorphClickListener.kt` | `core` | 防抖点击，时间戳冷却，默认 300ms |
+| `MorphTokens.kt` | `theme` | 统一设计 Token，iOS 模式颜色/形状/排版常量 |
+| `ReflectionHelper.kt` | `internal` | 安全反射字段访问与写入，供 MorphInstaller 使用 |
+| `consumer-rules.pro` | — | R8 混淆防御，构造函数签名级 `-keep` + LayoutInflater 字段反射 keep |
+| `attrs.xml` | — | 自定义属性 `morph*Style` + `morphInteractionMode` |
+| `themes.xml` | — | 主题定义，透明 overlay，仅声明 `morph*Style` 属性分配 |
+| `styles.xml` | — | 控件样式，iOS / Pixel 双套，通过 `morphInteractionMode` 分发 |
 
 ---
 
@@ -394,7 +424,20 @@ try {
 
 ### 6.1 测试目录
 
-所有测试代码**必须**位于 `src/test/java/com/morphkit/engine/` 目录下（本地 JVM 测试），不依赖真机或模拟器。
+所有测试代码**必须**与 `src/main` 保持完全一致的包路径：
+
+| 测试文件 | 包路径 | 源码对应 |
+|---------|--------|---------|
+| `MorphKitTest.kt` | `src/test/kotlin/com/morphkit/core/` | `core.MorphKit` |
+| `MorphFactory2Test.kt` | `src/test/java/com/morphkit/core/` | `core.MorphFactory2` |
+| `MorphConfigTest.kt` | `src/test/java/com/morphkit/core/` | `core.MorphConfig` |
+| `MorphInstallerTest.kt` | `src/test/java/com/morphkit/core/` | `core.MorphInstaller` |
+| `MorphInitProviderTest.kt` | `src/test/java/com/morphkit/core/` | `core.MorphInitProvider` |
+| `MorphClickListenerTest.kt` | `src/test/java/com/morphkit/core/` | `core.MorphClickListener` |
+| `MorphStyleResolverTest.kt` | `src/test/java/com/morphkit/theme/` | `theme.MorphStyleResolver` |
+| `MorphThemeTest.kt` | `src/test/java/com/morphkit/theme/` | `theme.MorphTheme` |
+
+测试为本地 JVM 测试，不依赖真机或模拟器。
 
 ### 6.2 测试框架
 
@@ -459,4 +502,4 @@ compileOnly("androidx.compose.material3:material3")
 
 ---
 
-*本文档最后更新：2026-06-07 | 基于 MorphKit 架构评审 A 级标准*
+*本文档最后更新：2026-06-07 | 基于 MorphKit 分层架构重构后更新*
