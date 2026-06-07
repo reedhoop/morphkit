@@ -2,6 +2,7 @@ package com.morphkit.widget.selection
 
 import android.animation.AnimatorInflater
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
@@ -9,6 +10,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.morphkit.R
+import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
 import com.morphkit.core.MorphClickListener
 
@@ -30,8 +32,6 @@ class MorphCheckBox @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyleAttr: Int = R.attr.morphCheckBoxStyle
 ) : AppCompatCheckBox(context, attrs, defStyleAttr) {
-
-    enum class InteractionMode { IOS, MATERIAL }
 
     private val interactionMode: InteractionMode
 
@@ -94,6 +94,17 @@ class MorphCheckBox @JvmOverloads constructor(
         }
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
+        if (interactionMode == InteractionMode.IOS) {
+            primaryColor = MorphTheme.morphColorPrimary(context)
+            onPrimaryColor = MorphTheme.morphColorOnPrimary(context)
+            surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+            invalidate()
+        }
+    }
+
     private fun initIosMode() {
         // ── 移除默认按钮指示器，改用自定义绘制 ──
         buttonDrawable = null
@@ -102,7 +113,7 @@ class MorphCheckBox @JvmOverloads constructor(
         // ── 无障碍合规：StateListAnimator 分离按压反馈与焦点反馈 ──
         stateListAnimator = AnimatorInflater.loadStateListAnimator(
             context,
-            R.animator.morph_widget_checkbox_ios_state
+            R.animator.morph_widget_selection_ios_state
         )
 
         // ── 防抖包装 ──

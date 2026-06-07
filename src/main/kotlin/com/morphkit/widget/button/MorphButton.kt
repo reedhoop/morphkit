@@ -11,6 +11,7 @@ import android.view.MotionEvent
 import androidx.appcompat.widget.AppCompatButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.morphkit.R
+import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
 
 /**
@@ -25,7 +26,6 @@ class MorphButton @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.morphButtonStyle
 ) : AppCompatButton(context, attrs, defStyleAttr) {
 
-    enum class InteractionMode { IOS, MATERIAL }
     enum class Style { FILLED, PLAIN }
 
     private val interactionMode: InteractionMode

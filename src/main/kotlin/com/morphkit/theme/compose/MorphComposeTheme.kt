@@ -241,22 +241,23 @@ fun MorphTheme(
     val resolvedStyle = resolveStyle(themeStyle)
 
     // ── 颜色选择：iOS 从 Token，Pixel 从 Context Theme ──
+    // resolveStyle() 保证返回 iOS 或 Pixel，不会返回 Auto
     val colors = when (resolvedStyle) {
         MorphStyle.iOS -> if (isDark) MorphColorPalette.iosDark() else MorphColorPalette.iosLight()
         MorphStyle.Pixel -> MorphColorPalette.pixelFromContext(context)
-        MorphStyle.Auto -> if (isDark) MorphColorPalette.iosDark() else MorphColorPalette.iosLight()
+        MorphStyle.Auto -> MorphColorPalette.iosLight() // unreachable, for exhaustiveness
     }
 
     val shape = when (resolvedStyle) {
         MorphStyle.iOS -> MorphShape.ios()
         MorphStyle.Pixel -> MorphShape.pixel()
-        MorphStyle.Auto -> MorphShape.ios()
+        MorphStyle.Auto -> MorphShape.ios() // unreachable
     }
 
     val interactionMode = when (resolvedStyle) {
         MorphStyle.iOS -> MorphInteractionMode.IOS
         MorphStyle.Pixel -> MorphInteractionMode.MATERIAL
-        MorphStyle.Auto -> MorphInteractionMode.IOS
+        MorphStyle.Auto -> MorphInteractionMode.IOS // unreachable
     }
 
     val typography = morphTypography()

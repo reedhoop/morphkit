@@ -33,7 +33,7 @@ class MorphClickListener(
     private var lastClickTime: Long = 0L
 
     override fun onClick(v: View) {
-        val now = android.os.SystemClock.elapsedRealtime()
+        val now = System.currentTimeMillis()
         if (now - lastClickTime < debounceInterval) {
             return // 冷却期内，忽略重复点击
         }

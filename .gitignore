@@ -85,3 +85,9 @@ java_pid*.hprof
 
 # Local dev tool configs
 mise.toml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db

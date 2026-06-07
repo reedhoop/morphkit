@@ -72,11 +72,9 @@ class MorphRadioButtonTest {
 
     @Test
     fun `InteractionMode 枚举存在且包含 IOS 和 MATERIAL`() {
-        val clazz = Class.forName("com.morphkit.widget.button.MorphRadioButton")
-        val innerClasses = clazz.declaredClasses
-        val modeClass = innerClasses.firstOrNull { it.simpleName == "InteractionMode" }
+        val modeClass = Class.forName("com.morphkit.core.InteractionMode")
         assertThat(modeClass).isNotNull()
-        assertThat(modeClass!!.isEnum).isTrue()
+        assertThat(modeClass.isEnum).isTrue()
         val enumConstants = modeClass.enumConstants
         assertThat(enumConstants!!.map { (it as Enum<*>).name })
             .containsExactly("IOS", "MATERIAL")

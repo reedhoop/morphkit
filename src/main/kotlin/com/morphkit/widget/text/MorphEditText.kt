@@ -150,11 +150,11 @@ class MorphEditText @JvmOverloads constructor(
         tintColor = MorphTheme.morphColorPrimary(context)
 
         // 焦点态背景色：在原始色基础上微调透明度
-        // 浅色模式：略提亮（叠加少量白色）
+        // 浅色模式：略加深（叠加少量黑色，在浅灰背景上更明显）
         // 深色模式：略提亮（叠加少量白色）
         searchBackgroundFocusedColor = blendColor(
             searchBackgroundColor,
-            if (MorphTheme.isDarkMode(context)) Color.WHITE else Color.WHITE,
+            if (MorphTheme.isDarkMode(context)) Color.WHITE else Color.BLACK,
             FOCUS_OVERLAY_ALPHA
         )
 

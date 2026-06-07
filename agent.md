@@ -490,7 +490,7 @@ MorphKit 的 Compose 模块对宿主是**可选依赖**：
 
 ```kotlin
 // build.gradle.kts
-compileOnly(platform("androidx.compose:compose-bom:2024.10.00"))
+compileOnly(platform("androidx.compose:compose-bom:2025.05.01"))
 compileOnly("androidx.compose.material3:material3")
 // ... 其他 Compose 依赖均为 compileOnly
 ```

@@ -9,26 +9,32 @@
 #    LayoutInflater 通过反射调用此构造函数，R8 移除会导致运行时 Crash
 # ═══════════════════════════════════════════════════════════════════════════════
 -keep class com.morphkit.widget.button.MorphButton {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep class com.morphkit.widget.button.MorphRadioButton {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep class com.morphkit.widget.text.MorphTextView {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep class com.morphkit.widget.text.MorphEditText {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep class com.morphkit.widget.container.MorphCardView {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
 -keep class com.morphkit.widget.selection.MorphCheckBox {
+    public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
@@ -45,7 +51,7 @@
 -keep class com.morphkit.theme.MorphTokens { *; }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 4. MorphKit 枚举 — StylePolicy / MorphStyle / MorphInteractionMode
+# 4. MorphKit 枚举 — StylePolicy / InteractionMode / MorphStyle / MorphInteractionMode
 #    枚举在 Kotlin/JVM 中通常被自动 Keep，但显式声明更安全
 # ═══════════════════════════════════════════════════════════════════════════════
 -keepclassmembers enum com.morphkit.core.** {
