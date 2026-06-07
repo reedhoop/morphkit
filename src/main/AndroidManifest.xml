@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application>
+        <!--
+            MorphKit 零侵入自动初始化 ContentProvider。
+            利用 ContentProvider 在 Application.onCreate() 之前初始化的特性，
+            实现宿主 App 零代码接入 MorphKit。
+
+            android:authorities 必须包含宿主包名以确保唯一性，
+            使用 ${applicationId} 占位符由 AGP 自动替换。
+
+            android:exported="false" 确保外部应用无法访问此 Provider。
+        -->
+        <provider
+            android:name="com.morphkit.engine.MorphInitProvider"
+            android:authorities="${applicationId}.morphkit.init"
+            android:exported="false"
+            android:enabled="true"
+            android:initOrder="2147483647" />
+    </application>
+
+</manifest>

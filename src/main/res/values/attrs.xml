@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphKit 主题属性 — 控件默认样式入口
+         宿主 Theme 通过这些 reference 属性，将控件外观指向不同的 Style 皮肤
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <attr name="morphButtonStyle" format="reference" />
+    <attr name="morphTextViewStyle" format="reference" />
+    <attr name="morphEditTextStyle" format="reference" />
+    <attr name="morphCardStyle" format="reference" />
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         交互模式 — iOS 按压变色 vs Material 涟漪水波纹
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <attr name="morphInteractionMode" format="enum">
+        <!-- iOS 风格：按压整体变色，无涟漪 -->
+        <enum name="ios" value="0" />
+        <!-- Material 风格：保留系统 Ripple 涟漪水波纹 -->
+        <enum name="material" value="1" />
+    </attr>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphButton 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphButton">
+        <!-- 按钮圆角半径 -->
+        <attr name="morphCornerRadius" format="dimension" />
+        <!-- 交互模式 -->
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphTextView 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphTextView">
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphEditText 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphEditText">
+        <attr name="morphCornerRadius" />
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphCardView 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphCardView">
+        <attr name="morphCornerRadius" />
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+</resources>

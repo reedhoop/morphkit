@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         iOS 皮肤 — 极简按压变色，零涟漪，大圆角
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <style name="Widget.MorphKit.Button.iOS" parent="Widget.AppCompat.Button">
+        <item name="morphCornerRadius">12dp</item>
+        <item name="morphInteractionMode">ios</item>
+        <item name="android:background">?attr/colorPrimary</item>
+        <item name="android:textColor">?attr/colorOnPrimary</item>
+        <item name="android:elevation">0dp</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="Widget.MorphKit.TextView.iOS" parent="Widget.AppCompat.TextView">
+        <item name="morphInteractionMode">ios</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.MorphKit.EditText.iOS" parent="Widget.AppCompat.EditText">
+        <item name="morphCornerRadius">12dp</item>
+        <item name="morphInteractionMode">ios</item>
+        <item name="android:background">@null</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColorHint">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="Widget.MorphKit.Card.iOS" parent="Widget.MaterialComponents.CardView">
+        <item name="morphCornerRadius">16dp</item>
+        <item name="morphInteractionMode">ios</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurface</item>
+        <item name="strokeColor">?attr/colorOutlineVariant</item>
+        <item name="strokeWidth">0.5dp</item>
+        <item name="rippleColor">@android:color/transparent</item>
+    </style>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         Pixel 皮肤 — Material You 原生风格，保留涟漪，M3 标准圆角
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <style name="Widget.MorphKit.Button.Pixel" parent="Widget.Material3.Button">
+        <item name="morphCornerRadius">8dp</item>
+        <item name="morphInteractionMode">material</item>
+    </style>
+
+    <style name="Widget.MorphKit.TextView.Pixel" parent="Widget.MaterialComponents.TextView">
+        <item name="morphInteractionMode">material</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="Widget.MorphKit.EditText.Pixel" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="morphCornerRadius">8dp</item>
+        <item name="morphInteractionMode">material</item>
+    </style>
+
+    <style name="Widget.MorphKit.Card.Pixel" parent="Widget.Material3.CardView.Filled">
+        <item name="morphCornerRadius">12dp</item>
+        <item name="morphInteractionMode">material</item>
+    </style>
+
+</resources>

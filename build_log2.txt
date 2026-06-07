@@ -1,0 +1,51 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.10.2/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :preBuild UP-TO-DATE
+> Task :preReleaseBuild UP-TO-DATE
+> Task :mergeReleaseJniLibFolders UP-TO-DATE
+> Task :mergeReleaseNativeLibs NO-SOURCE
+> Task :stripReleaseDebugSymbols NO-SOURCE
+> Task :copyReleaseJniLibsProjectAndLocalJars UP-TO-DATE
+> Task :generateReleaseResValues UP-TO-DATE
+> Task :extractDeepLinksForAarRelease UP-TO-DATE
+> Task :checkKotlinGradlePluginConfigurationErrors
+> Task :generateReleaseResources UP-TO-DATE
+> Task :packageReleaseResources UP-TO-DATE
+> Task :parseReleaseLocalResources UP-TO-DATE
+> Task :generateReleaseRFile UP-TO-DATE
+> Task :javaPreCompileRelease UP-TO-DATE
+> Task :mergeReleaseShaders UP-TO-DATE
+> Task :compileReleaseShaders NO-SOURCE
+> Task :generateReleaseAssets UP-TO-DATE
+> Task :packageReleaseAssets UP-TO-DATE
+> Task :prepareLintJarForPublish UP-TO-DATE
+> Task :prepareReleaseArtProfile UP-TO-DATE
+> Task :processReleaseManifest UP-TO-DATE
+> Task :writeReleaseAarMetadata UP-TO-DATE
+> Task :mapReleaseSourceSetPaths
+
+> Task :compileReleaseKotlin FAILED
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphButton.kt:403:49 Const 'val' initializer should be a constant value
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphButton.kt:406:48 Const 'val' initializer should be a constant value
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphEditText.kt:142:46 Function invocation 'hasFocus()' expected
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphTextView.kt:42:51 Unresolved reference: textViewStyle
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphTheme.kt:185:17 Expecting an element
+e: file:///E:/01_workspace/03_demo/Morphkit/src/main/kotlin/com/morphkit/engine/MorphTheme.kt:184:17 Type mismatch: inferred type is Int but Boolean was expected
+
+> Task :mergeReleaseResources
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 48s
+19 actionable tasks: 4 executed, 15 up-to-date

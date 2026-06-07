@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- iOS 模式按压态：Alpha 变暗（无涟漪） -->
+    <item android:state_pressed="true">
+        <objectAnimator
+            android:propertyName="alpha"
+            android:valueFrom="1.0"
+            android:valueTo="0.8"
+            android:duration="150"
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </item>
+
+    <!-- 键盘焦点态：translationZ 抬起（无障碍合规） -->
+    <item android:state_focused="true">
+        <objectAnimator
+            android:propertyName="translationZ"
+            android:valueFrom="0dp"
+            android:valueTo="4dp"
+            android:duration="200"
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </item>
+
+    <!-- 默认态：恢复 -->
+    <item>
+        <objectAnimator
+            android:propertyName="alpha"
+            android:valueFrom="0.8"
+            android:valueTo="1.0"
+            android:duration="200"
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </item>
+</selector>
