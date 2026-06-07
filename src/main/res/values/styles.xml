@@ -37,6 +37,18 @@
         <item name="rippleColor">@android:color/transparent</item>
     </style>
 
+    <style name="Widget.MorphKit.RadioButton.iOS" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="morphInteractionMode">ios</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+
+    <style name="Widget.MorphKit.CheckBox.iOS" parent="Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="morphInteractionMode">ios</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+
     <!-- ═══════════════════════════════════════════════════════════════════════
          Pixel 皮肤 — Material You 原生风格，保留涟漪，M3 标准圆角
          ═══════════════════════════════════════════════════════════════════════ -->
@@ -58,6 +70,14 @@
 
     <style name="Widget.MorphKit.Card.Pixel" parent="Widget.Material3.CardView.Filled">
         <item name="morphCornerRadius">12dp</item>
+        <item name="morphInteractionMode">material</item>
+    </style>
+
+    <style name="Widget.MorphKit.RadioButton.Pixel" parent="Widget.Material3.CompoundButton.RadioButton">
+        <item name="morphInteractionMode">material</item>
+    </style>
+
+    <style name="Widget.MorphKit.CheckBox.Pixel" parent="Widget.Material3.CompoundButton.CheckBox">
         <item name="morphInteractionMode">material</item>
     </style>
 

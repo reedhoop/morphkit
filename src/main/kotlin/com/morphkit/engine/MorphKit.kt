@@ -297,6 +297,12 @@ object MorphKit {
             replace("com.google.android.material.card.MaterialCardView") { ctx, attrs ->
                 MorphCardView(ctx, attrs)
             }
+            groupReplace(listOf("RadioButton", "androidx.appcompat.widget.AppCompatRadioButton")) { ctx, attrs ->
+                MorphRadioButton(ctx, attrs)
+            }
+            groupReplace(listOf("CheckBox", "androidx.appcompat.widget.AppCompatCheckBox")) { ctx, attrs ->
+                MorphCheckBox(ctx, attrs)
+            }
         }
     }
 

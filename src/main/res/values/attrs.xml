@@ -10,6 +10,8 @@
     <attr name="morphTextViewStyle" format="reference" />
     <attr name="morphEditTextStyle" format="reference" />
     <attr name="morphCardStyle" format="reference" />
+    <attr name="morphRadioButtonStyle" format="reference" />
+    <attr name="morphCheckBoxStyle" format="reference" />
 
     <!-- ═══════════════════════════════════════════════════════════════════════
          交互模式 — iOS 按压变色 vs Material 涟漪水波纹
@@ -56,6 +58,22 @@
 
     <declare-styleable name="MorphCardView">
         <attr name="morphCornerRadius" />
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphRadioButton 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphRadioButton">
+        <attr name="morphInteractionMode" />
+    </declare-styleable>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
+         MorphCheckBox 自定义属性
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <declare-styleable name="MorphCheckBox">
         <attr name="morphInteractionMode" />
     </declare-styleable>
 

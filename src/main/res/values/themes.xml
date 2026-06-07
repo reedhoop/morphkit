@@ -15,6 +15,8 @@
         <item name="morphTextViewStyle">@style/Widget.MorphKit.TextView.iOS</item>
         <item name="morphEditTextStyle">@style/Widget.MorphKit.EditText.iOS</item>
         <item name="morphCardStyle">@style/Widget.MorphKit.Card.iOS</item>
+        <item name="morphRadioButtonStyle">@style/Widget.MorphKit.RadioButton.iOS</item>
+        <item name="morphCheckBoxStyle">@style/Widget.MorphKit.CheckBox.iOS</item>
     </style>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
@@ -26,6 +28,8 @@
         <item name="morphTextViewStyle">@style/Widget.MorphKit.TextView.Pixel</item>
         <item name="morphEditTextStyle">@style/Widget.MorphKit.EditText.Pixel</item>
         <item name="morphCardStyle">@style/Widget.MorphKit.Card.Pixel</item>
+        <item name="morphRadioButtonStyle">@style/Widget.MorphKit.RadioButton.Pixel</item>
+        <item name="morphCheckBoxStyle">@style/Widget.MorphKit.CheckBox.Pixel</item>
     </style>
 
 </resources>
