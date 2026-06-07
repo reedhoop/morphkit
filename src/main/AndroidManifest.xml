@@ -13,7 +13,7 @@
             android:exported="false" 确保外部应用无法访问此 Provider。
         -->
         <provider
-            android:name="com.morphkit.engine.MorphInitProvider"
+            android:name="com.morphkit.core.MorphInitProvider"
             android:authorities="${applicationId}.morphkit.init"
             android:exported="false"
             android:enabled="true"

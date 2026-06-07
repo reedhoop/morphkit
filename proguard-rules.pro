@@ -17,17 +17,17 @@
 # ═════════════════════════════════════════════════════════════════════════════
 
 # MorphKit 单例对象 — 包含 init/createView/modifyView 等核心方法
--keep class com.morphkit.engine.MorphKit { *; }
+-keep class com.morphkit.core.MorphKit { *; }
 
 # MorphConfig — DSL 配置类，replaceMap/modifyMap 通过反射/内联访问
--keep class com.morphkit.engine.MorphConfig { *; }
+-keep class com.morphkit.core.MorphConfig { *; }
 
 # MorphFactory2 — LayoutInflater.Factory2 代理，必须保持类名与接口实现
--keep class com.morphkit.engine.MorphFactory2 { *; }
+-keep class com.morphkit.core.MorphFactory2 { *; }
 
 # MorphInstaller — 反射访问 LayoutInflater 的 mFactory2/mFactory 字段
-# 其内部所有方法（install/injectFactory2/resolveField/setFieldValue 等）均不可混淆
--keep class com.morphkit.engine.MorphInstaller { *; }
+# 其内部所有方法（install/injectFactory2 等）均不可混淆
+-keep class com.morphkit.core.MorphInstaller { *; }
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  2. Morph* 前缀控件 — 类名校验保护
@@ -39,7 +39,37 @@
 #
 # 此规则同时保护控件的构造函数，确保 LayoutInflater 能通过反射创建实例。
 
--keep class com.morphkit.engine.Morph* {
+-keep class com.morphkit.widget.button.MorphButton {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public *;
+}
+-keep class com.morphkit.widget.button.MorphRadioButton {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public *;
+}
+-keep class com.morphkit.widget.text.MorphTextView {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public *;
+}
+-keep class com.morphkit.widget.text.MorphEditText {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public *;
+}
+-keep class com.morphkit.widget.container.MorphCardView {
+    public <init>(android.content.Context);
+    public <init>(android.content.Context, android.util.AttributeSet);
+    public <init>(android.content.Context, android.util.AttributeSet, int);
+    public *;
+}
+-keep class com.morphkit.widget.selection.MorphCheckBox {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);
     public <init>(android.content.Context, android.util.AttributeSet, int);
@@ -51,38 +81,38 @@
 # ═════════════════════════════════════════════════════════════════════════════
 
 # MorphTheme — 所有控件直接引用其方法/属性
--keep class com.morphkit.engine.MorphTheme { *; }
+-keep class com.morphkit.theme.MorphTheme { *; }
 
 # MorphTheme$MorphTypography — 排版令牌
--keep class com.morphkit.engine.MorphTheme$MorphTypography { *; }
+-keep class com.morphkit.theme.MorphTheme$MorphTypography { *; }
 
 # MorphTheme$TextStyle — data class，可能被序列化
--keep class com.morphkit.engine.MorphTheme$TextStyle { *; }
+-keep class com.morphkit.theme.MorphTheme$TextStyle { *; }
 
 # MorphTheme$FontWeight — enum，toTypeface() 方法被广泛调用
--keep class com.morphkit.engine.MorphTheme$FontWeight { *; }
+-keep class com.morphkit.theme.MorphTheme$FontWeight { *; }
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  4. 顶层扩展与常量
 # ═════════════════════════════════════════════════════════════════════════════
 
 # unifiedPrefix 顶层属性 — MorphConfig.unifiedPrefix 委托引用
--keepclassmembers class com.morphkit.engine.UnifiedPrefixKt {
+-keepclassmembers class com.morphkit.core.MorphConfigKt {
     public static *;
 }
 
 # MORPH_TAG_KEY 顶层属性 — MorphKit 中 setTag/getTag 依赖
--keepclassmembers class com.morphkit.engine.MorphKitKt {
+-keepclassmembers class com.morphkit.core.MorphKitKt {
     public static *;
 }
 
 # dp 扩展属性 — Int.dp / Float.dp
--keepclassmembers class com.morphkit.engine.MorphThemeKt {
+-keepclassmembers class com.morphkit.theme.MorphThemeKt {
     public static *;
 }
 
 # initIOSStyle 扩展函数
--keepclassmembers class com.morphkit.engine.MorphKitIOSConfigKt {
+-keepclassmembers class com.morphkit.theme.MorphKitIOSConfigKt {
     public static *;
 }
 
@@ -102,7 +132,7 @@
 #  6. LayoutInflater 反射目标字段 — 警告性保护
 # ═════════════════════════════════════════════════════════════════════════════
 #
-# MorphInstaller 通过反射访问 android.view.LayoutInflater 的以下字段：
+# MorphInstaller 通过 ReflectionHelper 反射访问 android.view.LayoutInflater 的以下字段：
 # - mFactory2 (LayoutInflater.Factory2)
 # - mFactory (LayoutInflater.Factory)
 #
