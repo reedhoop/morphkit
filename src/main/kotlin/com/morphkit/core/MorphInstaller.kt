@@ -175,6 +175,12 @@ object MorphInstaller {
     }
 
     private fun fallbackSetFactory2(inflater: LayoutInflater, factory: MorphFactory2) {
+        // 优先使用 ReflectionHelper 的安全降级方案（处理 Android 14+ 反射限制）
+        if (ReflectionHelper.safeSetFactory2(inflater, factory)) {
+            return
+        }
+
+        // 如果 safeSetFactory2 也失败，尝试原始降级逻辑
         try {
             sFactorySetField?.let { field ->
                 try {

@@ -245,6 +245,7 @@ object MorphKit {
      * @see MorphFactory2
      */
     var finalThemeResId: Int = 0
+        /** Only written by [MorphKit.init]; external code must treat this as read-only. */
         private set
 
     /**

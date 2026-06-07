@@ -11,7 +11,7 @@ import android.view.View
  * 以便于在 Layout Inspector 与日志中快速辨识替换来源。
  * 此值同时作为 [MorphConfig.unifiedPrefix] 的数据源，以及运行时规范校验的判定依据。
  */
-val unifiedPrefix = "Morph"
+val unifiedPrefix = MorphConfig.DEFAULT_PREFIX
 
 /**
  * 自适应风格策略枚举。
@@ -73,6 +73,11 @@ enum class StylePolicy {
  * @constructor 内部构造，仅由 [MorphKit.init] 创建
  */
 class MorphConfig internal constructor() {
+
+    companion object {
+        /** Default prefix for all MorphKit replacement widget class names. */
+        const val DEFAULT_PREFIX = "Morph"
+    }
 
     /** 替换规则映射：原始控件名 → 创建器 */
     private val _replaceMap = mutableMapOf<String, (Context, AttributeSet) -> View>()
