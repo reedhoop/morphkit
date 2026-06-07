@@ -116,9 +116,6 @@ class MorphEditText @JvmOverloads constructor(
         textSize = typo.fontSize
         typeface = typo.weight.toTypeface()
 
-        // ── 光标颜色跟随 tintColor ──
-        applyCursorColor()
-
         // ── 提示文字颜色 ──
         setHintTextColor(MorphTheme.morphColorOnSurfaceVariant(context))
 
@@ -180,21 +177,6 @@ class MorphEditText @JvmOverloads constructor(
         val bgColor = if (focused) searchBackgroundFocusedColor else searchBackgroundColor
         searchBackgroundDrawable.setColor(bgColor)
         background = searchBackgroundDrawable
-    }
-
-    /**
-     * 应用光标颜色。
-     *
-     * 通过反射设置 `mCursorDrawableRes` 相关资源，使光标跟随 tintColor。
-     * 由于 Android API 限制，此处使用 textCursorDrawable 属性方案：
-     * 在 API 29+ 上通过 `setTextCursorDrawable` 设置。
-     *
-     * 对于低版本，光标颜色继承自 tint 色系，视觉上可接受。
-     */
-    private fun applyCursorColor() {
-        // API 29+ 可直接通过 setTextCursorDrawable 设置自定义光标 Drawable
-        // 低版本依赖 AppCompat 的着色机制，不再额外反射处理
-        // 光标颜色通过 accent/tint 语义色间接保证一致性
     }
 
     // ═══════════════════════════════════════════════════════════════════════

@@ -19,7 +19,7 @@ import android.view.View
  *
  * ## 实现原理
  *
- * 记录上次点击的时间戳 [lastClickTime]，若两次点击间隔小于 [debounceInterval]，
+ * 记录上次点击的 elapsedRealtime [lastClickTime]，若两次点击间隔小于 [debounceInterval]，
  * 则忽略本次点击。默认冷却时间 300ms，可通过构造函数自定义。
  *
  * @param debounceInterval 防抖冷却时间（毫秒），默认 300ms
@@ -33,7 +33,7 @@ class MorphClickListener(
     private var lastClickTime: Long = 0L
 
     override fun onClick(v: View) {
-        val now = System.currentTimeMillis()
+        val now = android.os.SystemClock.elapsedRealtime()
         if (now - lastClickTime < debounceInterval) {
             return // 冷却期内，忽略重复点击
         }

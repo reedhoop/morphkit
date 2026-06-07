@@ -44,6 +44,7 @@ class MorphCheckBox @JvmOverloads constructor(
         strokeJoin = Paint.Join.ROUND
     }
     private val checkPath = Path()
+    private val tempRect = android.graphics.RectF()
 
     private var boxSize: Float = 0f
     private var cornerRadius: Float = 0f
@@ -79,6 +80,17 @@ class MorphCheckBox @JvmOverloads constructor(
         when (interactionMode) {
             InteractionMode.IOS -> initIosMode()
             InteractionMode.MATERIAL -> { /* 保留 M3 默认 */ }
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // 暗色/亮色模式切换后重新获取主题颜色
+        if (interactionMode == InteractionMode.IOS) {
+            primaryColor = MorphTheme.morphColorPrimary(context)
+            onPrimaryColor = MorphTheme.morphColorOnPrimary(context)
+            surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+            invalidate()
         }
     }
 
@@ -127,14 +139,14 @@ class MorphCheckBox @JvmOverloads constructor(
     }
 
     private fun drawRoundRect(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
-        val rect = android.graphics.RectF(left, top, right, bottom)
-        canvas.drawRoundRect(rect, cornerRadius, cornerRadius, boxPaint)
+        tempRect.set(left, top, right, bottom)
+        canvas.drawRoundRect(tempRect, cornerRadius, cornerRadius, boxPaint)
     }
 
     private fun drawRoundRectStroke(canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) {
         val inset = strokeWidth / 2f
-        val rect = android.graphics.RectF(left + inset, top + inset, right - inset, bottom - inset)
-        canvas.drawRoundRect(rect, cornerRadius, cornerRadius, strokePaint)
+        tempRect.set(left + inset, top + inset, right - inset, bottom - inset)
+        canvas.drawRoundRect(tempRect, cornerRadius, cornerRadius, strokePaint)
     }
 
     private fun drawCheckMark(canvas: Canvas, boxLeft: Float, boxTop: Float) {

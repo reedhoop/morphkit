@@ -167,7 +167,7 @@ class MorphTextView @JvmOverloads constructor(
      */
     private fun applyTextColor() {
         val color: Int = when {
-            isTertiaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
+            isTertiaryText -> MorphTheme.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), 0.55f)
             isSecondaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
             else -> MorphTheme.morphColorOnSurface(context)
         }

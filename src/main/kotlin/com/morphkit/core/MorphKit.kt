@@ -299,7 +299,7 @@ object MorphKit {
             groupReplace(listOf("Button", "androidx.appcompat.widget.AppCompatButton")) { ctx, attrs ->
                 MorphButton(ctx, attrs)
             }
-            replace("androidx.appcompat.widget.AppCompatEditText") { ctx, attrs ->
+            groupReplace(listOf("EditText", "androidx.appcompat.widget.AppCompatEditText")) { ctx, attrs ->
                 MorphEditText(ctx, attrs)
             }
             replace("com.google.android.material.card.MaterialCardView") { ctx, attrs ->

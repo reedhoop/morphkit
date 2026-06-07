@@ -75,6 +75,17 @@ class MorphRadioButton @JvmOverloads constructor(
         }
     }
 
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        // 暗色/亮色模式切换后重新获取主题颜色
+        if (interactionMode == InteractionMode.IOS) {
+            primaryColor = MorphTheme.morphColorPrimary(context)
+            onSurfaceColor = MorphTheme.morphColorOnSurface(context)
+            surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+            invalidate()
+        }
+    }
+
     private fun initIosMode() {
         // ── 移除默认按钮指示器，改用自定义绘制 ──
         buttonDrawable = null

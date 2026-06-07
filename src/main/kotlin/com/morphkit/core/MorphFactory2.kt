@@ -53,6 +53,10 @@ class MorphFactory2(
     private var hostThemeChecked = false
     private var hostHasMorphAttr = false
 
+    // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
+    private var cachedThemedContext: Context? = null
+    private var cachedBaseContext: Context? = null
+
     /**
      * 补充 AppCompat delegate 作为 originalFactory。
      */
@@ -136,7 +140,17 @@ class MorphFactory2(
             hostThemeChecked = true
         }
 
-        return if (hostHasMorphAttr) context else ContextThemeWrapper(context, finalThemeResId)
+        if (hostHasMorphAttr) return context
+
+        // 缓存：同一 Activity 内 context 实例相同，无需重复创建
+        if (cachedBaseContext === context && cachedThemedContext != null) {
+            return cachedThemedContext!!
+        }
+
+        val wrapped = ContextThemeWrapper(context, finalThemeResId)
+        cachedThemedContext = wrapped
+        cachedBaseContext = context
+        return wrapped
     }
 
     private fun hostThemeHasMorphAttributes(context: Context): Boolean {

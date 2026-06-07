@@ -16,7 +16,9 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.google.android.material.color.MaterialColors
+import com.morphkit.theme.MorphStyleResolver
 import com.morphkit.theme.MorphTokens
+import com.morphkit.core.StylePolicy
 
 /**
  * MorphKit Compose 主题系统。
@@ -274,7 +276,24 @@ fun MorphTheme(
 }
 
 @Composable
-private fun resolveStyle(style: MorphStyle): MorphStyle = style
+private fun resolveStyle(style: MorphStyle): MorphStyle {
+    if (style != MorphStyle.Auto) return style
+    val context = LocalContext.current
+    return resolveAutoStyle(context)
+}
+
+/**
+ * Auto 模式：委托 [MorphStyleResolver] 判断。
+ * 如果最终 Theme 是 Pixel 主题，则走 Pixel；否则走 iOS。
+ */
+private fun resolveAutoStyle(context: Context): MorphStyle {
+    return try {
+        val themeResId = MorphStyleResolver.resolve(context, StylePolicy.AUTO)
+        if (themeResId == com.morphkit.R.style.Theme_MorphKit_Pixel) MorphStyle.Pixel else MorphStyle.iOS
+    } catch (e: Exception) {
+        MorphStyle.iOS  // 降级：解析失败时默认 iOS
+    }
+}
 
 private fun morphTypography(): Typography {
     val ff = FontFamily.SansSerif
