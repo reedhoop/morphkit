@@ -53,6 +53,11 @@ android {
     }
 }
 
+// 启用 JUnit5 平台支持（MorphKitTest 使用 JUnit5）
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
+
 dependencies {
     // ── Android 基础依赖（始终包含）──
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -74,6 +79,8 @@ dependencies {
     testImplementation("org.robolectric:robolectric:4.10.3")
     testImplementation("com.google.truth:truth:1.1.5")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:1.9.24")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("org.junit.vintage:junit-vintage-engine:5.10.2")
 
     // ── Compose Runtime（仅测试编译需要）──
     // buildFeatures.compose=true 会全局启用 Compose Compiler 插件，

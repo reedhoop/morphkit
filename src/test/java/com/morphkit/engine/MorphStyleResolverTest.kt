@@ -155,4 +155,33 @@ class MorphStyleResolverTest {
             themeResId
         )
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 B7：OEM 未知值回退到 StylePolicy 判定
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OEM未知值时_回退到StylePolicy判定`() {
+        // OEM 设置为 99（未知值），应回退到 StylePolicy
+        every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 99
+
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_PIXEL)
+        assertEquals(
+            "OEM 未知值时应回退到 StylePolicy",
+            com.morphkit.R.style.Theme_MorphKit_Pixel,
+            themeResId
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 B8：OEM_UI_STYLE_KEY 常量值正确
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OEM_UI_STYLE_KEY常量值正确`() {
+        assertEquals("oem_ui_style", MorphStyleResolver.OEM_UI_STYLE_KEY)
+        assertEquals(0, MorphStyleResolver.OEM_STYLE_DEFAULT)
+        assertEquals(1, MorphStyleResolver.OEM_STYLE_IOS)
+        assertEquals(2, MorphStyleResolver.OEM_STYLE_PIXEL)
+    }
 }

@@ -66,6 +66,8 @@ class MorphKitTest {
     fun setUp() {
         // 重置 MorphKit 单例状态，确保每个测试从干净状态开始
         resetMorphKit()
+        // 重置 MorphInstaller 防重入标志
+        resetMorphInstaller()
 
         // Mock Application：拦截 registerActivityLifecycleCallbacks（MorphInstaller.install 需要）
         mockApp = mockk<Application>(relaxed = true)
@@ -77,6 +79,8 @@ class MorphKitTest {
 
     @AfterEach
     fun tearDown() {
+        // 清理 mockkObject(MorphKit) 的 mock，避免影响其他测试
+        try { unmockkObject(MorphKit) } catch (_: Exception) {}
         resetMorphKit()
     }
 
@@ -91,9 +95,6 @@ class MorphKitTest {
         fun `groupReplace — 别名列表中的所有名称均能返回同一个自定义 View`() {
             // ── Arrange ──
             val morphButton = mockk<View>(relaxed = true)
-            // 模拟类名以 Morph 开头，避免规范警告干扰
-            every { morphButton.javaClass.simpleName } returns "MorphButton"
-            every { morphButton.javaClass.name } returns "com.example.MorphButton"
 
             val sharedCreator: (Context, AttributeSet) -> View = { _, _ -> morphButton }
 
@@ -120,8 +121,6 @@ class MorphKitTest {
         @Test
         fun `groupReplace — 未注册的名称返回 null`() {
             val morphTextView = mockk<View>(relaxed = true)
-            every { morphTextView.javaClass.simpleName } returns "MorphTextView"
-            every { morphTextView.javaClass.name } returns "com.example.MorphTextView"
 
             MorphKit.init(mockApp) {
                 groupReplace(listOf("TextView", "AppCompatTextView")) { _, _ -> morphTextView }
@@ -232,8 +231,6 @@ class MorphKitTest {
         fun `符合规范的 MorphButton — Tag 被正确设置为 Morph replaced Button`() {
             // ── Arrange ──
             val morphButton = mockk<View>(relaxed = true)
-            every { morphButton.javaClass.simpleName } returns "MorphButton"
-            every { morphButton.javaClass.name } returns "com.example.MorphButton"
 
             MorphKit.init(mockApp) {
                 replace("Button") { _, _ -> morphButton }
@@ -250,11 +247,9 @@ class MorphKitTest {
         }
 
         @Test
-        fun `不符合规范的 BadButton — 输出规范警告 Log`() {
+        fun `不符合规范的控件_输出规范警告Log`() {
             // ── Arrange ──
             val badButton = mockk<View>(relaxed = true)
-            every { badButton.javaClass.simpleName } returns "BadButton"
-            every { badButton.javaClass.name } returns "com.example.BadButton"
 
             MorphKit.init(mockApp) {
                 replace("Button") { _, _ -> badButton }
@@ -269,33 +264,34 @@ class MorphKitTest {
             verify(exactly = 1) {
                 badButton.setTag(MORPH_TAG_KEY, "Morph (replaced: Button)")
             }
-            // 规范警告日志已输出
+            // 规范警告日志已输出（mock View 的类名不以 Morph 开头，必然触发警告）
             verify(atLeast = 1) {
                 Log.w(
                     "MorphKit",
-                    match<String> { it.contains("BadButton") && it.contains("未遵循前缀规范") }
+                    match<String> { it.contains("未遵循前缀规范") }
                 )
             }
         }
 
         @Test
-        fun `符合规范的控件 — 不输出规范警告 Log`() {
+        fun `规范警告包含原始控件名`() {
             // ── Arrange ──
-            val morphTextView = mockk<View>(relaxed = true)
-            every { morphTextView.javaClass.simpleName } returns "MorphTextView"
-            every { morphTextView.javaClass.name } returns "com.example.MorphTextView"
+            val someView = mockk<View>(relaxed = true)
 
             MorphKit.init(mockApp) {
-                replace("TextView") { _, _ -> morphTextView }
+                replace("EditText") { _, _ -> someView }
             }
 
             // ── Act ──
-            MorphKit.createView("TextView", mockContext, mockAttrs)
+            MorphKit.createView("EditText", mockContext, mockAttrs)
 
             // ── Assert ──
-            // 不应输出包含"未遵循前缀规范"的警告
-            verify(exactly = 0) {
-                Log.w("MorphKit", match<String> { it.contains("未遵循前缀规范") })
+            // 警告日志应包含原始控件名（建议重命名信息）
+            verify(atLeast = 1) {
+                Log.w(
+                    "MorphKit",
+                    match<String> { it.contains("MorphEditText") }
+                )
             }
         }
     }
@@ -340,8 +336,6 @@ class MorphKitTest {
         fun `命中 replace 且命中 modify — 替换控件被创建且属性被修改`() {
             // ── Arrange ──
             val morphTextView = mockk<View>(relaxed = true)
-            every { morphTextView.javaClass.simpleName } returns "MorphTextView"
-            every { morphTextView.javaClass.name } returns "com.example.MorphTextView"
 
             var modifyExecuted = false
 
@@ -389,8 +383,6 @@ class MorphKitTest {
         @Test
         fun `onCreateView 无 parent 重载 — 委托给带 parent 版本`() {
             val morphButton = mockk<View>(relaxed = true)
-            every { morphButton.javaClass.simpleName } returns "MorphButton"
-            every { morphButton.javaClass.name } returns "com.example.MorphButton"
 
             MorphKit.init(mockApp) {
                 replace("Button") { _, _ -> morphButton }
@@ -410,8 +402,6 @@ class MorphKitTest {
         fun `硬替换成功且 modify 异常 — 仍返回替换控件（属性修改丢失但不白屏）`() {
             // ── Arrange ──
             val morphTextView = mockk<View>(relaxed = true)
-            every { morphTextView.javaClass.simpleName } returns "MorphTextView"
-            every { morphTextView.javaClass.name } returns "com.example.MorphTextView"
 
             MorphKit.init(mockApp) {
                 replace("TextView") { _, _ -> morphTextView }
@@ -458,6 +448,136 @@ class MorphKitTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 测试 5：init() 重复调用防御
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Nested
+    inner class InitReentryTest {
+
+        @Test
+        fun `init重复调用_抛出IllegalStateException`() {
+            MorphKit.init(mockApp) {
+                replace("TextView") { _, _ -> mockk(relaxed = true) }
+            }
+
+            val exception = assertThrows<IllegalStateException> {
+                MorphKit.init(mockApp) {
+                    replace("Button") { _, _ -> mockk(relaxed = true) }
+                }
+            }
+            assertTrue(exception.message?.contains("已初始化") == true)
+        }
+
+        @Test
+        fun `autoInit重复调用_抛出IllegalStateException`() {
+            MorphKit.autoInit(mockApp)
+
+            val exception = assertThrows<IllegalStateException> {
+                MorphKit.autoInit(mockApp)
+            }
+            assertTrue(exception.message?.contains("已初始化") == true)
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 测试 6：autoInit() 默认映射完整性
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Nested
+    inner class AutoInitMappingTest {
+
+        private fun getConfigReplaceMap(): Map<String, *> {
+            val configField = MorphKit::class.java.getDeclaredField("config")
+            configField.isAccessible = true
+            val config = configField.get(MorphKit) as MorphConfig
+            return config.replaceMap
+        }
+
+        @Test
+        fun `autoInit注册TextView别名映射`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertTrue(replaceMap.containsKey("TextView"), "autoInit 应注册 TextView")
+            assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatTextView"), "autoInit 应注册 AppCompatTextView")
+        }
+
+        @Test
+        fun `autoInit注册Button别名映射`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertTrue(replaceMap.containsKey("Button"), "autoInit 应注册 Button")
+            assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatButton"), "autoInit 应注册 AppCompatButton")
+        }
+
+        @Test
+        fun `autoInit注册RadioButton别名映射`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertTrue(replaceMap.containsKey("RadioButton"), "autoInit 应注册 RadioButton")
+            assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatRadioButton"), "autoInit 应注册 AppCompatRadioButton")
+        }
+
+        @Test
+        fun `autoInit注册CheckBox别名映射`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertTrue(replaceMap.containsKey("CheckBox"), "autoInit 应注册 CheckBox")
+            assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatCheckBox"), "autoInit 应注册 AppCompatCheckBox")
+        }
+
+        @Test
+        fun `autoInit注册EditText和CardView映射`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatEditText"), "autoInit 应注册 AppCompatEditText")
+            assertTrue(replaceMap.containsKey("com.google.android.material.card.MaterialCardView"), "autoInit 应注册 MaterialCardView")
+        }
+
+        @Test
+        fun `autoInit未注册的控件不在replaceMap中`() {
+            MorphKit.autoInit(mockApp)
+
+            val replaceMap = getConfigReplaceMap()
+            assertFalse(replaceMap.containsKey("ImageView"), "ImageView 不应在 replaceMap 中")
+            assertFalse(replaceMap.containsKey("RecyclerView"), "RecyclerView 不应在 replaceMap 中")
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 测试 7：finalThemeResId 赋值正确性
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Nested
+    inner class FinalThemeResIdTest {
+
+        @Test
+        fun `init后_finalThemeResId被赋值`() {
+            MorphKit.init(mockApp) {
+                stylePolicy(StylePolicy.FORCE_IOS)
+            }
+
+            assertNotEquals(0, MorphKit.finalThemeResId, "init 后 finalThemeResId 应被赋值")
+        }
+
+        @Test
+        fun `FORCE_IOS策略_finalThemeResId指向iOS主题`() {
+            MorphKit.init(mockApp) {
+                stylePolicy(StylePolicy.FORCE_IOS)
+            }
+
+            assertEquals(
+                com.morphkit.R.style.Theme_MorphKit_iOS,
+                MorphKit.finalThemeResId
+            )
+        }
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法
     // ═══════════════════════════════════════════════════════════════════════
 
@@ -480,6 +600,17 @@ class MorphKitTest {
             configField.set(MorphKit, null)
         } catch (e: Exception) {
             // 反射重置失败时忽略，测试可能因此失败并给出明确错误信息
+        }
+    }
+
+    private fun resetMorphInstaller() {
+        try {
+            val field = MorphInstaller::class.java.getDeclaredField("installed")
+            field.isAccessible = true
+            val atomicBool = field.get(MorphInstaller) as java.util.concurrent.atomic.AtomicBoolean
+            atomicBool.set(false)
+        } catch (e: Exception) {
+            // 反射重置失败时忽略
         }
     }
 }

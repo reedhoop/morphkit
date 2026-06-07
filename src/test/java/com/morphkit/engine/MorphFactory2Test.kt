@@ -194,4 +194,87 @@ class MorphFactory2Test {
         result = factory.onCreateView(null, "ImageView", context, attrs)
         assertEquals("补充 originalFactory 后应返回 AppCompat View", appCompatView, result)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 A6：finalThemeResId 为 0 时不包装 Context
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `finalThemeResId为0时_不包装Context`() {
+        val mockOriginalFactory: LayoutInflater.Factory2 = mockk(relaxed = true)
+        val originalView: View = mockk(relaxed = true)
+        every { mockOriginalFactory.onCreateView(any(), any(), any(), any()) } returns originalView
+
+        mockkObject(MorphKit)
+        every { MorphKit.createView(any(), any(), any()) } returns null
+        every { MorphKit.modifyView(any(), any()) } returns originalView
+
+        // finalThemeResId = 0（默认值）
+        val factory = MorphFactory2(mockOriginalFactory, 0)
+
+        val context: Context = mockk(relaxed = true)
+        val attrs: AttributeSet = mockk(relaxed = true)
+
+        // 不应抛异常，Context 不被包装
+        val result = factory.onCreateView(null, "ImageView", context, attrs)
+        assertNotNull(result)
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 A7：finalThemeResId 非 0 时尝试 ContextThemeWrapper 包装
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `finalThemeResId非0时_尝试ContextThemeWrapper包装`() {
+        val mockOriginalFactory: LayoutInflater.Factory2 = mockk(relaxed = true)
+        val originalView: View = mockk(relaxed = true)
+        every { mockOriginalFactory.onCreateView(any(), any(), any(), any()) } returns originalView
+
+        mockkObject(MorphKit)
+        every { MorphKit.createView(any(), any(), any()) } returns null
+        every { MorphKit.modifyView(any(), any()) } returns originalView
+
+        // finalThemeResId 非 0（模拟 iOS 主题）
+        val factory = MorphFactory2(mockOriginalFactory, com.morphkit.R.style.Theme_MorphKit_iOS)
+
+        val context: Context = mockk(relaxed = true)
+        val attrs: AttributeSet = mockk(relaxed = true)
+
+        // 在纯 JVM 环境中，Context.theme.obtainStyledAttributes 可能抛异常，
+        // 但 MorphFactory2 内部有 try-catch，不应崩溃
+        val result = factory.onCreateView(null, "ImageView", context, attrs)
+        // 结果可能为 null（JVM 环境下 ContextThemeWrapper 无法正常工作），
+        // 关键是不崩溃
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 A8：updateOriginalFactory 后替换仍优先于 originalFactory
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `updateOriginalFactory后_替换仍优先于originalFactory`() {
+        val mockOriginalFactory: LayoutInflater.Factory2 = mockk(relaxed = true)
+        val originalView: View = mockk(relaxed = true)
+        every { mockOriginalFactory.onCreateView(any(), any(), any(), any()) } returns originalView
+
+        val replacedView: View = mockk(relaxed = true)
+
+        val factory = MorphFactory2(null, 0)
+
+        // 先补充 originalFactory
+        factory.updateOriginalFactory(mockOriginalFactory)
+
+        // 注册替换规则
+        mockkObject(MorphKit)
+        every { MorphKit.createView(any(), any(), any()) } returns replacedView
+        every { MorphKit.modifyView(any(), any()) } returns replacedView
+
+        val context: Context = mockk(relaxed = true)
+        val attrs: AttributeSet = mockk(relaxed = true)
+
+        val result = factory.onCreateView(null, "Button", context, attrs)
+
+        // 替换控件应优先于 originalFactory
+        assertEquals("补充 originalFactory 后替换仍应优先", replacedView, result)
+    }
 }
