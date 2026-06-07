@@ -1,6 +1,7 @@
 plugins {
-    id("com.android.library") version "8.5.2"
-    id("org.jetbrains.kotlin.android") version "1.9.24"
+    id("com.android.library") version "8.9.1"
+    id("org.jetbrains.kotlin.android") version "2.1.21"
+    id("org.jetbrains.kotlin.plugin.compose") version "2.1.21"
 }
 
 android {
@@ -34,13 +35,7 @@ android {
     }
 
     buildFeatures {
-        viewBinding = false
-        dataBinding = false
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     testOptions {
@@ -77,7 +72,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.5")
     testImplementation("org.robolectric:robolectric:4.10.3")
     testImplementation("com.google.truth:truth:1.1.5")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.1.0")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5:2.1.21")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.10.2")
 
