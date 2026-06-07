@@ -1,7 +1,6 @@
 plugins {
-    id("com.android.library") version "8.7.0"
-    id("org.jetbrains.kotlin.android") version "2.1.0"
-    id("org.jetbrains.kotlin.plugin.compose") version "2.1.0"
+    id("com.android.library") version "8.5.2"
+    id("org.jetbrains.kotlin.android") version "1.9.24"
 }
 
 android {
@@ -38,6 +37,10 @@ android {
         viewBinding = false
         dataBinding = false
         compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
 
     testOptions {
