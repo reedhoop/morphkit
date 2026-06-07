@@ -29,6 +29,7 @@ proguard/
 
 # Log Files
 *.log
+build_log*.txt
 
 # Android Studio Navigation editor temp files
 .navigation/
@@ -77,4 +78,10 @@ lint/outputs/
 lint/tmp/
 
 # Android Studio 3.1+ serialized cache file
-.idea/caches/build_file_checksums.serjava_pid*.hprof
+.idea/caches/build_file_checksums.ser
+
+# Heap dump files
+java_pid*.hprof
+
+# Local dev tool configs
+mise.toml
