@@ -22,7 +22,7 @@ import com.morphkit.theme.MorphTheme
  * ## 颜色规范
  * - 默认文字色：纯黑（浅色）/ 纯白（深色），即 iOS `labelColor`
  * - 次级文字色：iOS `tertiaryLabelColor`（#8A8A8E / #636366），
- *   通过 [MorphTheme.tertiaryLabelColor] 获取
+ *   通过 [MorphTheme.morphColorOnSurfaceVariant] 获取
  *
  * ## 使用方式
  *
@@ -34,8 +34,8 @@ import com.morphkit.theme.MorphTheme
  * }
  * ```
  *
- * @see MorphTheme.labelColor 主文字颜色
- * @see MorphTheme.tertiaryLabelColor 次级文字颜色
+ * @see MorphTheme.morphColorOnSurface 主文字颜色
+ * @see MorphTheme.morphColorOnSurfaceVariant 次级文字颜色
  * @see MorphTheme.typography 排版令牌
  */
 class MorphTextView @JvmOverloads constructor(
@@ -51,7 +51,7 @@ class MorphTextView @JvmOverloads constructor(
     /**
      * 是否为次级文字模式。
      *
-     * 设置为 `true` 时，文字颜色自动切换为 [MorphTheme.tertiaryLabelColor]，
+     * 设置为 `true` 时，文字颜色自动切换为 [MorphTheme.morphColorOnSurfaceVariant]，
      * 适用于副标题、说明文字、时间戳等 iOS 风格的灰色辅助信息。
      *
      * 可在 XML 中通过代码设置：
@@ -68,7 +68,7 @@ class MorphTextView @JvmOverloads constructor(
     /**
      * 是否为三级文字模式。
      *
-     * 设置为 `true` 时，文字颜色自动切换为 [MorphTheme.tertiaryLabelColor]，
+     * 设置为 `true` 时，文字颜色自动切换为 [MorphTheme.morphColorOnSurfaceVariant]（带透明度衰减），
      * 颜色比 [isSecondaryText] 更淡，适用于占位符、禁用态文字。
      */
     var isTertiaryText: Boolean = false
@@ -161,9 +161,9 @@ class MorphTextView @JvmOverloads constructor(
      *
      * | 级别 | 颜色 | iOS 对应 | 用途 |
      * |------|------|----------|------|
-     * | 默认 | [MorphTheme.labelColor] | UIColor.label | 主文字、标题 |
-     * | [isSecondaryText] | [MorphTheme.secondaryLabelColor] | UIColor.secondaryLabel | 副标题 |
-     * | [isTertiaryText] | [MorphTheme.tertiaryLabelColor] | UIColor.tertiaryLabel | 占位符、时间戳 |
+     * | 默认 | [MorphTheme.morphColorOnSurface] | UIColor.label | 主文字、标题 |
+     * | [isSecondaryText] | [MorphTheme.morphColorOnSurfaceVariant] | UIColor.secondaryLabel | 副标题 |
+     * | [isTertiaryText] | [MorphTheme.morphColorOnSurfaceVariant] + 55% 透明度 | UIColor.tertiaryLabel | 占位符、时间戳 |
      */
     private fun applyTextColor() {
         val color: Int = when {
