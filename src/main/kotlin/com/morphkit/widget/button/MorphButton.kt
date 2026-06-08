@@ -55,7 +55,7 @@ class MorphButton @JvmOverloads constructor(
             interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
             cornerRadius = a.getDimension(
                 R.styleable.MorphButton_morphCornerRadius,
-                MorphTheme.cornerMedium.toFloat()
+                MorphTheme.cornerMedium(context).toFloat()
             )
         } finally {
             a.recycle()
