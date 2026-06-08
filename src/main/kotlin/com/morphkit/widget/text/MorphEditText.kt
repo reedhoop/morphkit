@@ -89,7 +89,7 @@ class MorphEditText @JvmOverloads constructor(
 
     /** 搜索栏背景 Drawable（复用同一实例） */
     private val searchBackgroundDrawable = GradientDrawable().apply {
-        cornerRadius = MorphTheme.cornerMedium.toFloat()
+        cornerRadius = MorphTheme.cornerMedium(context).toFloat()
     }
 
     /** 缓存：搜索栏原始背景色 */
