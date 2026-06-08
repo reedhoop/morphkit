@@ -143,7 +143,8 @@ class MorphInitProviderTest {
         try {
             val initializedField = MorphKit::class.java.getDeclaredField("initialized")
             initializedField.isAccessible = true
-            initializedField.set(MorphKit, false)
+            val atomicBool = initializedField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean
+            atomicBool.set(false)
 
             val configField = MorphKit::class.java.getDeclaredField("config")
             configField.isAccessible = true
