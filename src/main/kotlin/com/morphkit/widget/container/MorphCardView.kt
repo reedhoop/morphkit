@@ -12,6 +12,7 @@ import android.widget.FrameLayout
 import com.google.android.material.card.MaterialCardView
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.dp
 
 /**
  * MorphKit iOS 17 风格卡片容器。
@@ -47,7 +48,7 @@ import com.morphkit.theme.MorphTheme
  *     app:isGlassmorphism="true" />
  * ```
  *
- * @see MorphTheme.cornerRadiusLarge 圆角大小
+ * @see MorphTheme.cornerLarge 圆角大小
  * @see isGlassmorphism 毛玻璃模式开关
  */
 class MorphCardView @JvmOverloads constructor(
