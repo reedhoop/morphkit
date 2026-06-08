@@ -30,6 +30,7 @@ class MorphClickListener(
     private val block: (View) -> Unit
 ) : View.OnClickListener {
 
+    @Volatile
     private var lastClickTime: Long = 0L
 
     override fun onClick(v: View) {
