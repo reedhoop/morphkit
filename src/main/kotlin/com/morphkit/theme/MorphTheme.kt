@@ -143,17 +143,29 @@ object MorphTheme {
     // 形状体系 — iOS 连续性圆角近似
     // ═══════════════════════════════════════════════════════════════════════
 
-    /** 小圆角 8dp — 标签、Badge、小按钮 */
+    /**
+     * 小圆角 8dp — 标签、Badge、小按钮。
+     *
+     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
+     */
     @Px
-    val cornerSmall: Int = 8.dp
+    fun cornerSmall(context: Context): Int = 8.dp(context)
 
-    /** 中圆角 12dp — 标准按钮、列表项、输入框 */
+    /**
+     * 中圆角 12dp — 标准按钮、列表项、输入框。
+     *
+     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
+     */
     @Px
-    val cornerMedium: Int = 12.dp
+    fun cornerMedium(context: Context): Int = 12.dp(context)
 
-    /** 大圆角 16dp — 全宽卡片、Bottom Sheet、Dialog */
+    /**
+     * 大圆角 16dp — 全宽卡片、Bottom Sheet、Dialog。
+     *
+     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
+     */
     @Px
-    val cornerLarge: Int = 16.dp
+    fun cornerLarge(context: Context): Int = 16.dp(context)
 
     /** 全圆角（胶囊形状） */
     @Px
@@ -196,19 +208,26 @@ object MorphTheme {
     }
 }
 
-/** dp 值转像素 */
-@get:Px
-val Int.dp: Int
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this.toFloat(),
-        android.content.res.Resources.getSystem().displayMetrics
-    ).toInt()
+/**
+ * dp 值转像素（Context 感知版本）。
+ *
+ * 使用 [Context.getResources] 获取当前 Activity 的 displayMetrics，
+ * 避免 [android.content.res.Resources.getSystem] 在多窗口/折叠屏场景下
+ * 返回不正确的 density 值。
+ */
+@Px
+fun Int.dp(context: Context): Int = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP,
+    this.toFloat(),
+    context.resources.displayMetrics
+).toInt()
 
-@get:Px
-val Float.dp: Float
-    get() = TypedValue.applyDimension(
-        TypedValue.COMPLEX_UNIT_DIP,
-        this,
-        android.content.res.Resources.getSystem().displayMetrics
-    )
+/**
+ * dp 值转像素（Float 版本，Context 感知）。
+ */
+@Px
+fun Float.dp(context: Context): Float = TypedValue.applyDimension(
+    TypedValue.COMPLEX_UNIT_DIP,
+    this,
+    context.resources.displayMetrics
+)
