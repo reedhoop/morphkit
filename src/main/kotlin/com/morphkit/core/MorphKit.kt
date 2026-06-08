@@ -5,7 +5,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
-import androidx.annotation.Volatile
 import com.morphkit.R
 import com.morphkit.theme.MorphStyleResolver
 import com.morphkit.widget.button.MorphButton
@@ -14,6 +13,7 @@ import com.morphkit.widget.text.MorphTextView
 import com.morphkit.widget.text.MorphEditText
 import com.morphkit.widget.container.MorphCardView
 import com.morphkit.widget.selection.MorphCheckBox
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * MorphKit 调试打标用的 Tag Key。
@@ -37,9 +37,9 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  用自定义控件替换原始控件。为确保替换后功能、样式、主题完全正常，              ║
  * ║  所有接入 MorphKit 的自定义控件 **必须** 严格遵守以下三条规范：               ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ ⚠️  规范 1：构造函数必须接收 attrs，严禁忽略                         │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  XML 中声明的所有属性（text、textColor、textSize、background 等）    │  ║
  * ║  │  均由 AttributeSet 驱动解析。若构造函数忽略 attrs，                  │  ║
@@ -57,11 +57,11 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │     class MorphTextView(context: Context) :                        │  ║
  * ║  │         AppCompatTextView(context)  // attrs 丢失！                │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ ⚠️  规范 2：推荐继承 AppCompat 系控件，保主题着色不断链              │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  AppCompat 系控件（AppCompatTextView、AppCompatButton 等）          │  ║
  * ║  │  内置了主题着色拦截器（TintContextWrapper）、矢量图着色、             │  ║
@@ -80,11 +80,11 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │     class MorphTextView(...) : TextView(...)    // 丢失着色！      │  ║
  * ║  │     class MorphButton(...)  : Button(...)      // 丢失着色！      │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ ⚠️  规范 3：类名必须以 `Morph` 开头，否则运行时收到 Logcat 警告      │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  框架通过 [MorphKit.stampAndValidateView] 在运行时校验替换控件       │  ║
  * ║  │  的类名前缀。不以 `Morph` 开头的控件将触发规范警告：                  │  ║
@@ -98,7 +98,7 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │  ✅ 正确：MorphTextView、MorphButton、MorphRecyclerView            │  ║
  * ║  │  ❌ 错误：MyTextView、CustomButton、SuperImageView                  │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
  * ║  违反上述规范不会导致崩溃，但会导致：                                      ║
  * ║  - XML 属性丢失（规范 1）                                                ║
@@ -117,9 +117,9 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  MorphKit 采用「引擎与皮肤分离」架构，内置 iOS 极简风和 Pixel 原生风        ║
  * ║  两套完整皮肤。宿主 App 可一行代码切换，也可扩展第三套自定义皮肤。           ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ 1. 切换内置皮肤                                                    │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  在 AndroidManifest.xml 的 <application> 或 <activity> 中设置：     │  ║
  * ║  │                                                                    │  ║
@@ -129,11 +129,11 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │  Pixel 原生风：                                                    │  ║
  * ║  │    android:theme="@style/Theme.MorphKit.Pixel"                     │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ 2. 扩展第三套自定义皮肤（如公司大促皮肤）                            │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  步骤 1：宿主 App 继承一个内置 Theme                               │  ║
  * ║  │                                                                    │  ║
@@ -163,11 +163,11 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │                                                                    │  ║
  * ║  │    android:theme="@style/Theme.MyApp.Promotion"                    │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
- * ║  ┌────────────────────────────────────────────────────────────────────────┐  ║
+ * ║  ┌────────────────────────────────────────────────────────────────────┐  ║
  * ║  │ 3. 可覆写的属性清单                                                │  ║
- * ║  ├────────────────────────────────────────────────────────────────────────┤  ║
+ * ║  ├────────────────────────────────────────────────────────────────────┤  ║
  * ║  │                                                                    │  ║
  * ║  │  Theme 级属性（在 Theme 中覆写，影响全局）：                        │  ║
  * ║  │  - morphButtonStyle     → 按钮默认样式                             │  ║
@@ -179,7 +179,7 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  * ║  │  - morphInteractionMode → ios(0) / material(1)                     │  ║
  * ║  │  - morphCornerRadius    → 圆角半径 (dimension)                     │  ║
  * ║  │                                                                    │  ║
- * ║  └────────────────────────────────────────────────────────────────────────┘  ║
+ * ║  └────────────────────────────────────────────────────────────────────┘  ║
  * ║                                                                          ║
  * ╚════════════════════════════════════════════════════════════════════════════╝
  */
@@ -230,9 +230,8 @@ object MorphKit {
     /** 当前配置，初始化后可用 */
     private lateinit var config: MorphConfig
 
-    /** 是否已初始化 */
-    @Volatile
-    private var initialized = false
+    /** 是否已初始化（使用 AtomicBoolean 保证 init() 的原子性 check-then-act） */
+    private val initialized = AtomicBoolean(false)
 
     /**
      * MorphKit 解析出的最终 Theme 资源 ID。
@@ -269,9 +268,8 @@ object MorphKit {
      * @throws IllegalStateException 若重复初始化
      */
     fun init(application: Application, block: MorphConfig.() -> Unit) {
-        check(!initialized) { "MorphKit 已初始化，禁止重复调用 init()" }
+        check(initialized.compareAndSet(false, true)) { "MorphKit 已初始化，禁止重复调用 init()" }
         config = MorphConfig().apply(block)
-        initialized = true
 
         // ── 根据 StylePolicy 解析最终 Theme ──
         finalThemeResId = MorphStyleResolver.resolve(application, config.policy)

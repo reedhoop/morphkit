@@ -562,7 +562,7 @@ class MorphKitTest {
     inner class FinalThemeResIdTest {
 
         @Test
-        fun `init后_finalThemeResId被赋值`() {
+        fun `init后finalThemeResId被赋值`() {
             MorphKit.init(mockApp) {
                 stylePolicy(StylePolicy.FORCE_IOS)
             }
@@ -592,13 +592,14 @@ class MorphKitTest {
      *
      * 由于 [MorphKit] 是 Kotlin `object` 单例，其 `initialized` 和 `config`
      * 字段在测试间需要重置，否则第二次 `init` 会抛 `IllegalStateException`。
-     * 此方法通过反射将 `initialized` 置为 false、`config` 置为未初始化状态。
+     * 此方法通过反射将 `initialized` AtomicBoolean 置为 false、`config` 置为未初始化状态。
      */
     private fun resetMorphKit() {
         try {
             val initializedField = MorphKit::class.java.getDeclaredField("initialized")
             initializedField.isAccessible = true
-            initializedField.set(MorphKit, false)
+            val atomicBool = initializedField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean
+            atomicBool.set(false)
 
             val configField = MorphKit::class.java.getDeclaredField("config")
             configField.isAccessible = true
