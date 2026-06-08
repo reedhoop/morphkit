@@ -12,7 +12,6 @@ import android.widget.FrameLayout
 import com.google.android.material.card.MaterialCardView
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
-import com.morphkit.theme.dp
 
 /**
  * MorphKit iOS 17 风格卡片容器。
@@ -80,7 +79,7 @@ class MorphCardView @JvmOverloads constructor(
         }
 
     /** 极细边框宽度（0.5dp → px） */
-    private val strokeWidthPx: Float = STROKE_WIDTH_DP.dp
+    private val strokeWidthPx: Float = STROKE_WIDTH_DP.dp(context)
 
     /** 缓存：极简模式背景色 */
     private var cardBackgroundColor: Int = MorphTheme.morphColorSurface(context)
@@ -116,7 +115,7 @@ class MorphCardView @JvmOverloads constructor(
         stateListAnimator = null
 
         // ── 圆角 ──
-        radius = MorphTheme.cornerLarge.toFloat()
+        radius = MorphTheme.cornerLarge(context).toFloat()
 
         // ── 裁剪子 View 到圆角范围 ──
         // 毛玻璃模式下子 View 不能溢出圆角区域
