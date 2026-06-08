@@ -16,10 +16,10 @@ import androidx.core.view.doOnLayout
  * 基于 [AppCompatEditText]，还原 iOS 输入框的视觉特征：
  *
  * ## 视觉特征
- * - **去除 Android 原生底线**：默认背景为透明，无下划线、无边框
- * - **搜索栏样式**：[Style.SEARCH] 模式下使用 [MorphTheme.secondarySystemBackground]
+ * - **去除 Android 原生底线**：默认背景是透明，无下划线、无边框
+ * - **搜索栏样式**：[Style.SEARCH] 模式下使用 [MorphTheme.morphColorSurfaceVariant]
  *   浅灰圆角背景，还原 iOS 搜索栏的极简观感
- * - **光标颜色**：跟随 [MorphTheme.tintColor]（iOS 系统蓝），与整体设计系统一致
+ * - **光标颜色**：跟随 [MorphTheme.morphColorPrimary]（iOS 系统蓝），与整体设计系统一致
  *
  * ## 交互特征
  * - 获取焦点时背景色透明度微调，提供 iOS 风格的「轻微变亮/变暗」反馈
@@ -51,7 +51,7 @@ class MorphEditText @JvmOverloads constructor(
      * | 样式 | 背景 | 焦点反馈 | iOS 对应 |
      * |------|------|----------|----------|
      * | [BARE] | 透明 | 无 | 无背景输入框 |
-     * | [SEARCH] | secondarySystemBackground | 透明度微调 | UISearchBar 内部输入框 |
+     * | [SEARCH] | morphColorSurfaceVariant | 透明度微调 | UISearchBar 内部输入框 |
      */
     enum class Style {
 
@@ -67,7 +67,7 @@ class MorphEditText @JvmOverloads constructor(
         /**
          * 搜索栏样式 — iOS 极简搜索框。
          *
-         * - 背景：[MorphTheme.secondarySystemBackground] 浅灰圆角
+         * - 背景：[MorphTheme.morphColorSurfaceVariant] 浅灰圆角
          * - 焦点反馈：获取焦点时背景色轻微变化
          * - 无下划线、无边框
          *
