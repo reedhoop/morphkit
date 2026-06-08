@@ -5,6 +5,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.annotation.Volatile
 import androidx.appcompat.view.ContextThemeWrapper
 import com.morphkit.R
 
@@ -41,7 +42,7 @@ import com.morphkit.R
  * @see MorphInstaller.patchAppCompatDelegate
  */
 class MorphFactory2(
-    private var originalFactory: LayoutInflater.Factory2?,
+    @Volatile private var originalFactory: LayoutInflater.Factory2?,
     private val finalThemeResId: Int = 0
 ) : LayoutInflater.Factory2 {
 
@@ -85,7 +86,7 @@ class MorphFactory2(
         // ═══════════════════════════════════════════════════════════════════
         // 阶段 2：检查是否命中替换规则
         //
-        // 基于 XML 标签名匹配替换规则，而非基于 originalView 的类型。
+        // 基于 XML 标签名匹配替换规则，而不是基于 originalView 的类型。
         // 因为 AppCompat 会将 "TextView" 替换为 AppCompatTextView，
         // 如果基于 originalView 类型判断，会错过原始标签名。
         // ═══════════════════════════════════════════════════════════════════
