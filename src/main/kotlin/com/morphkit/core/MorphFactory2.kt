@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import androidx.annotation.Volatile
 import androidx.appcompat.view.ContextThemeWrapper
 import com.morphkit.R
 
@@ -74,22 +73,22 @@ class MorphFactory2(
 
         val themedContext = wrapContextIfNeeded(context)
 
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         // 阶段 1：优先委托 originalFactory 创建初步 View
         //
         // 黄金标准：必须绝对优先调用原 Factory 的 onCreateView，
         // 确保 AppCompat 的 VectorDrawable 解析、background tint、
         // AppCompatTextView 等兼容性处理不被绕过。
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         val originalView = originalFactory?.onCreateView(parent, name, context, attrs)
 
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         // 阶段 2：检查是否命中替换规则
         //
         // 基于 XML 标签名匹配替换规则，而不是基于 originalView 的类型。
         // 因为 AppCompat 会将 "TextView" 替换为 AppCompatTextView，
         // 如果基于 originalView 类型判断，会错过原始标签名。
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         val startTime = System.nanoTime()
         try {
             val replacedView = MorphKit.createView(name, themedContext, attrs)
@@ -106,11 +105,11 @@ class MorphFactory2(
             Log.e(TAG, "硬替换异常，降级到 originalFactory 创建的控件: $name", e)
         }
 
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         // 阶段 3：返回 originalFactory 创建的 View + 软修改兜底
         //
         // 未命中替换规则 → 返回 AppCompat 创建的控件（着色完整保留）
-        // ═══════════════════════════════════════════════════════════════════
+        // ═══════════════════════════════════════════════════════════════════════
         if (originalView != null) {
             try {
                 return MorphKit.modifyView(name, originalView)
