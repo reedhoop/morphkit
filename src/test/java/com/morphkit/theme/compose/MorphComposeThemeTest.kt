@@ -52,6 +52,14 @@ class MorphComposeThemeTest {
         assertThat(MorphTokens.colorRed500).isNotEqualTo(0)
         assertThat(MorphTokens.colorGreen500).isNotEqualTo(0)
         assertThat(MorphTokens.colorOrange500).isNotEqualTo(0)
+        // S14: verify new M3 semantic color tokens
+        assertThat(MorphTokens.colorSecondary).isNotEqualTo(0)
+        assertThat(MorphTokens.colorTertiary).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnError).isNotEqualTo(0)
+        assertThat(MorphTokens.colorErrorContainer).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOutline).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSurfaceDim).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSurfaceContainer).isNotEqualTo(0)
     }
 
     @Test
@@ -71,10 +79,27 @@ class MorphComposeThemeTest {
     fun morphColorPalette_hasAllExpectedFields() {
         val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
         val expectedFields = setOf(
+            // Primary
             "primary", "onPrimary", "primaryContainer", "onPrimaryContainer",
-            "surface", "surfaceVariant", "onSurface", "onSurfaceVariant",
-            "outlineVariant", "background", "onBackground", "error",
-            "success", "warning"
+            // Secondary
+            "secondary", "onSecondary", "secondaryContainer", "onSecondaryContainer",
+            // Tertiary
+            "tertiary", "onTertiary", "tertiaryContainer", "onTertiaryContainer",
+            // Error
+            "error", "onError", "errorContainer", "onErrorContainer",
+            // Surface
+            "surface", "onSurface", "surfaceVariant", "onSurfaceVariant",
+            "surfaceDim", "surfaceBright",
+            "surfaceContainerLowest", "surfaceContainerLow", "surfaceContainer",
+            "surfaceContainerHigh", "surfaceContainerHighest",
+            // Outline
+            "outline", "outlineVariant",
+            // Background
+            "background", "onBackground",
+            // Inverse
+            "inverseSurface", "inverseOnSurface", "inversePrimary",
+            // Misc
+            "scrim", "success", "warning"
         )
         val actualFields = clazz.declaredFields
             .filter { !Modifier.isStatic(it.modifiers) }
@@ -103,19 +128,12 @@ class MorphComposeThemeTest {
 
     @Test
     fun compositionLocalProviders_existAsTopLevelFields() {
-        // LocalMorphColors, LocalMorphShape, LocalMorphInteractionMode, LocalMorphStyle
-        // are top-level vals in the package. Since MorphComposeThemeKt has static
-        // initializers that call staticCompositionLocalOf (requiring Compose runtime),
-        // we cannot load the class. Instead, read the compiled class file and check
-        // that the field names exist in its constant pool (UTF-8 entries).
         val classResource = javaClass.classLoader?.getResourceAsStream(
             "com/morphkit/theme/compose/MorphComposeThemeKt.class"
         )
         assertThat(classResource).isNotNull()
 
         val classBytes = classResource!!.readBytes()
-        // Field names appear as UTF-8 constants in the class file constant pool.
-        // Check for the presence of each CompositionLocal provider name.
         val utf8Strings = extractUtf8Constants(classBytes)
 
         assertThat(utf8Strings).contains("LocalMorphColors")
@@ -124,48 +142,42 @@ class MorphComposeThemeTest {
         assertThat(utf8Strings).contains("LocalMorphStyle")
     }
 
-    /**
-     * Extracts UTF-8 constant pool entries from a .class file.
-     * Format: constant_pool_count (u2), then constant_pool entries.
-     * Tag 1 = CONSTANT_Utf8, followed by length (u2) and bytes.
-     */
     private fun extractUtf8Constants(classBytes: ByteArray): Set<String> {
         val constants = mutableSetOf<String>()
-        // Skip magic (4), minor_version (2), major_version (2)
         var offset = 8
         val cpCount = ((classBytes[offset].toInt() and 0xFF) shl 8) or
                 (classBytes[offset + 1].toInt() and 0xFF)
         offset += 2
 
-        var i = 1 // constant_pool is 1-indexed
+        var i = 1
         while (i < cpCount) {
             val tag = classBytes[offset].toInt() and 0xFF
             offset++
             when (tag) {
-                1 -> { // CONSTANT_Utf8
+                1 -> {
                     val len = ((classBytes[offset].toInt() and 0xFF) shl 8) or
                             (classBytes[offset + 1].toInt() and 0xFF)
                     offset += 2
                     constants.add(String(classBytes, offset, len, Charsets.UTF_8))
                     offset += len
                 }
-                7 -> offset += 2 // CONSTANT_Class: name_index (u2)
-                8 -> offset += 2 // CONSTANT_String: string_index (u2)
-                3 -> offset += 4 // CONSTANT_Integer: bytes (u4)
-                4 -> offset += 4 // CONSTANT_Float: bytes (u4)
-                5 -> { offset += 8; i++ } // CONSTANT_Long: takes 2 slots
-                6 -> { offset += 8; i++ } // CONSTANT_Double: takes 2 slots
-                9 -> offset += 4 // CONSTANT_Fieldref: class_index + name_and_type_index
-                10 -> offset += 4 // CONSTANT_Methodref
-                11 -> offset += 4 // CONSTANT_InterfaceMethodref
-                12 -> offset += 4 // CONSTANT_NameAndType
-                15 -> offset += 3 // CONSTANT_MethodHandle
-                16 -> offset += 2 // CONSTANT_MethodType
-                17 -> offset += 4 // CONSTANT_Dynamic
-                18 -> offset += 4 // CONSTANT_InvokeDynamic
-                19 -> offset += 2 // CONSTANT_Module
-                20 -> offset += 2 // CONSTANT_Package
-                else -> break // Unknown tag, stop parsing
+                7 -> offset += 2
+                8 -> offset += 2
+                3 -> offset += 4
+                4 -> offset += 4
+                5 -> { offset += 8; i++ }
+                6 -> { offset += 8; i++ }
+                9 -> offset += 4
+                10 -> offset += 4
+                11 -> offset += 4
+                12 -> offset += 4
+                15 -> offset += 3
+                16 -> offset += 2
+                17 -> offset += 4
+                18 -> offset += 4
+                19 -> offset += 2
+                20 -> offset += 2
+                else -> break
             }
             i++
         }
