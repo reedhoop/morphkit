@@ -1,0 +1,302 @@
+package com.morphkit.widget.container
+
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Rect
+import android.graphics.RenderEffect
+import android.graphics.RenderNode
+import android.graphics.Shader
+import android.os.Build
+import android.view.View
+import android.view.ViewGroup
+
+/**
+ * MorphKit 背景模糊辅助工具。
+ *
+ * 实现真正的「behind-blur」毛玻璃效果：截取父容器在卡片区域下方的像素，
+ * 对其进行高斯模糊，然后将模糊后的 Bitmap 作为卡片背景图层显示。
+ *
+ * ## 模糊策略
+ *
+ * | API 范围     | 技术                              | 质量     |
+ * |-------------|----------------------------------|---------|
+ * | API 31+     | [RenderEffect.createBlurEffect]  | GPU 高斯 |
+ * | API 29–30   | [RenderNode] 直接渲染（无模糊）    | 无模糊   |
+ * | API < 29    | 软件 Stack Blur（水平+垂直两遍）   | 近似高斯 |
+ *
+ * ## 使用方式
+ *
+ * ```kotlin
+ * // 1. 截取父容器区域
+ * val parentBitmap = BackdropBlurHelper.captureParentArea(cardView)
+ * // 2. 模糊
+ * val blurredBitmap = BackdropBlurHelper.blur(parentBitmap, 25f)
+ * // 3. 设为背景 ImageView 的 drawable
+ * blurImageView.setImageBitmap(blurredBitmap)
+ * ```
+ *
+ * @see MorphCardView 毛玻璃卡片容器
+ */
+internal object BackdropBlurHelper {
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 父容器截图
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * 截取 [view] 在父容器中所占区域的像素。
+     *
+     * 原理：临时将 [view] 设为 [View.INVISIBLE]（不参与绘制但仍占布局空间），
+     * 然后在父容器的 Canvas 上绘制，绘制完成后恢复 [View.VISIBLE]。
+     * 这样截取的 Bitmap 只包含卡片**背后**的内容，不含卡片自身。
+     *
+     * @param view 要截取背景的 View（必须已 attach 且 parent 为 [ViewGroup]）
+     * @return 父容器在 View 区域的像素快照，失败返回 null
+     */
+    fun captureParentArea(view: View): Bitmap? {
+        val parent = view.parent as? ViewGroup ?: return null
+        if (parent.width <= 0 || parent.height <= 0) return null
+
+        // 临时隐藏卡片，使 parent.draw() 不包含卡片自身
+        val originalVisibility = view.visibility
+        view.visibility = View.INVISIBLE
+
+        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val canvas = Canvas(bitmap)
+
+        try {
+            // 将父容器绘制偏移到 View 在父容器中的位置
+            canvas.translate(-view.left.toFloat(), -view.top.toFloat())
+            parent.draw(canvas)
+        } catch (_: Exception) {
+            // parent.draw() 在某些场景下可能失败（如硬件加速限制）
+            view.visibility = originalVisibility
+            bitmap.recycle()
+            return null
+        }
+
+        view.visibility = originalVisibility
+        return bitmap
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 模糊处理
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * 对 [source] Bitmap 应用高斯模糊。
+     *
+     * - API 31+：使用 [RenderEffect.createBlurEffect] + [RenderNode] GPU 加速
+     * - API 29–30：使用 [RenderNode] 直接渲染（无模糊，仅复制像素）
+     * - API < 29：软件 Stack Blur（水平+垂直两遍均值滤波）
+     *
+     * @param source 源 Bitmap
+     * @param radius 模糊半径（px），推荐 15–35
+     * @return 模糊后的新 Bitmap，失败返回 null
+     */
+    fun blur(source: Bitmap, radius: Float): Bitmap? {
+        if (source.width <= 0 || source.height <= 0) return null
+
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            blurWithRenderEffect(source, radius)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // API 29-30: RenderNode 可用但 RenderEffect 不可用
+            blurWithRenderNode(source)
+        } else {
+            blurSoftware(source, radius.toInt().coerceAtLeast(1))
+        }
+    }
+
+    // ── API 31+：RenderEffect GPU 高斯模糊 ──
+
+    private fun blurWithRenderEffect(source: Bitmap, radius: Float): Bitmap? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
+
+        return try {
+            val w = source.width
+            val h = source.height
+            val output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+
+            val node = RenderNode("morphBlur")
+            node.setPosition(0, 0, w, h)
+
+            val blurEffect = RenderEffect.createBlurEffect(
+                radius, radius, Shader.TileMode.CLAMP
+            )
+            node.setRenderEffect(blurEffect)
+
+            val canvas = node.beginRecording(w, h)
+            canvas.drawBitmap(source, 0f, 0f, null)
+            node.endRecording()
+
+            val outputCanvas = Canvas(output)
+            if (outputCanvas.isHardwareAccelerated) {
+                outputCanvas.drawRenderNode(node)
+            } else {
+                // 软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
+                output.recycle()
+                blurSoftware(source, radius.toInt().coerceAtLeast(1))
+            }
+
+            output
+        } catch (_: Exception) {
+            // RenderEffect 可能因硬件加速关闭等原因抛异常
+            blurSoftware(source, radius.toInt().coerceAtLeast(1))
+        }
+    }
+
+    // ── API 29-30：RenderNode 无模糊直传 ──
+
+    private fun blurWithRenderNode(source: Bitmap): Bitmap? {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
+
+        return try {
+            val w = source.width
+            val h = source.height
+            val output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+
+            val node = RenderNode("morphCapture")
+            node.setPosition(0, 0, w, h)
+
+            val canvas = node.beginRecording(w, h)
+            canvas.drawBitmap(source, 0f, 0f, null)
+            node.endRecording()
+
+            val outputCanvas = Canvas(output)
+            if (outputCanvas.isHardwareAccelerated) {
+                outputCanvas.drawRenderNode(node)
+            } else {
+                // 软件 Canvas 降级：直接复制
+                output.recycle()
+                source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
+            }
+
+            output
+        } catch (_: Exception) {
+            source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
+        }
+    }
+
+    // ── API < 29 或降级：软件 Stack Blur ──
+
+    /**
+     * 软件 Stack Blur 实现。
+     *
+     * 使用水平+垂直两遍均值滤波（moving average）近似高斯模糊。
+     * 时间复杂度 O(w × h)，与半径无关，适合大半径模糊。
+     *
+     * @param source 源 Bitmap（不会被修改）
+     * @param radius 模糊半径（px），至少 1
+     * @return 模糊后的新 Bitmap
+     */
+    private fun blurSoftware(source: Bitmap, radius: Int): Bitmap {
+        val w = source.width
+        val h = source.height
+        val result = source.copy(source.config ?: Bitmap.Config.ARGB_8888, true)
+
+        if (radius < 1) return result
+
+        val pixels = IntArray(w * h)
+        result.getPixels(pixels, 0, w, 0, 0, w, h)
+
+        // 水平方向均值滤波
+        stackBlurHorizontal(pixels, w, h, radius)
+        // 垂直方向均值滤波
+        stackBlurVertical(pixels, w, h, radius)
+
+        result.setPixels(pixels, 0, w, 0, 0, w, h)
+        return result
+    }
+
+    /**
+     * 水平方向 Stack Blur（均值滤波）。
+     *
+     * 对每一行从左到右滑动窗口求均值，利用滑动窗口增量更新避免重复求和。
+     */
+    private fun stackBlurHorizontal(pixels: IntArray, w: Int, h: Int, radius: Int) {
+        val div = radius + radius + 1
+        val divSum = div.toLong()
+        val temp = IntArray(w)
+
+        for (y in 0 until h) {
+            var rSum = 0L; var gSum = 0L; var bSum = 0L; var aSum = 0L
+            val rowOffset = y * w
+
+            // 初始化窗口：左边缘镜像填充
+            for (i in -radius..radius) {
+                val px = pixels[rowOffset + i.coerceIn(0, w - 1)]
+                aSum += (px ushr 24) and 0xFF
+                rSum += (px ushr 16) and 0xFF
+                gSum += (px ushr 8) and 0xFF
+                bSum += px and 0xFF
+            }
+
+            for (x in 0 until w) {
+                temp[x] = ((aSum / divSum shl 24) or
+                        (rSum / divSum shl 16) or
+                        (gSum / divSum shl 8) or
+                        (bSum / divSum)).toInt()
+
+                // 滑动窗口：移除左侧像素，加入右侧像素
+                val removeIdx = rowOffset + (x - radius).coerceIn(0, w - 1)
+                val addIdx = rowOffset + (x + radius + 1).coerceIn(0, w - 1)
+                val removePx = pixels[removeIdx]
+                val addPx = pixels[addIdx]
+                aSum += ((addPx ushr 24) and 0xFF) - ((removePx ushr 24) and 0xFF)
+                rSum += ((addPx ushr 16) and 0xFF) - ((removePx ushr 16) and 0xFF)
+                gSum += ((addPx ushr 8) and 0xFF) - ((removePx ushr 8) and 0xFF)
+                bSum += (addPx and 0xFF) - (removePx and 0xFF)
+            }
+
+            // 写回
+            System.arraycopy(temp, 0, pixels, rowOffset, w)
+        }
+    }
+
+    /**
+     * 垂直方向 Stack Blur（均值滤波）。
+     *
+     * 对每一列从上到下滑动窗口求均值。
+     */
+    private fun stackBlurVertical(pixels: IntArray, w: Int, h: Int, radius: Int) {
+        val div = radius + radius + 1
+        val divSum = div.toLong()
+        val temp = IntArray(h)
+
+        for (x in 0 until w) {
+            var rSum = 0L; var gSum = 0L; var bSum = 0L; var aSum = 0L
+
+            // 初始化窗口：上边缘镜像填充
+            for (i in -radius..radius) {
+                val px = pixels[i.coerceIn(0, h - 1) * w + x]
+                aSum += (px ushr 24) and 0xFF
+                rSum += (px ushr 16) and 0xFF
+                gSum += (px ushr 8) and 0xFF
+                bSum += px and 0xFF
+            }
+
+            for (y in 0 until h) {
+                temp[y] = ((aSum / divSum shl 24) or
+                        (rSum / divSum shl 16) or
+                        (gSum / divSum shl 8) or
+                        (bSum / divSum)).toInt()
+
+                val removeIdx = (y - radius).coerceIn(0, h - 1) * w + x
+                val addIdx = (y + radius + 1).coerceIn(0, h - 1) * w + x
+                val removePx = pixels[removeIdx]
+                val addPx = pixels[addIdx]
+                aSum += ((addPx ushr 24) and 0xFF) - ((removePx ushr 24) and 0xFF)
+                rSum += ((addPx ushr 16) and 0xFF) - ((removePx ushr 16) and 0xFF)
+                gSum += ((addPx ushr 8) and 0xFF) - ((removePx ushr 8) and 0xFF)
+                bSum += (addPx and 0xFF) - (removePx and 0xFF)
+            }
+
+            // 写回
+            for (y in 0 until h) {
+                pixels[y * w + x] = temp[y]
+            }
+        }
+    }
+}

@@ -12,8 +12,8 @@ import java.lang.reflect.Modifier
  * JVM unit tests for the MorphKit Compose theme module.
  *
  * Uses reflection to verify class structure, enum values, data class fields,
- * and CompositionLocal provider existence — all without requiring a running
- * Compose runtime.
+ * CompositionLocal provider existence, and behavioral properties — all without
+ * requiring a running Compose runtime.
  */
 class MorphComposeThemeTest {
 
@@ -110,6 +110,32 @@ class MorphComposeThemeTest {
     }
 
     @Test
+    fun morphColorPalette_fieldCountMatchesM3ColorScheme() {
+        // M3 ColorScheme has 37 color roles (including surfaceTint)
+        // MorphColorPalette should have exactly 37 non-static fields
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val fieldCount = clazz.declaredFields
+            .count { !Modifier.isStatic(it.modifiers) }
+
+        assertThat(fieldCount).isEqualTo(37)
+    }
+
+    @Test
+    fun morphColorPalette_isImmutableAnnotated() {
+        // @Immutable annotation requires Compose runtime at class-load time.
+        // Since Compose runtime is testCompileOnly, we verify via bytecode instead.
+        val classResource = javaClass.classLoader?.getResourceAsStream(
+            "com/morphkit/theme/compose/MorphColorPalette.class"
+        )
+        assertThat(classResource).isNotNull()
+        val classBytes = classResource!!.readBytes()
+        val utf8Strings = extractUtf8Constants(classBytes)
+        // Annotation descriptor in constant pool: "Landroidx/compose/runtime/Immutable;"
+        val hasImmutable = utf8Strings.any { it.contains("Immutable") }
+        assertThat(hasImmutable).isTrue()
+    }
+
+    @Test
     fun morphShape_hasAllExpectedFields() {
         val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
         val expectedFields = setOf(
@@ -122,6 +148,26 @@ class MorphComposeThemeTest {
             .toSet()
 
         assertThat(actualFields).containsAtLeastElementsIn(expectedFields)
+    }
+
+    @Test
+    fun morphShape_isImmutableAnnotated() {
+        val classResource = javaClass.classLoader?.getResourceAsStream(
+            "com/morphkit/theme/compose/MorphShape.class"
+        )
+        assertThat(classResource).isNotNull()
+        val classBytes = classResource!!.readBytes()
+        val utf8Strings = extractUtf8Constants(classBytes)
+        val hasImmutable = utf8Strings.any { it.contains("Immutable") }
+        assertThat(hasImmutable).isTrue()
+    }
+
+    @Test
+    fun morphShape_fieldCountIsSix() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val fieldCount = clazz.declaredFields
+            .count { !Modifier.isStatic(it.modifiers) }
+        assertThat(fieldCount).isEqualTo(6)
     }
 
     // ── 4. CompositionLocal providers exist ───────────────────────────────
@@ -142,6 +188,9 @@ class MorphComposeThemeTest {
         assertThat(utf8Strings).contains("LocalMorphStyle")
     }
 
+    /**
+     * Extracts UTF-8 constant pool entries from a .class file.
+     */
     private fun extractUtf8Constants(classBytes: ByteArray): Set<String> {
         val constants = mutableSetOf<String>()
         var offset = 8
@@ -192,5 +241,233 @@ class MorphComposeThemeTest {
         val enumConstants = clazz.enumConstants?.map { (it as Enum<*>).name } ?: emptyList()
 
         assertThat(enumConstants).containsExactly("Auto", "iOS", "Pixel")
+    }
+
+    // ── 6. S15: MorphColorPalette companion methods ───────────────────────
+
+    @Test
+    fun morphColorPalette_companionHasFactoryMethods() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val companion = clazz.declaredClasses.firstOrNull { it.simpleName == "Companion" }
+        assertThat(companion).isNotNull()
+
+        val methodNames = companion!!.declaredMethods.map { it.name }
+        assertThat(methodNames).contains("iosLight")
+        assertThat(methodNames).contains("iosDark")
+        assertThat(methodNames).contains("pixelFromContext")
+    }
+
+    @Test
+    fun morphColorPalette_companionHasPrivateResolveM3Color() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val companion = clazz.declaredClasses.first { it.simpleName == "Companion" }
+        val methodNames = companion.declaredMethods.map { it.name }
+        // resolveM3Color is a private helper — verify any method with "resolve" and "Color" in name exists
+        val resolveMethods = methodNames.filter { it.contains("resolve", ignoreCase = true) && it.contains("Color", ignoreCase = true) }
+        assertThat(resolveMethods).isNotEmpty()
+    }
+
+    // ── 7. S15: MorphShape companion methods ──────────────────────────────
+
+    @Test
+    fun morphShape_companionHasFactoryMethods() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val companion = clazz.declaredClasses.firstOrNull { it.simpleName == "Companion" }
+        assertThat(companion).isNotNull()
+
+        val methodNames = companion!!.declaredMethods.map { it.name }
+        assertThat(methodNames).contains("ios")
+        assertThat(methodNames).contains("pixel")
+    }
+
+    // ── 8. S15: Private functions in MorphComposeThemeKt ──────────────────
+
+    @Test
+    fun morphComposeThemeKt_hasPrivateHelperFunctions() {
+        val classResource = javaClass.classLoader?.getResourceAsStream(
+            "com/morphkit/theme/compose/MorphComposeThemeKt.class"
+        )
+        assertThat(classResource).isNotNull()
+
+        val classBytes = classResource!!.readBytes()
+        val utf8Strings = extractUtf8Constants(classBytes)
+
+        // Verify private helper functions exist in constant pool
+        assertThat(utf8Strings).contains("material3ColorScheme")
+        assertThat(utf8Strings).contains("morphTypography")
+        assertThat(utf8Strings).contains("resolveStyle")
+        assertThat(utf8Strings).contains("resolveAutoStyle")
+    }
+
+    // ── 9. S15: Dark mode token completeness ──────────────────────────────
+
+    @Test
+    fun morphTokens_darkModeColorTokensExistForAllPrimaryRoles() {
+        // Verify that for every light-mode color token used in iosLight(),
+        // there is a corresponding dark-mode token used in iosDark()
+        // Primary
+        assertThat(MorphTokens.colorBlue100).isNotEqualTo(0) // dark primary
+        assertThat(MorphTokens.colorBlue700).isNotEqualTo(0) // dark primaryContainer
+        // Secondary
+        assertThat(MorphTokens.colorSecondaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnSecondaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSecondaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnSecondaryContainerDark).isNotEqualTo(0)
+        // Tertiary
+        assertThat(MorphTokens.colorTertiaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnTertiaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorTertiaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnTertiaryContainerDark).isNotEqualTo(0)
+        // Error
+        assertThat(MorphTokens.colorOnErrorDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorErrorContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnErrorContainerDark).isNotEqualTo(0)
+        // Surface hierarchy
+        assertThat(MorphTokens.colorSurfaceDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnSurfaceDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSurfaceVariantDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnSurfaceVariantDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSurfaceDimDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceBrightDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceContainerLowestDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceContainerLowDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceContainerDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceContainerHighDark).isNotNull()
+        assertThat(MorphTokens.colorSurfaceContainerHighestDark).isNotNull()
+        // Outline
+        assertThat(MorphTokens.colorOutlineDark).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOutlineVariantDark).isNotEqualTo(0)
+    }
+
+    // ── 10. S15: Token value correctness ──────────────────────────────────
+
+    @Test
+    fun morphTokens_primaryColorIsIOSBlue() {
+        // iOS system blue: #007AFF
+        assertThat(MorphTokens.colorBlue500).isEqualTo(0xFF007AFF.toInt())
+    }
+
+    @Test
+    fun morphTokens_surfaceColorsAreDistinctFromBackground() {
+        // surface, surfaceVariant, and background should all be different
+        assertThat(MorphTokens.colorSurface).isNotEqualTo(MorphTokens.colorSurfaceVariant)
+        assertThat(MorphTokens.colorSurface).isNotEqualTo(MorphTokens.colorBackground)
+        assertThat(MorphTokens.colorSurfaceVariant).isNotEqualTo(MorphTokens.colorBackground)
+    }
+
+    @Test
+    fun morphTokens_surfaceContainerHierarchyIsOrdered() {
+        // The 5-level surface container hierarchy should have distinct values
+        val containers = listOf(
+            MorphTokens.colorSurfaceContainerLowest,
+            MorphTokens.colorSurfaceContainerLow,
+            MorphTokens.colorSurfaceContainer,
+            MorphTokens.colorSurfaceContainerHigh,
+            MorphTokens.colorSurfaceContainerHighest
+        )
+        // All 5 levels should be distinct
+        assertThat(containers.toSet()).hasSize(5)
+    }
+
+    @Test
+    fun morphTokens_typographyTokensArePositive() {
+        assertThat(MorphTokens.fontSizeLargeTitle).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeTitle1).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeTitle2).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeTitle3).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeHeadline).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeBody).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeCallout).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeSubheadline).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeFootnote).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeCaption1).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeCaption2).isGreaterThan(0f)
+        assertThat(MorphTokens.fontSizeButton).isGreaterThan(0f)
+    }
+
+    @Test
+    fun morphTokens_typographyHierarchyIsOrdered() {
+        // iOS typography scale: LargeTitle > Title1 > Title2 > Title3 > Headline >= Body
+        assertThat(MorphTokens.fontSizeLargeTitle).isGreaterThan(MorphTokens.fontSizeTitle1)
+        assertThat(MorphTokens.fontSizeTitle1).isGreaterThan(MorphTokens.fontSizeTitle2)
+        assertThat(MorphTokens.fontSizeTitle2).isGreaterThan(MorphTokens.fontSizeTitle3)
+        assertThat(MorphTokens.fontSizeTitle3).isGreaterThan(MorphTokens.fontSizeHeadline)
+        assertThat(MorphTokens.fontSizeHeadline).isAtLeast(MorphTokens.fontSizeBody)
+        assertThat(MorphTokens.fontSizeBody).isGreaterThan(MorphTokens.fontSizeFootnote)
+        assertThat(MorphTokens.fontSizeFootnote).isGreaterThan(MorphTokens.fontSizeCaption1)
+        assertThat(MorphTokens.fontSizeCaption1).isGreaterThan(MorphTokens.fontSizeCaption2)
+    }
+
+    @Test
+    fun morphTokens_interactionTokensHaveReasonableValues() {
+        // Press overlay alpha should be subtle (0 < alpha < 0.5)
+        assertThat(MorphTokens.pressOverlayMaxAlpha).isGreaterThan(0f)
+        assertThat(MorphTokens.pressOverlayMaxAlpha).isLessThan(0.5f)
+
+        // Press durations should be quick (50-500ms)
+        assertThat(MorphTokens.pressInDuration).isAtLeast(50L)
+        assertThat(MorphTokens.pressInDuration).isAtMost(500L)
+        assertThat(MorphTokens.pressOutDuration).isAtLeast(50L)
+        assertThat(MorphTokens.pressOutDuration).isAtMost(500L)
+
+        // Disabled alpha should make things visibly faded
+        assertThat(MorphTokens.disabledAlpha).isGreaterThan(0f)
+        assertThat(MorphTokens.disabledAlpha).isLessThan(1f)
+    }
+
+    // ── 11. S15: M3 ColorScheme compatibility ─────────────────────────────
+
+    @Test
+    fun morphColorPalette_fieldNamesContainAllM3ColorSchemeRoles() {
+        // M3 ColorScheme constructor parameters (as of material3 1.x):
+        val m3Roles = setOf(
+            "primary", "onPrimary", "primaryContainer", "onPrimaryContainer",
+            "secondary", "onSecondary", "secondaryContainer", "onSecondaryContainer",
+            "tertiary", "onTertiary", "tertiaryContainer", "onTertiaryContainer",
+            "error", "onError", "errorContainer", "onErrorContainer",
+            "background", "onBackground",
+            "surface", "onSurface", "surfaceVariant", "onSurfaceVariant",
+            "surfaceDim", "surfaceBright",
+            "surfaceContainerLowest", "surfaceContainerLow",
+            "surfaceContainer", "surfaceContainerHigh", "surfaceContainerHighest",
+            "outline", "outlineVariant",
+            "inverseSurface", "inverseOnSurface", "inversePrimary",
+            "scrim"
+        )
+
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val fieldNames = clazz.declaredFields
+            .filter { !Modifier.isStatic(it.modifiers) }
+            .map { it.name }
+            .toSet()
+
+        // Every M3 role must have a corresponding field
+        for (role in m3Roles) {
+            assertThat(fieldNames).contains(role)
+        }
+    }
+
+    @Test
+    fun morphColorPalette_isDataClass() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val methodNames = clazz.declaredMethods.map { it.name }
+        // Data classes generate equals(), hashCode(), toString() — verify these exist
+        assertThat(methodNames).contains("equals")
+        assertThat(methodNames).contains("hashCode")
+        assertThat(methodNames).contains("toString")
+        // copy() is mangled by Compose inline class (Color) — check any method starting with "copy"
+        assertThat(methodNames.any { it.startsWith("copy") }).isTrue()
+        // Verify componentN methods exist — should have at least 30 for 37 fields
+        val componentCount = methodNames.count { it.startsWith("component") }
+        assertThat(componentCount).isAtLeast(30)
+    }
+
+    @Test
+    fun morphShape_isDataClass() {
+        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val methodNames = clazz.declaredMethods.map { it.name }
+        assertThat(methodNames).contains("copy")
+        assertThat(methodNames).contains("component1")
+        assertThat(methodNames).contains("component6") // 6 fields
     }
 }

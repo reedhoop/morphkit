@@ -59,6 +59,10 @@
     <declare-styleable name="MorphCardView">
         <attr name="morphCornerRadius" />
         <attr name="morphInteractionMode" />
+        <!-- 是否启用毛玻璃模式（背景模糊） -->
+        <attr name="isGlassmorphism" format="boolean" />
+        <!-- 毛玻璃模糊半径（px），推荐范围 15–35 -->
+        <attr name="glassmorphismBlurRadius" format="float" />
     </declare-styleable>
 
     <!-- ═══════════════════════════════════════════════════════════════════════

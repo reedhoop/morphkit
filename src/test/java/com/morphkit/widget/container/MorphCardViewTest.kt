@@ -76,4 +76,79 @@ class MorphCardViewTest {
         val field = clazz.getDeclaredField("isGlassmorphism")
         assertThat(field.type).isEqualTo(Boolean::class.javaPrimitiveType)
     }
+
+    // ── S4 新增测试：毛玻璃模糊改进 ──
+
+    @Test
+    fun `glassmorphismBlurRadius 属性存在且类型为 Float`() {
+        val clazz = Class.forName("com.morphkit.widget.container.MorphCardView")
+        val getter = clazz.getDeclaredMethod("getGlassmorphismBlurRadius")
+        val setter = clazz.getDeclaredMethod("setGlassmorphismBlurRadius", Float::class.javaPrimitiveType)
+        assertThat(getter.returnType).isEqualTo(Float::class.javaPrimitiveType)
+        assertThat(setter).isNotNull()
+    }
+
+    @Test
+    fun `refreshGlassmorphismBlur 公开方法存在`() {
+        val clazz = Class.forName("com.morphkit.widget.container.MorphCardView")
+        val method = clazz.getDeclaredMethod("refreshGlassmorphismBlur")
+        assertThat(Modifier.isPublic(method.modifiers)).isTrue()
+        assertThat(method.returnType).isEqualTo(Void.TYPE)
+    }
+
+    @Test
+    fun `不再使用 View setRenderEffect 做模糊`() {
+        // S4 修复验证：MorphCardView 不应直接调用 setRenderEffect 做模糊
+        // （模糊由 BackdropBlurHelper 在独立 Bitmap 上完成）
+        val clazz = Class.forName("com.morphkit.widget.container.MorphCardView")
+        val methods = clazz.declaredMethods.map { it.name }
+        // 旧的 applyBlurEffect 和 clearBlurEffect 方法应已移除
+        assertThat(methods).doesNotContain("applyBlurEffect")
+        assertThat(methods).doesNotContain("clearBlurEffect")
+    }
+
+    @Test
+    fun `BackdropBlurHelper 工具类存在`() {
+        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
+        // Kotlin object 编译后是单例，应有 INSTANCE 字段
+        val instanceField = clazz.getDeclaredField("INSTANCE")
+        assertThat(instanceField).isNotNull()
+    }
+
+    @Test
+    fun `BackdropBlurHelper 提供 captureParentArea 方法`() {
+        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
+        val method = clazz.getDeclaredMethod("captureParentArea", android.view.View::class.java)
+        assertThat(method.returnType).isEqualTo(android.graphics.Bitmap::class.java)
+    }
+
+    @Test
+    fun `BackdropBlurHelper 提供 blur 方法`() {
+        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
+        val method = clazz.getDeclaredMethod("blur", android.graphics.Bitmap::class.java, Float::class.javaPrimitiveType)
+        assertThat(method.returnType).isEqualTo(android.graphics.Bitmap::class.java)
+    }
+
+    @Test
+    fun `Companion 对象存在`() {
+        val clazz = Class.forName("com.morphkit.widget.container.MorphCardView")
+        val companion = clazz.declaredClasses.firstOrNull { it.simpleName == "Companion" }
+        assertThat(companion).isNotNull()
+    }
+
+    @Test
+    fun `XML 属性 isGlassmorphism 已声明`() {
+        val rStyleableClass = Class.forName("com.morphkit.R\$styleable")
+        val field = rStyleableClass.getDeclaredField("MorphCardView_isGlassmorphism")
+        assertThat(field).isNotNull()
+        assertThat(field.type).isEqualTo(Int::class.javaPrimitiveType)
+    }
+
+    @Test
+    fun `XML 属性 glassmorphismBlurRadius 已声明`() {
+        val rStyleableClass = Class.forName("com.morphkit.R\$styleable")
+        val field = rStyleableClass.getDeclaredField("MorphCardView_glassmorphismBlurRadius")
+        assertThat(field).isNotNull()
+        assertThat(field.type).isEqualTo(Int::class.javaPrimitiveType)
+    }
 }

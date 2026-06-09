@@ -5,9 +5,9 @@ import androidx.annotation.ColorInt
 /**
  * MorphKit 统一设计 Token 层。
  *
- * 定义 MorphKit 设计系统的所有原始设计变量，作为 View 体系和 Compose 体系的**唯一数据源**。
- * View 体系的 [MorphTheme] 和 Compose 体系的 [MorphComposeTheme] 均从此处读取 Token，
- * 确保双体系视觉完全一致。
+ * 定义 MorphKit 设计系统的所有原始设计变量，作为 View 体系和 Compose 体系
+ * 的**唯一数据源**。View 体系的 [MorphTheme] 和 Compose 体系的
+ * [MorphComposeTheme] 均从此处读取 Token，确保双体系视觉完全一致。
  *
  * ## Token 分层架构
  *
