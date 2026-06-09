@@ -68,56 +68,158 @@ enum class MorphStyle {
 // MorphColorPalette — Compose 颜色体系
 // ═════════════════════════════════════════════════════════════════════════════════
 
+/**
+ * MorphKit Compose 颜色色板。
+ *
+ * 完整覆盖 M3 ColorScheme 的 37 个语义色角色，消除以往 secondary/tertiary 复用 primary、
+ * surfaceContainer 系列缺失等问题。每个字段与 M3 ColorScheme 角色一一对应。
+ */
 @Immutable
 data class MorphColorPalette(
+    // ── Primary ──
     val primary: Color,
     val onPrimary: Color,
     val primaryContainer: Color,
     val onPrimaryContainer: Color,
+    // ── Secondary ──
+    val secondary: Color,
+    val onSecondary: Color,
+    val secondaryContainer: Color,
+    val onSecondaryContainer: Color,
+    // ── Tertiary ──
+    val tertiary: Color,
+    val onTertiary: Color,
+    val tertiaryContainer: Color,
+    val onTertiaryContainer: Color,
+    // ── Error ──
+    val error: Color,
+    val onError: Color,
+    val errorContainer: Color,
+    val onErrorContainer: Color,
+    // ── Surface ──
     val surface: Color,
-    val surfaceVariant: Color,
     val onSurface: Color,
+    val surfaceVariant: Color,
     val onSurfaceVariant: Color,
+    val surfaceDim: Color,
+    val surfaceBright: Color,
+    val surfaceContainerLowest: Color,
+    val surfaceContainerLow: Color,
+    val surfaceContainer: Color,
+    val surfaceContainerHigh: Color,
+    val surfaceContainerHighest: Color,
+    // ── Outline ──
+    val outline: Color,
     val outlineVariant: Color,
+    // ── Background ──
     val background: Color,
     val onBackground: Color,
-    val error: Color,
+    // ── Inverse ──
+    val inverseSurface: Color,
+    val inverseOnSurface: Color,
+    val inversePrimary: Color,
+    // ── Misc ──
+    val scrim: Color,
     val success: Color,
     val warning: Color
 ) {
     companion object {
         /** iOS 亮色色板 — 从 MorphTokens 读取 */
         fun iosLight() = MorphColorPalette(
+            // Primary
             primary = Color(MorphTokens.colorBlue500),
             onPrimary = Color(MorphTokens.colorOnPrimary),
             primaryContainer = Color(MorphTokens.colorPrimaryContainer),
             onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainer),
+            // Secondary
+            secondary = Color(MorphTokens.colorSecondary),
+            onSecondary = Color(MorphTokens.colorOnSecondary),
+            secondaryContainer = Color(MorphTokens.colorSecondaryContainer),
+            onSecondaryContainer = Color(MorphTokens.colorOnSecondaryContainer),
+            // Tertiary
+            tertiary = Color(MorphTokens.colorTertiary),
+            onTertiary = Color(MorphTokens.colorOnTertiary),
+            tertiaryContainer = Color(MorphTokens.colorTertiaryContainer),
+            onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainer),
+            // Error
+            error = Color(MorphTokens.colorRed500),
+            onError = Color(MorphTokens.colorOnError),
+            errorContainer = Color(MorphTokens.colorErrorContainer),
+            onErrorContainer = Color(MorphTokens.colorOnErrorContainer),
+            // Surface
             surface = Color(MorphTokens.colorSurface),
-            surfaceVariant = Color(MorphTokens.colorSurfaceVariant),
             onSurface = Color(MorphTokens.colorOnSurface),
+            surfaceVariant = Color(MorphTokens.colorSurfaceVariant),
             onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariant),
+            surfaceDim = Color(MorphTokens.colorSurfaceDim),
+            surfaceBright = Color(MorphTokens.colorSurfaceBright),
+            surfaceContainerLowest = Color(MorphTokens.colorSurfaceContainerLowest),
+            surfaceContainerLow = Color(MorphTokens.colorSurfaceContainerLow),
+            surfaceContainer = Color(MorphTokens.colorSurfaceContainer),
+            surfaceContainerHigh = Color(MorphTokens.colorSurfaceContainerHigh),
+            surfaceContainerHighest = Color(MorphTokens.colorSurfaceContainerHighest),
+            // Outline
+            outline = Color(MorphTokens.colorOutline),
             outlineVariant = Color(MorphTokens.colorOutlineVariant),
+            // Background
             background = Color(MorphTokens.colorBackground),
             onBackground = Color(MorphTokens.colorOnSurface),
-            error = Color(MorphTokens.colorRed500),
+            // Inverse
+            inverseSurface = Color(MorphTokens.colorOnSurface),
+            inverseOnSurface = Color(MorphTokens.colorSurface),
+            inversePrimary = Color(MorphTokens.colorBlue100),
+            // Misc
+            scrim = Color.Black,
             success = Color(MorphTokens.colorGreen500),
             warning = Color(MorphTokens.colorOrange500)
         )
 
         /** iOS 暗色色板 — 从 MorphTokens 读取 */
         fun iosDark() = MorphColorPalette(
+            // Primary
             primary = Color(MorphTokens.colorBlue100),
             onPrimary = Color(0xFF001D3F),
             primaryContainer = Color(MorphTokens.colorBlue700),
             onPrimaryContainer = Color(MorphTokens.colorBlue100),
+            // Secondary
+            secondary = Color(MorphTokens.colorSecondaryDark),
+            onSecondary = Color(MorphTokens.colorOnSecondaryDark),
+            secondaryContainer = Color(MorphTokens.colorSecondaryContainerDark),
+            onSecondaryContainer = Color(MorphTokens.colorOnSecondaryContainerDark),
+            // Tertiary
+            tertiary = Color(MorphTokens.colorTertiaryDark),
+            onTertiary = Color(MorphTokens.colorOnTertiaryDark),
+            tertiaryContainer = Color(MorphTokens.colorTertiaryContainerDark),
+            onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainerDark),
+            // Error
+            error = Color(0xFFFF6961),
+            onError = Color(MorphTokens.colorOnErrorDark),
+            errorContainer = Color(MorphTokens.colorErrorContainerDark),
+            onErrorContainer = Color(MorphTokens.colorOnErrorContainerDark),
+            // Surface
             surface = Color(MorphTokens.colorSurfaceDark),
-            surfaceVariant = Color(MorphTokens.colorSurfaceVariantDark),
             onSurface = Color(MorphTokens.colorOnSurfaceDark),
+            surfaceVariant = Color(MorphTokens.colorSurfaceVariantDark),
             onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariantDark),
+            surfaceDim = Color(MorphTokens.colorSurfaceDimDark),
+            surfaceBright = Color(MorphTokens.colorSurfaceBrightDark),
+            surfaceContainerLowest = Color(MorphTokens.colorSurfaceContainerLowestDark),
+            surfaceContainerLow = Color(MorphTokens.colorSurfaceContainerLowDark),
+            surfaceContainer = Color(MorphTokens.colorSurfaceContainerDark),
+            surfaceContainerHigh = Color(MorphTokens.colorSurfaceContainerHighDark),
+            surfaceContainerHighest = Color(MorphTokens.colorSurfaceContainerHighestDark),
+            // Outline
+            outline = Color(MorphTokens.colorOutlineDark),
             outlineVariant = Color(MorphTokens.colorOutlineVariantDark),
+            // Background
             background = Color(MorphTokens.colorBackgroundDark),
             onBackground = Color(MorphTokens.colorOnSurfaceDark),
-            error = Color(0xFFFF6961),
+            // Inverse
+            inverseSurface = Color(MorphTokens.colorOnSurfaceDark),
+            inverseOnSurface = Color(MorphTokens.colorSurfaceDark),
+            inversePrimary = Color(MorphTokens.colorBlue500),
+            // Misc
+            scrim = Color.Black,
             success = Color(0xFF30D158),
             warning = Color(0xFFFFB340)
         )
@@ -133,18 +235,50 @@ data class MorphColorPalette(
          */
         fun pixelFromContext(context: Context): MorphColorPalette {
             return MorphColorPalette(
+                // Primary
                 primary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimary, MorphTokens.colorBlue500),
                 onPrimary = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimary, MorphTokens.colorOnPrimary),
                 primaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryContainer, MorphTokens.colorPrimaryContainer),
                 onPrimaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimaryContainer, MorphTokens.colorOnPrimaryContainer),
+                // Secondary
+                secondary = resolveM3Color(context, com.google.android.material.R.attr.colorSecondary, MorphTokens.colorSecondary),
+                onSecondary = resolveM3Color(context, com.google.android.material.R.attr.colorOnSecondary, MorphTokens.colorOnSecondary),
+                secondaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorSecondaryContainer, MorphTokens.colorSecondaryContainer),
+                onSecondaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnSecondaryContainer, MorphTokens.colorOnSecondaryContainer),
+                // Tertiary
+                tertiary = resolveM3Color(context, com.google.android.material.R.attr.colorTertiary, MorphTokens.colorTertiary),
+                onTertiary = resolveM3Color(context, com.google.android.material.R.attr.colorOnTertiary, MorphTokens.colorOnTertiary),
+                tertiaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorTertiaryContainer, MorphTokens.colorTertiaryContainer),
+                onTertiaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnTertiaryContainer, MorphTokens.colorOnTertiaryContainer),
+                // Error
+                error = resolveM3Color(context, com.google.android.material.R.attr.colorError, MorphTokens.colorRed500),
+                onError = resolveM3Color(context, com.google.android.material.R.attr.colorOnError, MorphTokens.colorOnError),
+                errorContainer = resolveM3Color(context, com.google.android.material.R.attr.colorErrorContainer, MorphTokens.colorErrorContainer),
+                onErrorContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnErrorContainer, MorphTokens.colorOnErrorContainer),
+                // Surface
                 surface = resolveM3Color(context, com.google.android.material.R.attr.colorSurface, MorphTokens.colorSurface),
-                surfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceVariant, MorphTokens.colorSurfaceVariant),
                 onSurface = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.colorOnSurface),
+                surfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceVariant, MorphTokens.colorSurfaceVariant),
                 onSurfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurfaceVariant, MorphTokens.colorOnSurfaceVariant),
+                surfaceDim = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceDim, MorphTokens.colorSurfaceDim),
+                surfaceBright = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceBright, MorphTokens.colorSurfaceBright),
+                surfaceContainerLowest = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceContainerLowest, MorphTokens.colorSurfaceContainerLowest),
+                surfaceContainerLow = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceContainerLow, MorphTokens.colorSurfaceContainerLow),
+                surfaceContainer = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceContainer, MorphTokens.colorSurfaceContainer),
+                surfaceContainerHigh = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceContainerHigh, MorphTokens.colorSurfaceContainerHigh),
+                surfaceContainerHighest = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceContainerHighest, MorphTokens.colorSurfaceContainerHighest),
+                // Outline
+                outline = resolveM3Color(context, com.google.android.material.R.attr.colorOutline, MorphTokens.colorOutline),
                 outlineVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOutlineVariant, MorphTokens.colorOutlineVariant),
+                // Background
                 background = resolveM3Color(context, android.R.attr.colorBackground, MorphTokens.colorBackground),
                 onBackground = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.colorOnSurface),
-                error = resolveM3Color(context, com.google.android.material.R.attr.colorError, MorphTokens.colorRed500),
+                // Inverse (Material 1.12.0 无 colorInverseSurface/colorInverseOnSurface 属性)
+                inverseSurface = Color(MorphTokens.colorOnSurface),
+                inverseOnSurface = Color(MorphTokens.colorSurface),
+                inversePrimary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryInverse, MorphTokens.colorBlue100),
+                // Misc
+                scrim = Color.Black,
                 success = Color(MorphTokens.colorGreen500),
                 warning = Color(MorphTokens.colorOrange500)
             )
@@ -317,34 +451,47 @@ private fun morphTypography(): Typography {
     )
 }
 
+/**
+ * 将 MorphColorPalette 映射到 M3 ColorScheme。
+ *
+ * 每个 M3 角色与 MorphColorPalette 字段一一对应，消除以往 secondary/tertiary 复用 primary、
+ * surfaceContainer 系列缺失、onError 误用 onPrimary 等问题。
+ */
 private fun material3ColorScheme(colors: MorphColorPalette) = androidx.compose.material3.ColorScheme(
     primary = colors.primary,
     onPrimary = colors.onPrimary,
     primaryContainer = colors.primaryContainer,
     onPrimaryContainer = colors.onPrimaryContainer,
-    inversePrimary = colors.onPrimary,
-    secondary = colors.primary,
-    onSecondary = colors.onPrimary,
-    secondaryContainer = colors.primaryContainer,
-    onSecondaryContainer = colors.onPrimaryContainer,
-    tertiary = colors.primary,
-    onTertiary = colors.onPrimary,
-    tertiaryContainer = colors.primaryContainer,
-    onTertiaryContainer = colors.onPrimaryContainer,
+    secondary = colors.secondary,
+    onSecondary = colors.onSecondary,
+    secondaryContainer = colors.secondaryContainer,
+    onSecondaryContainer = colors.onSecondaryContainer,
+    tertiary = colors.tertiary,
+    onTertiary = colors.onTertiary,
+    tertiaryContainer = colors.tertiaryContainer,
+    onTertiaryContainer = colors.onTertiaryContainer,
+    error = colors.error,
+    onError = colors.onError,
+    errorContainer = colors.errorContainer,
+    onErrorContainer = colors.onErrorContainer,
     background = colors.background,
     onBackground = colors.onBackground,
     surface = colors.surface,
     onSurface = colors.onSurface,
     surfaceVariant = colors.surfaceVariant,
     onSurfaceVariant = colors.onSurfaceVariant,
+    surfaceDim = colors.surfaceDim,
+    surfaceBright = colors.surfaceBright,
+    surfaceContainerLowest = colors.surfaceContainerLowest,
+    surfaceContainerLow = colors.surfaceContainerLow,
+    surfaceContainer = colors.surfaceContainer,
+    surfaceContainerHigh = colors.surfaceContainerHigh,
+    surfaceContainerHighest = colors.surfaceContainerHighest,
     surfaceTint = colors.primary,
-    inverseSurface = colors.onSurface,
-    inverseOnSurface = colors.surface,
-    error = colors.error,
-    onError = colors.onPrimary,
-    errorContainer = colors.error,
-    onErrorContainer = colors.onPrimary,
-    outline = colors.outlineVariant,
+    inverseSurface = colors.inverseSurface,
+    inverseOnSurface = colors.inverseOnSurface,
+    inversePrimary = colors.inversePrimary,
+    outline = colors.outline,
     outlineVariant = colors.outlineVariant,
-    scrim = Color.Black
+    scrim = colors.scrim
 )
