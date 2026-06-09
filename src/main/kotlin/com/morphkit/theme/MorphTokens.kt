@@ -136,6 +136,168 @@ object MorphTokens {
     @ColorInt
     val colorBackgroundDark: Int = 0xFF000000.toInt()
 
+    // ── Secondary 语义色（M3 对齐 — iOS 以灰色系表达次要层级） ──
+
+    /** 次要色 */
+    @ColorInt
+    val colorSecondary: Int = 0xFF8E8E93.toInt()
+
+    /** 暗色模式次要色 */
+    @ColorInt
+    val colorSecondaryDark: Int = 0xFFA8A8AD.toInt()
+
+    /** 次要色上的文字/图标色 */
+    @ColorInt
+    val colorOnSecondary: Int = 0xFFFFFFFF.toInt()
+
+    /** 暗色模式次要色上的文字/图标色 */
+    @ColorInt
+    val colorOnSecondaryDark: Int = 0xFF1C1C1E.toInt()
+
+    /** 次要色容器色 */
+    @ColorInt
+    val colorSecondaryContainer: Int = 0xFFE5E5EA.toInt()
+
+    /** 暗色模式次要色容器色 */
+    @ColorInt
+    val colorSecondaryContainerDark: Int = 0xFF2C2C2E.toInt()
+
+    /** 次要色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnSecondaryContainer: Int = 0xFF1C1C1E.toInt()
+
+    /** 暗色模式次要色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnSecondaryContainerDark: Int = 0xFFC7C7CC.toInt()
+
+    // ── Tertiary 语义色（M3 对齐 — iOS 以暖色系表达第三层级） ──
+
+    /** 第三色 */
+    @ColorInt
+    val colorTertiary: Int = 0xFFFF9500.toInt()
+
+    /** 暗色模式第三色 */
+    @ColorInt
+    val colorTertiaryDark: Int = 0xFFFFB340.toInt()
+
+    /** 第三色上的文字/图标色 */
+    @ColorInt
+    val colorOnTertiary: Int = 0xFFFFFFFF.toInt()
+
+    /** 暗色模式第三色上的文字/图标色 */
+    @ColorInt
+    val colorOnTertiaryDark: Int = 0xFF3A2200.toInt()
+
+    /** 第三色容器色 */
+    @ColorInt
+    val colorTertiaryContainer: Int = 0xFFFFE8CC.toInt()
+
+    /** 暗色模式第三色容器色 */
+    @ColorInt
+    val colorTertiaryContainerDark: Int = 0xFF3A2200.toInt()
+
+    /** 第三色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnTertiaryContainer: Int = 0xFF3A2200.toInt()
+
+    /** 暗色模式第三色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnTertiaryContainerDark: Int = 0xFFFFDDB3.toInt()
+
+    // ── Error 补充语义色（M3 对齐） ──
+
+    /** 错误色上的文字/图标色 */
+    @ColorInt
+    val colorOnError: Int = 0xFFFFFFFF.toInt()
+
+    /** 暗色模式错误色上的文字/图标色 */
+    @ColorInt
+    val colorOnErrorDark: Int = 0xFF3A0000.toInt()
+
+    /** 错误色容器色 */
+    @ColorInt
+    val colorErrorContainer: Int = 0xFFFFDAD6.toInt()
+
+    /** 暗色模式错误色容器色 */
+    @ColorInt
+    val colorErrorContainerDark: Int = 0xFF5C0000.toInt()
+
+    /** 错误色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnErrorContainer: Int = 0xFF410002.toInt()
+
+    /** 暗色模式错误色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnErrorContainerDark: Int = 0xFFFFDAD6.toInt()
+
+    // ── Outline 补充（M3 对齐） ──
+
+    /** 轮廓色（输入框边框、焦点环） */
+    @ColorInt
+    val colorOutline: Int = 0xFF8E8E93.toInt()
+
+    /** 暗色模式轮廓色 */
+    @ColorInt
+    val colorOutlineDark: Int = 0xFF636366.toInt()
+
+    // ── Surface Container 层级色（M3 对齐 — 用于卡片、底栏、抽屉等层级面） ──
+
+    /** 表面暗调（最暗的表面容器） */
+    @ColorInt
+    val colorSurfaceDim: Int = 0xFFD8D8DD.toInt()
+
+    /** 暗色模式表面暗调 */
+    @ColorInt
+    val colorSurfaceDimDark: Int = 0xFF000000.toInt()
+
+    /** 表面亮调（最亮的表面容器） */
+    @ColorInt
+    val colorSurfaceBright: Int = 0xFFF2F2F7.toInt()
+
+    /** 暗色模式表面亮调 */
+    @ColorInt
+    val colorSurfaceBrightDark: Int = 0xFF2C2C2E.toInt()
+
+    /** 表面容器 — 最低层级 */
+    @ColorInt
+    val colorSurfaceContainerLowest: Int = 0xFFFFFFFF.toInt()
+
+    /** 暗色模式表面容器 — 最低层级 */
+    @ColorInt
+    val colorSurfaceContainerLowestDark: Int = 0xFF000000.toInt()
+
+    /** 表面容器 — 低层级 */
+    @ColorInt
+    val colorSurfaceContainerLow: Int = 0xFFFAFAFF.toInt()
+
+    /** 暗色模式表面容器 — 低层级 */
+    @ColorInt
+    val colorSurfaceContainerLowDark: Int = 0xFF111113.toInt()
+
+    /** 表面容器 — 中层级 */
+    @ColorInt
+    val colorSurfaceContainer: Int = 0xFFF2F2F7.toInt()
+
+    /** 暗色模式表面容器 — 中层级 */
+    @ColorInt
+    val colorSurfaceContainerDark: Int = 0xFF1C1C1E.toInt()
+
+    /** 表面容器 — 高层级 */
+    @ColorInt
+    val colorSurfaceContainerHigh: Int = 0xFFE5E5EA.toInt()
+
+    /** 暗色模式表面容器 — 高层级 */
+    @ColorInt
+    val colorSurfaceContainerHighDark: Int = 0xFF2C2C2E.toInt()
+
+    /** 表面容器 — 最高层级 */
+    @ColorInt
+    val colorSurfaceContainerHighest: Int = 0xFFD8D8DD.toInt()
+
+    /** 暗色模式表面容器 — 最高层级 */
+    @ColorInt
+    val colorSurfaceContainerHighestDark: Int = 0xFF3A3A3C.toInt()
+
     // ═══════════════════════════════════════════════════════════════════════
     // 形状 Token — 圆角半径（dp 值，由各体系自行转换为 px / Dp）
     // ═══════════════════════════════════════════════════════════════════════
