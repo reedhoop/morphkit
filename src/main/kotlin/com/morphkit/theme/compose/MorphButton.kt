@@ -120,21 +120,21 @@ private fun IosButton(
                     // 按下：变亮动画
                     pressAlpha.animateTo(
                         targetValue = 1f,
-                        animationSpec = tween(MorphTokens.PressInDuration.toInt())
+                        animationSpec = tween(MorphTokens.pressInDuration.toInt())
                     )
                 }
                 is PressInteraction.Release -> {
                     // 松开：恢复动画
                     pressAlpha.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(MorphTokens.PressOutDuration.toInt())
+                        animationSpec = tween(MorphTokens.pressOutDuration.toInt())
                     )
                 }
                 is PressInteraction.Cancel -> {
                     // 取消（手指移出按钮区域）：恢复动画
                     pressAlpha.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(MorphTokens.PressOutDuration.toInt())
+                        animationSpec = tween(MorphTokens.pressOutDuration.toInt())
                     )
                 }
             }
@@ -144,17 +144,17 @@ private fun IosButton(
     val backgroundColor = if (enabled) {
         colors.primary
     } else {
-        colors.primary.copy(alpha = MorphTokens.DisabledAlpha)
+        colors.primary.copy(alpha = MorphTokens.disabledAlpha)
     }
     val contentColor = if (enabled) {
         colors.onPrimary
     } else {
-        colors.onPrimary.copy(alpha = MorphTokens.DisabledAlpha)
+        colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
     }
 
     // 按压态颜色：将白色遮罩混合到主色上，模拟 iOS 按压变亮效果
     val displayColor = if (enabled) {
-        val overlayAlpha = pressAlpha.value * MorphTokens.PressOverlayMaxAlpha
+        val overlayAlpha = pressAlpha.value * MorphTokens.pressOverlayMaxAlpha
         backgroundColor.lerp(Color.White, overlayAlpha)
     } else {
         backgroundColor
@@ -227,8 +227,8 @@ private fun MaterialButton(
         colors = ButtonDefaults.buttonColors(
             containerColor = colors.primary,
             contentColor = colors.onPrimary,
-            disabledContainerColor = colors.primary.copy(alpha = MorphTokens.DisabledAlpha),
-            disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.DisabledAlpha)
+            disabledContainerColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha),
+            disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
         ),
         contentPadding = PaddingValues(horizontal = 24.dp, vertical = 0.dp)
     ) {
