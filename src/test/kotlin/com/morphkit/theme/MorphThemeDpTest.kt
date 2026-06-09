@@ -5,9 +5,14 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.DisplayMetrics
+import android.util.TypedValue
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -30,6 +35,33 @@ import org.junit.jupiter.api.Test
  * dp → px 公式：`px = dp × density + 0.5`（TypedValue.applyDimension 内部实现）
  */
 class MorphThemeDpTest {
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun setUpTypedValue() {
+            mockkStatic(TypedValue::class)
+            every {
+                TypedValue.applyDimension(any(), any(), any())
+            } answers {
+                val unit = firstArg<Int>()
+                val value = secondArg<Float>()
+                val metrics = thirdArg<DisplayMetrics>()
+                when (unit) {
+                    TypedValue.COMPLEX_UNIT_DIP -> value * metrics.density
+                    TypedValue.COMPLEX_UNIT_SP -> value * metrics.scaledDensity
+                    TypedValue.COMPLEX_UNIT_PX -> value
+                    else -> value
+                }
+            }
+        }
+
+        @JvmStatic
+        @AfterAll
+        fun tearDownTypedValue() {
+            unmockkStatic(TypedValue::class)
+        }
+    }
 
     /** 不同密度的 mock Context 缓存 */
     private lateinit var mdpiContext: Context      // density = 1.0

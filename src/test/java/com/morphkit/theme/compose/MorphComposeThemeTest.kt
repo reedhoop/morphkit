@@ -46,23 +46,23 @@ class MorphComposeThemeTest {
     @Test
     fun morphTokens_colorConstantsAreAccessible() {
         // Verify key color tokens used by MorphColorPalette are present and non-zero
-        assertThat(MorphTokens.Blue500).isNotEqualTo(0)
-        assertThat(MorphTokens.OnPrimary).isNotEqualTo(0)
-        assertThat(MorphTokens.Surface).isNotEqualTo(0)
-        assertThat(MorphTokens.Red500).isNotEqualTo(0)
-        assertThat(MorphTokens.Green500).isNotEqualTo(0)
-        assertThat(MorphTokens.Orange500).isNotEqualTo(0)
+        assertThat(MorphTokens.colorBlue500).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOnPrimary).isNotEqualTo(0)
+        assertThat(MorphTokens.colorSurface).isNotEqualTo(0)
+        assertThat(MorphTokens.colorRed500).isNotEqualTo(0)
+        assertThat(MorphTokens.colorGreen500).isNotEqualTo(0)
+        assertThat(MorphTokens.colorOrange500).isNotEqualTo(0)
     }
 
     @Test
     fun morphTokens_cornerRadiusConstantsAreAccessible() {
         // Verify shape tokens used by MorphShape are present
-        assertThat(MorphTokens.CornerRadiusButtonIOS).isEqualTo(12)
-        assertThat(MorphTokens.CornerRadiusButtonPixel).isEqualTo(8)
-        assertThat(MorphTokens.CornerRadiusCardIOS).isEqualTo(16)
-        assertThat(MorphTokens.CornerRadiusSmall).isEqualTo(8)
-        assertThat(MorphTokens.CornerRadiusMedium).isEqualTo(12)
-        assertThat(MorphTokens.CornerRadiusLarge).isEqualTo(16)
+        assertThat(MorphTokens.cornerRadiusButtonIos).isEqualTo(12)
+        assertThat(MorphTokens.cornerRadiusButtonPixel).isEqualTo(8)
+        assertThat(MorphTokens.cornerRadiusCardIos).isEqualTo(16)
+        assertThat(MorphTokens.cornerRadiusSmall).isEqualTo(8)
+        assertThat(MorphTokens.cornerRadiusMedium).isEqualTo(12)
+        assertThat(MorphTokens.cornerRadiusLarge).isEqualTo(16)
     }
 
     // ── 3. Data class field verification ──────────────────────────────────
