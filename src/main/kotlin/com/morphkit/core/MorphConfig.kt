@@ -14,35 +14,47 @@ import android.view.View
 val unifiedPrefix = MorphConfig.DEFAULT_PREFIX
 
 /**
- * 自适应风格策略枚举。
+ * 自适应风格策略枚举 — MorphKit 唯一的风格决策类型。
  *
  * 决定 MorphKit 在运行时选择哪套内置皮肤，由 [MorphConfig.stylePolicy] 配置。
+ * View 体系（[MorphStyleResolver]）和 Compose 体系（MorphTheme composable）均使用
+ * 此枚举，消除以往 `MorphStyle` / `StylePolicy` 双重概念的歧义。
  *
  * | 策略 | 行为 | 适用场景 |
  * |------|------|---------|
  * | [AUTO] | 根据设备是否支持 Dynamic Color 自动选择 | 默认策略，零配置 |
- * | [FORCE_IOS] | 强制使用 iOS 极简风格 | 需要确定性强、不依赖系统取色的场景 |
- * | [FORCE_PIXEL] | 强制使用 Pixel (Material You) 风格 | 需要原生 M3 体验的场景 |
+ * | [IOS] | 使用 iOS 极简风格 | 需要确定性强、不依赖系统取色的场景 |
+ * | [PIXEL] | 使用 Pixel (Material You) 风格 | 需要原生 M3 体验的场景 |
  *
  * ## AUTO 策略判定逻辑
  *
  * ```
  * 设备支持 Dynamic Color (Android 12+ 且壁纸引擎可用)
- *   └─ → Pixel (将色彩控制权交给系统壁纸引擎)
+ *   └─ → PIXEL (将色彩控制权交给系统壁纸引擎)
  * 设备不支持 Dynamic Color
- *   └─ → iOS (回退到确定性强、不依赖系统取色的极简风格)
+ *   └─ → IOS (回退到确定性强、不依赖系统取色的极简风格)
  * ```
  *
  * @see MorphConfig.stylePolicy
  * @see MorphStyleResolver
  */
 enum class StylePolicy {
-    /** 自动检测：支持 Dynamic Color → Pixel，否则 → iOS */
+    /** 自动检测：支持 Dynamic Color → PIXEL，否则 → IOS */
     AUTO,
-    /** 强制 iOS 极简风格，无视设备环境 */
-    FORCE_IOS,
-    /** 强制 Pixel (Material You) 风格，无视设备环境 */
-    FORCE_PIXEL
+    /** iOS 极简风格 */
+    IOS,
+    /** Pixel (Material You) 风格 */
+    PIXEL;
+
+    companion object {
+        /** @suppress 向后兼容：旧代码中的 FORCE_IOS 等价于 [IOS] */
+        @Deprecated("Use IOS instead", ReplaceWith("StylePolicy.IOS"))
+        val FORCE_IOS: StylePolicy = IOS
+
+        /** @suppress 向后兼容：旧代码中的 FORCE_PIXEL 等价于 [PIXEL] */
+        @Deprecated("Use PIXEL instead", ReplaceWith("StylePolicy.PIXEL"))
+        val FORCE_PIXEL: StylePolicy = PIXEL
+    }
 }
 
 /**
@@ -117,13 +129,13 @@ class MorphConfig internal constructor() {
      *
      * 决定 MorphKit 在运行时选择 iOS 极简风还是 Pixel 原生风：
      * - [StylePolicy.AUTO]（默认）：根据设备是否支持 Dynamic Color 自动选择
-     * - [StylePolicy.FORCE_IOS]：强制 iOS 极简风格
-     * - [StylePolicy.FORCE_PIXEL]：强制 Pixel (Material You) 风格
+     * - [StylePolicy.IOS]：iOS 极简风格
+     * - [StylePolicy.PIXEL]：Pixel (Material You) 风格
      *
      * 示例：
      * ```kotlin
      * MorphKit.init(application) {
-     *     stylePolicy(StylePolicy.FORCE_IOS)  // 强制 iOS 风格
+     *     stylePolicy(StylePolicy.IOS)  // iOS 风格
      *     // ...
      * }
      * ```

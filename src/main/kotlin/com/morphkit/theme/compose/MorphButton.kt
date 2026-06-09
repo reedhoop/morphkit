@@ -29,6 +29,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTokens
 import kotlinx.coroutines.flow.collectLatest
 
@@ -39,8 +40,8 @@ import kotlinx.coroutines.flow.collectLatest
  *
  * | 交互模式 | 触控反馈 | 视觉特征 | 风格 |
  * |---------|---------|---------|------|
- * | [MorphInteractionMode.IOS] | 按压整体变色，无涟漪 | 大圆角 12dp，零阴影 | iOS 极简 |
- * | [MorphInteractionMode.MATERIAL] | 保留 Material3 Ripple 涟漪 | 圆角 8dp，M3 标准 | Pixel 原生 |
+ * | [InteractionMode.IOS] | 按压整体变色，无涟漪 | 大圆角 12dp，零阴影 | iOS 极简 |
+ * | [InteractionMode.MATERIAL] | 保留 Material3 Ripple 涟漪 | 圆角 8dp，M3 标准 | Pixel 原生 |
  *
  * ## OEM 接入规范（强制）
  *
@@ -59,13 +60,13 @@ fun MorphButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    interactionMode: MorphInteractionMode = LocalMorphInteractionMode.current
+    interactionMode: InteractionMode = LocalMorphInteractionMode.current
 ) {
     val colors = LocalMorphColors.current
     val shape = LocalMorphShape.current
 
     when (interactionMode) {
-        MorphInteractionMode.IOS -> {
+        InteractionMode.IOS -> {
             IosButton(
                 text = text,
                 onClick = onClick,
@@ -75,7 +76,7 @@ fun MorphButton(
                 cornerRadius = shape.cornerRadiusButton
             )
         }
-        MorphInteractionMode.MATERIAL -> {
+        InteractionMode.MATERIAL -> {
             MaterialButton(
                 text = text,
                 onClick = onClick,

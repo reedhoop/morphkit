@@ -564,16 +564,16 @@ class MorphKitTest {
         @Test
         fun `init后finalThemeResId被赋值`() {
             MorphKit.init(mockApp) {
-                stylePolicy(StylePolicy.FORCE_IOS)
+                stylePolicy(StylePolicy.IOS)
             }
 
             assertNotEquals(0, MorphKit.finalThemeResId, "init 后 finalThemeResId 应被赋值")
         }
 
         @Test
-        fun `FORCE_IOS策略_finalThemeResId指向iOS主题`() {
+        fun `IOS策略_finalThemeResId指向iOS主题`() {
             MorphKit.init(mockApp) {
-                stylePolicy(StylePolicy.FORCE_IOS)
+                stylePolicy(StylePolicy.IOS)
             }
 
             assertEquals(

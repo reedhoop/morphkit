@@ -19,7 +19,7 @@ import com.morphkit.core.StylePolicy
  *    OEM 厂商只需在系统设置 App 中修改此值，所有接入 MorphKit 的预装 App 即可瞬间整体变装。
  * 2. **AUTO 策略检测**：当 OEM 未设置时，检查设备是否支持 Material You Dynamic Color，
  *    支持则选择 Pixel 皮肤，不支持则回退到 iOS 皮肤。
- * 3. **强制策略**：[StylePolicy.FORCE_IOS] / [StylePolicy.FORCE_PIXEL]
+ * 3. **强制策略**：[StylePolicy.IOS] / [StylePolicy.PIXEL]
  *    无视设备环境，直接返回对应的 Theme ResId。
  *
  * ## 优先级链路
@@ -29,8 +29,8 @@ import com.morphkit.core.StylePolicy
  *   ├─ 值为 1 → iOS 极简风（OEM 指定）
  *   ├─ 值为 2 → Pixel 原生风（OEM 指定）
  *   └─ 值为 0（默认）→ 根据 StylePolicy 判定
- *        ├─ FORCE_IOS → iOS
- *        ├─ FORCE_PIXEL → Pixel
+ *        ├─ IOS → iOS
+ *        ├─ PIXEL → Pixel
  *        └─ AUTO → Dynamic Color 可用 → Pixel，否则 → iOS
  * ```
  *
@@ -105,11 +105,11 @@ object MorphStyleResolver {
      */
     private fun resolveByPolicy(context: Context, policy: StylePolicy): Int {
         return when (policy) {
-            StylePolicy.FORCE_IOS -> {
+            StylePolicy.IOS -> {
                 Log.d(TAG, "Style policy applied -> iOS (forced)")
                 R.style.Theme_MorphKit_iOS
             }
-            StylePolicy.FORCE_PIXEL -> {
+            StylePolicy.PIXEL -> {
                 Log.d(TAG, "Style policy applied -> Pixel (forced)")
                 R.style.Theme_MorphKit_Pixel
             }

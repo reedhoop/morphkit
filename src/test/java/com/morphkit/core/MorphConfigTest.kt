@@ -129,11 +129,11 @@ class MorphConfigTest {
     fun `stylePolicy DSL设置后_policy变更`() {
         val config = MorphConfig()
 
-        config.stylePolicy(StylePolicy.FORCE_IOS)
-        assertEquals(StylePolicy.FORCE_IOS, config.policy)
+        config.stylePolicy(StylePolicy.IOS)
+        assertEquals(StylePolicy.IOS, config.policy)
 
-        config.stylePolicy(StylePolicy.FORCE_PIXEL)
-        assertEquals(StylePolicy.FORCE_PIXEL, config.policy)
+        config.stylePolicy(StylePolicy.PIXEL)
+        assertEquals(StylePolicy.PIXEL, config.policy)
     }
 
     // ═══════════════════════════════════════════════════════════════════════

@@ -60,28 +60,28 @@ class MorphStyleResolverTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 用例 B1：FORCE_IOS 策略直接返回 iOS Theme
+    // 用例 B1：IOS 策略直接返回 iOS Theme
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `FORCE_IOS策略_返回iOS主题`() {
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_IOS)
+    fun `IOS策略_返回iOS主题`() {
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.IOS)
         assertEquals(
-            "FORCE_IOS 应返回 iOS 主题",
+            "IOS 应返回 iOS 主题",
             com.morphkit.R.style.Theme_MorphKit_iOS,
             themeResId
         )
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 用例 B2：FORCE_PIXEL 策略直接返回 Pixel Theme
+    // 用例 B2：PIXEL 策略直接返回 Pixel Theme
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `FORCE_PIXEL策略_返回Pixel主题`() {
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_PIXEL)
+    fun `PIXEL策略_返回Pixel主题`() {
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
         assertEquals(
-            "FORCE_PIXEL 应返回 Pixel 主题",
+            "PIXEL 应返回 Pixel 主题",
             com.morphkit.R.style.Theme_MorphKit_Pixel,
             themeResId
         )
@@ -115,12 +115,12 @@ class MorphStyleResolverTest {
 
     @Test
     fun `OEM系统设置优先级高于StylePolicy`() {
-        // OEM 设置为 iOS (1)，但 StylePolicy 为 FORCE_PIXEL
+        // OEM 设置为 iOS (1)，但 StylePolicy 为 PIXEL
         every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 1
 
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_PIXEL)
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
         assertEquals(
-            "OEM 设置为 iOS 时应返回 iOS 主题，即使 StylePolicy 为 FORCE_PIXEL",
+            "OEM 设置为 iOS 时应返回 iOS 主题，即使 StylePolicy 为 PIXEL",
             com.morphkit.R.style.Theme_MorphKit_iOS,
             themeResId
         )
@@ -134,9 +134,9 @@ class MorphStyleResolverTest {
     fun `OEM系统设置为Pixel时_返回Pixel主题`() {
         every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 2
 
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_IOS)
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.IOS)
         assertEquals(
-            "OEM 设置为 Pixel 时应返回 Pixel 主题，即使 StylePolicy 为 FORCE_IOS",
+            "OEM 设置为 Pixel 时应返回 Pixel 主题，即使 StylePolicy 为 IOS",
             com.morphkit.R.style.Theme_MorphKit_Pixel,
             themeResId
         )
@@ -150,7 +150,7 @@ class MorphStyleResolverTest {
     fun `OEM系统设置读取异常时_安全回退到StylePolicy`() {
         every { Settings.System.getInt(any(), "oem_ui_style", any()) } throws SecurityException("权限不足")
 
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_IOS)
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.IOS)
         assertEquals(
             "OEM 设置读取异常时应安全回退到 StylePolicy",
             com.morphkit.R.style.Theme_MorphKit_iOS,
@@ -167,7 +167,7 @@ class MorphStyleResolverTest {
         // OEM 设置为 99（未知值），应回退到 StylePolicy
         every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 99
 
-        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.FORCE_PIXEL)
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
         assertEquals(
             "OEM 未知值时应回退到 StylePolicy",
             com.morphkit.R.style.Theme_MorphKit_Pixel,

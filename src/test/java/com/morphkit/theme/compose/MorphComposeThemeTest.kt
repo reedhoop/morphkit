@@ -25,16 +25,19 @@ class MorphComposeThemeTest {
     // ── 1. Class existence & correct package ──────────────────────────────
 
     @Test
-    fun morphStyle_enumExistsInCorrectPackage() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphStyle")
-        assertThat(clazz.`package`?.name).isEqualTo("com.morphkit.theme.compose")
+    fun stylePolicy_enumExistsInCorePackage() {
+        val clazz = Class.forName("com.morphkit.core.StylePolicy")
+        assertThat(clazz.`package`?.name).isEqualTo("com.morphkit.core")
         assertThat(clazz.isEnum).isTrue()
+
+        val enumConstants = clazz.enumConstants?.map { (it as Enum<*>).name } ?: emptyList()
+        assertThat(enumConstants).containsExactly("AUTO", "IOS", "PIXEL")
     }
 
     @Test
-    fun morphInteractionMode_enumExistsWithCorrectValues() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphInteractionMode")
-        assertThat(clazz.`package`?.name).isEqualTo("com.morphkit.theme.compose")
+    fun interactionMode_enumExistsInCorePackage() {
+        val clazz = Class.forName("com.morphkit.core.InteractionMode")
+        assertThat(clazz.`package`?.name).isEqualTo("com.morphkit.core")
         assertThat(clazz.isEnum).isTrue()
 
         val enumConstants = clazz.enumConstants?.map { (it as Enum<*>).name } ?: emptyList()
@@ -185,7 +188,7 @@ class MorphComposeThemeTest {
         assertThat(utf8Strings).contains("LocalMorphColors")
         assertThat(utf8Strings).contains("LocalMorphShape")
         assertThat(utf8Strings).contains("LocalMorphInteractionMode")
-        assertThat(utf8Strings).contains("LocalMorphStyle")
+        assertThat(utf8Strings).contains("LocalMorphStylePolicy")
     }
 
     /**
@@ -233,14 +236,14 @@ class MorphComposeThemeTest {
         return constants
     }
 
-    // ── 5. MorphStyle enum values ─────────────────────────────────────────
+    // ── 5. StylePolicy enum values ────────────────────────────────────────
 
     @Test
-    fun morphStyle_hasAutoIosPixelValues() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphStyle")
+    fun stylePolicy_hasAutoIosPixelValues() {
+        val clazz = Class.forName("com.morphkit.core.StylePolicy")
         val enumConstants = clazz.enumConstants?.map { (it as Enum<*>).name } ?: emptyList()
 
-        assertThat(enumConstants).containsExactly("Auto", "iOS", "Pixel")
+        assertThat(enumConstants).containsExactly("AUTO", "IOS", "PIXEL")
     }
 
     // ── 6. S15: MorphColorPalette companion methods ───────────────────────
