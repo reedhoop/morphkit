@@ -88,35 +88,35 @@ data class MorphColorPalette(
     companion object {
         /** iOS 亮色色板 — 从 MorphTokens 读取 */
         fun iosLight() = MorphColorPalette(
-            primary = Color(MorphTokens.Blue500),
-            onPrimary = Color(MorphTokens.OnPrimary),
-            primaryContainer = Color(MorphTokens.PrimaryContainer),
-            onPrimaryContainer = Color(MorphTokens.OnPrimaryContainer),
-            surface = Color(MorphTokens.Surface),
-            surfaceVariant = Color(MorphTokens.SurfaceVariant),
-            onSurface = Color(MorphTokens.OnSurface),
-            onSurfaceVariant = Color(MorphTokens.OnSurfaceVariant),
-            outlineVariant = Color(MorphTokens.OutlineVariant),
-            background = Color(MorphTokens.Background),
-            onBackground = Color(MorphTokens.OnSurface),
-            error = Color(MorphTokens.Red500),
-            success = Color(MorphTokens.Green500),
-            warning = Color(MorphTokens.Orange500)
+            primary = Color(MorphTokens.colorBlue500),
+            onPrimary = Color(MorphTokens.colorOnPrimary),
+            primaryContainer = Color(MorphTokens.colorPrimaryContainer),
+            onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainer),
+            surface = Color(MorphTokens.colorSurface),
+            surfaceVariant = Color(MorphTokens.colorSurfaceVariant),
+            onSurface = Color(MorphTokens.colorOnSurface),
+            onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariant),
+            outlineVariant = Color(MorphTokens.colorOutlineVariant),
+            background = Color(MorphTokens.colorBackground),
+            onBackground = Color(MorphTokens.colorOnSurface),
+            error = Color(MorphTokens.colorRed500),
+            success = Color(MorphTokens.colorGreen500),
+            warning = Color(MorphTokens.colorOrange500)
         )
 
         /** iOS 暗色色板 — 从 MorphTokens 读取 */
         fun iosDark() = MorphColorPalette(
-            primary = Color(MorphTokens.Blue100),
+            primary = Color(MorphTokens.colorBlue100),
             onPrimary = Color(0xFF001D3F),
-            primaryContainer = Color(MorphTokens.Blue700),
-            onPrimaryContainer = Color(MorphTokens.Blue100),
-            surface = Color(MorphTokens.SurfaceDark),
-            surfaceVariant = Color(MorphTokens.SurfaceVariantDark),
-            onSurface = Color(MorphTokens.OnSurfaceDark),
-            onSurfaceVariant = Color(MorphTokens.OnSurfaceVariantDark),
-            outlineVariant = Color(MorphTokens.OutlineVariantDark),
-            background = Color(MorphTokens.BackgroundDark),
-            onBackground = Color(MorphTokens.OnSurfaceDark),
+            primaryContainer = Color(MorphTokens.colorBlue700),
+            onPrimaryContainer = Color(MorphTokens.colorBlue100),
+            surface = Color(MorphTokens.colorSurfaceDark),
+            surfaceVariant = Color(MorphTokens.colorSurfaceVariantDark),
+            onSurface = Color(MorphTokens.colorOnSurfaceDark),
+            onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariantDark),
+            outlineVariant = Color(MorphTokens.colorOutlineVariantDark),
+            background = Color(MorphTokens.colorBackgroundDark),
+            onBackground = Color(MorphTokens.colorOnSurfaceDark),
             error = Color(0xFFFF6961),
             success = Color(0xFF30D158),
             warning = Color(0xFFFFB340)
@@ -133,20 +133,20 @@ data class MorphColorPalette(
          */
         fun pixelFromContext(context: Context): MorphColorPalette {
             return MorphColorPalette(
-                primary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimary, MorphTokens.Blue500),
-                onPrimary = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimary, MorphTokens.OnPrimary),
-                primaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryContainer, MorphTokens.PrimaryContainer),
-                onPrimaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimaryContainer, MorphTokens.OnPrimaryContainer),
-                surface = resolveM3Color(context, com.google.android.material.R.attr.colorSurface, MorphTokens.Surface),
-                surfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceVariant, MorphTokens.SurfaceVariant),
-                onSurface = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.OnSurface),
-                onSurfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurfaceVariant, MorphTokens.OnSurfaceVariant),
-                outlineVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOutlineVariant, MorphTokens.OutlineVariant),
-                background = resolveM3Color(context, android.R.attr.colorBackground, MorphTokens.Background),
-                onBackground = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.OnSurface),
-                error = resolveM3Color(context, com.google.android.material.R.attr.colorError, MorphTokens.Red500),
-                success = Color(MorphTokens.Green500),
-                warning = Color(MorphTokens.Orange500)
+                primary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimary, MorphTokens.colorBlue500),
+                onPrimary = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimary, MorphTokens.colorOnPrimary),
+                primaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryContainer, MorphTokens.colorPrimaryContainer),
+                onPrimaryContainer = resolveM3Color(context, com.google.android.material.R.attr.colorOnPrimaryContainer, MorphTokens.colorOnPrimaryContainer),
+                surface = resolveM3Color(context, com.google.android.material.R.attr.colorSurface, MorphTokens.colorSurface),
+                surfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceVariant, MorphTokens.colorSurfaceVariant),
+                onSurface = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.colorOnSurface),
+                onSurfaceVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurfaceVariant, MorphTokens.colorOnSurfaceVariant),
+                outlineVariant = resolveM3Color(context, com.google.android.material.R.attr.colorOutlineVariant, MorphTokens.colorOutlineVariant),
+                background = resolveM3Color(context, android.R.attr.colorBackground, MorphTokens.colorBackground),
+                onBackground = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, MorphTokens.colorOnSurface),
+                error = resolveM3Color(context, com.google.android.material.R.attr.colorError, MorphTokens.colorRed500),
+                success = Color(MorphTokens.colorGreen500),
+                warning = Color(MorphTokens.colorOrange500)
             )
         }
 
@@ -178,21 +178,21 @@ data class MorphShape(
 ) {
     companion object {
         fun ios() = MorphShape(
-            cornerRadiusButton = MorphTokens.CornerRadiusButtonIOS,
-            cornerRadiusCard = MorphTokens.CornerRadiusCardIOS,
-            cornerRadiusTextField = MorphTokens.CornerRadiusTextFieldIOS,
-            cornerRadiusSmall = MorphTokens.CornerRadiusSmall,
-            cornerRadiusMedium = MorphTokens.CornerRadiusMedium,
-            cornerRadiusLarge = MorphTokens.CornerRadiusLarge
+            cornerRadiusButton = MorphTokens.cornerRadiusButtonIos,
+            cornerRadiusCard = MorphTokens.cornerRadiusCardIos,
+            cornerRadiusTextField = MorphTokens.cornerRadiusTextFieldIos,
+            cornerRadiusSmall = MorphTokens.cornerRadiusSmall,
+            cornerRadiusMedium = MorphTokens.cornerRadiusMedium,
+            cornerRadiusLarge = MorphTokens.cornerRadiusLarge
         )
 
         fun pixel() = MorphShape(
-            cornerRadiusButton = MorphTokens.CornerRadiusButtonPixel,
-            cornerRadiusCard = MorphTokens.CornerRadiusCardPixel,
-            cornerRadiusTextField = MorphTokens.CornerRadiusTextFieldPixel,
-            cornerRadiusSmall = MorphTokens.CornerRadiusSmall,
-            cornerRadiusMedium = MorphTokens.CornerRadiusMedium,
-            cornerRadiusLarge = MorphTokens.CornerRadiusLarge
+            cornerRadiusButton = MorphTokens.cornerRadiusButtonPixel,
+            cornerRadiusCard = MorphTokens.cornerRadiusCardPixel,
+            cornerRadiusTextField = MorphTokens.cornerRadiusTextFieldPixel,
+            cornerRadiusSmall = MorphTokens.cornerRadiusSmall,
+            cornerRadiusMedium = MorphTokens.cornerRadiusMedium,
+            cornerRadiusLarge = MorphTokens.cornerRadiusLarge
         )
     }
 }
@@ -299,21 +299,21 @@ private fun resolveAutoStyle(context: Context): MorphStyle {
 private fun morphTypography(): Typography {
     val ff = FontFamily.SansSerif
     return Typography(
-        displayLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.FontSizeLargeTitle.sp),
-        displayMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.FontSizeTitle1.sp),
-        displaySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.FontSizeTitle2.sp),
-        headlineLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.FontSizeTitle3.sp),
-        headlineMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.FontSizeHeadline.sp),
-        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.FontSizeHeadline.sp),
-        titleLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.FontSizeTitle3.sp),
-        titleMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.FontSizeHeadline.sp),
-        titleSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeSubheadline.sp),
-        bodyLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeBody.sp),
-        bodyMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeCallout.sp),
-        bodySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeSubheadline.sp),
-        labelLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeButton.sp),
-        labelMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeCaption1.sp),
-        labelSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.FontSizeCaption2.sp)
+        displayLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.fontSizeLargeTitle.sp),
+        displayMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.fontSizeTitle1.sp),
+        displaySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle2.sp),
+        headlineLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle3.sp),
+        headlineMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
+        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
+        titleLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle3.sp),
+        titleMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
+        titleSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeSubheadline.sp),
+        bodyLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeBody.sp),
+        bodyMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCallout.sp),
+        bodySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeSubheadline.sp),
+        labelLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeButton.sp),
+        labelMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCaption1.sp),
+        labelSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCaption2.sp)
     )
 }
 
