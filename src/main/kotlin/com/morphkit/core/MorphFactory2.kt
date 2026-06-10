@@ -64,13 +64,18 @@ class MorphFactory2(
     private var hostHasMorphAttr = false
 
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
+    // @Volatile: MorphInstaller 在 onActivityCreated 中写入，onCreateView 在 UI 线程读取
+    @Volatile
     private var cachedThemedContext: Context? = null
+    @Volatile
     private var cachedBaseContext: Context? = null
 
     /**
      * 补充 AppCompat delegate 作为 originalFactory。
+     *
+     * 仅供 [MorphInstaller] 内部调用，外部不应直接修改。
      */
-    fun updateOriginalFactory(factory: LayoutInflater.Factory2) {
+    internal fun updateOriginalFactory(factory: LayoutInflater.Factory2) {
         originalFactory = factory
     }
 

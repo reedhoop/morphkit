@@ -80,7 +80,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphColorPalette_hasAllExpectedFields() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化，避免 Compose UI Color 类加载失败
+            javaClass.classLoader
+        )
         val expectedFields = setOf(
             // Primary
             "primary", "onPrimary", "primaryContainer", "onPrimaryContainer",
@@ -116,7 +120,11 @@ class MorphComposeThemeTest {
     fun morphColorPalette_fieldCountMatchesM3ColorScheme() {
         // M3 ColorScheme has 37 color roles (including surfaceTint)
         // MorphColorPalette should have exactly 37 non-static fields
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val fieldCount = clazz.declaredFields
             .count { !Modifier.isStatic(it.modifiers) }
 
@@ -140,7 +148,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphShape_hasAllExpectedFields() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphShape",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val expectedFields = setOf(
             "cornerRadiusButton", "cornerRadiusCard", "cornerRadiusTextField",
             "cornerRadiusSmall", "cornerRadiusMedium", "cornerRadiusLarge"
@@ -167,7 +179,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphShape_fieldCountIsSix() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphShape",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val fieldCount = clazz.declaredFields
             .count { !Modifier.isStatic(it.modifiers) }
         assertThat(fieldCount).isEqualTo(6)
@@ -250,7 +266,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphColorPalette_companionHasFactoryMethods() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val companion = clazz.declaredClasses.firstOrNull { it.simpleName == "Companion" }
         assertThat(companion).isNotNull()
 
@@ -262,7 +282,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphColorPalette_companionHasPrivateResolveM3Color() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val companion = clazz.declaredClasses.first { it.simpleName == "Companion" }
         val methodNames = companion.declaredMethods.map { it.name }
         // resolveM3Color is a private helper — verify any method with "resolve" and "Color" in name exists
@@ -274,7 +298,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphShape_companionHasFactoryMethods() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphShape",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val companion = clazz.declaredClasses.firstOrNull { it.simpleName == "Companion" }
         assertThat(companion).isNotNull()
 
@@ -438,7 +466,11 @@ class MorphComposeThemeTest {
             "scrim"
         )
 
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val fieldNames = clazz.declaredFields
             .filter { !Modifier.isStatic(it.modifiers) }
             .map { it.name }
@@ -452,7 +484,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphColorPalette_isDataClass() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphColorPalette")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphColorPalette",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val methodNames = clazz.declaredMethods.map { it.name }
         // Data classes generate equals(), hashCode(), toString() — verify these exist
         assertThat(methodNames).contains("equals")
@@ -467,7 +503,11 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphShape_isDataClass() {
-        val clazz = Class.forName("com.morphkit.theme.compose.MorphShape")
+        val clazz = Class.forName(
+            "com.morphkit.theme.compose.MorphShape",
+            false, // 不触发类初始化
+            javaClass.classLoader
+        )
         val methodNames = clazz.declaredMethods.map { it.name }
         assertThat(methodNames).contains("copy")
         assertThat(methodNames).contains("component1")

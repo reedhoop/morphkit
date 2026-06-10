@@ -245,9 +245,14 @@ object MorphKit {
      * @see MorphStyleResolver
      * @see MorphFactory2
      */
-    var finalThemeResId: Int = 0
-        /** Only written by [MorphKit.init]; external code must treat this as read-only. */
-        private set
+    private var _finalThemeResId: Int = 0
+
+    /**
+     * 获取 MorphKit 解析出的最终 Theme 资源 ID。
+     *
+     * @return Theme 资源 ID，0 表示宿主已完全接管
+     */
+    fun getFinalThemeResId(): Int = _finalThemeResId
 
     /**
      * 初始化 MorphKit 引擎。
@@ -255,7 +260,7 @@ object MorphKit {
      * 完成以下操作（原子性，不可部分执行）：
      * 1. 创建 [MorphConfig] 并执行 DSL 配置块，注册所有 replace / groupReplace / modify 规则
      * 2. 根据 [StylePolicy] 通过 [MorphStyleResolver] 解析最终 Theme，
-     *    缓存到 [finalThemeResId]，并打印策略日志
+     *    缓存到 [getFinalThemeResId]，并打印策略日志
      * 3. 调用 [MorphInstaller.install] 注册 Activity 生命周期回调，在每个 Activity 启动前
      *    自动注入 [MorphFactory2]
      *
@@ -272,7 +277,7 @@ object MorphKit {
         config = MorphConfig().apply(block)
 
         // ── 根据 StylePolicy 解析最终 Theme ──
-        finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
+        _finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
 
         // 自动安装全局 Factory2 注入，在每个 Activity 启动前拦截 LayoutInflater
         MorphInstaller.install(application)

@@ -161,25 +161,44 @@ object MorphStyleResolver {
     }
 
     /**
+     * 缓存的 DynamicColors.isDynamicColorAvailable 方法引用。
+     *
+     * 反射查找仅在首次调用时执行，后续调用直接复用。
+     * 首次查找失败后缓存为空方法（不再重试）。
+     */
+    @Volatile
+    private var cachedDynamicColorMethod: java.lang.reflect.Method? = null
+    private var dynamicColorMethodResolved = false
+
+    /**
      * 检测设备是否支持 Material You Dynamic Color。
      *
      * 双重检测策略：
-     * 1. 优先调用 DynamicColors.isDynamicColorAvailable()
+     * 1. 优先调用 DynamicColors.isDynamicColorAvailable()（反射结果已缓存，避免重复查找）
      * 2. 若反射调用失败，降级为 `Build.VERSION.SDK_INT >= S`
      *
      * @param context 上下文
      * @return true 表示设备支持 Dynamic Color
      */
     private fun checkDynamicColorAvailable(context: Context): Boolean {
-        try {
-            val clazz = Class.forName("com.google.android.material.color.DynamicColors")
-            val method = clazz.getMethod("isDynamicColorAvailable", Context::class.java)
-            val result = method.invoke(null, context)
-            if (result is Boolean) {
-                return result
+        // ── 缓存反射方法引用，避免每次调用都执行 Class.forName + getMethod ──
+        if (!dynamicColorMethodResolved) {
+            try {
+                val clazz = Class.forName("com.google.android.material.color.DynamicColors")
+                cachedDynamicColorMethod = clazz.getMethod("isDynamicColorAvailable", Context::class.java)
+            } catch (e: Exception) {
+                Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 不可用，降级到 API 级别检测", e)
             }
-        } catch (e: Exception) {
-            Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 不可用，降级到 API 级别检测", e)
+            dynamicColorMethodResolved = true
+        }
+
+        cachedDynamicColorMethod?.let { method ->
+            try {
+                val result = method.invoke(null, context)
+                if (result is Boolean) return result
+            } catch (e: Exception) {
+                Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 调用失败，降级到 API 级别检测", e)
+            }
         }
 
         return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S

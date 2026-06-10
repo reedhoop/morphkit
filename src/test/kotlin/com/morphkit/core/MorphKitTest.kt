@@ -567,7 +567,7 @@ class MorphKitTest {
                 stylePolicy(StylePolicy.IOS)
             }
 
-            assertNotEquals(0, MorphKit.finalThemeResId, "init 后 finalThemeResId 应被赋值")
+            assertNotEquals(0, MorphKit.getFinalThemeResId(), "init 后 finalThemeResId 应被赋值")
         }
 
         @Test
@@ -578,7 +578,7 @@ class MorphKitTest {
 
             assertEquals(
                 com.morphkit.R.style.Theme_MorphKit_iOS,
-                MorphKit.finalThemeResId
+                MorphKit.getFinalThemeResId()
             )
         }
     }

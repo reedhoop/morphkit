@@ -118,7 +118,7 @@ object MorphInstaller {
             }
 
             // originalFactory 暂时为 null，将在 onActivityCreated 中补充
-            val morphFactory = MorphFactory2(currentFactory2, MorphKit.finalThemeResId)
+            val morphFactory = MorphFactory2(currentFactory2, MorphKit.getFinalThemeResId())
             setFactoryFields(inflater, morphFactory)
 
             Log.d(TAG, "Factory2 注入成功: ${activity.javaClass.simpleName}")
