@@ -51,7 +51,7 @@
 -keep class com.morphkit.theme.MorphTokens { *; }
 
 # ═══════════════════════════════════════════════════════════════════════════════
-# 4. MorphKit 枚举 — StylePolicy / InteractionMode / MorphStyle / MorphInteractionMode
+# 4. MorphKit 枚举 — StylePolicy / InteractionMode
 #    枚举在 Kotlin/JVM 中通常被自动 Keep，但显式声明更安全
 # ═══════════════════════════════════════════════════════════════════════════════
 -keepclassmembers enum com.morphkit.core.** {
