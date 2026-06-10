@@ -44,6 +44,9 @@ class MorphRadioButton @JvmOverloads constructor(
     private var dotRadius: Float = 0f
     private var ringStrokeWidth: Float = 0f
 
+    /** 原始左内边距，用于在 iOS 模式下为自定义指示器预留空间而不影响文字位置 */
+    private var originalPaddingLeft: Int = 0
+
     // ── 缓存颜色 ──
     private var primaryColor: Int = 0
     private var onSurfaceColor: Int = 0
@@ -68,6 +71,9 @@ class MorphRadioButton @JvmOverloads constructor(
         primaryColor = MorphTheme.morphColorPrimary(context)
         onSurfaceColor = MorphTheme.morphColorOnSurface(context)
         surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+
+        // ── 保存原始左内边距（iOS 模式下需要调整） ──
+        originalPaddingLeft = paddingLeft
 
         when (interactionMode) {
             InteractionMode.IOS -> initIosMode()
@@ -120,8 +126,9 @@ class MorphRadioButton @JvmOverloads constructor(
     }
 
     private fun drawIosIndicator(canvas: Canvas) {
-        // ── 指示器位置：垂直居中，水平在文字左侧 ──
-        val cx = ringRadius + ringStrokeWidth / 2 + paddingLeft
+        // ── 指示器位置：垂直居中，水平在原始 paddingLeft 偏移处 ──
+        // 注意：paddingLeft 已被增加以推开文字，此处使用 originalPaddingLeft
+        val cx = ringRadius + ringStrokeWidth / 2 + originalPaddingLeft
         val cy = height / 2f
 
         ringPaint.strokeWidth = ringStrokeWidth
@@ -140,13 +147,19 @@ class MorphRadioButton @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (interactionMode == InteractionMode.IOS) {
-            // ── 为指示器预留空间 ──
-            val indicatorWidth = ((ringRadius + ringStrokeWidth / 2) * 2 + 8f * context.resources.displayMetrics.density).toInt()
-            val newWidth = measuredWidth + indicatorWidth
-            setMeasuredDimension(newWidth, measuredHeight)
+            // ── 通过增加 paddingLeft 为指示器预留空间，避免文字与指示器重叠 ──
+            // 原始 paddingLeft 保存在 originalPaddingLeft 中
+            // 指示器绘制在 [0, indicatorWidth) 区域
+            // 文字起始位置从 paddingLeft = originalPaddingLeft + indicatorWidth 开始
+            val gap = (8f * context.resources.displayMetrics.density).toInt()
+            val indicatorWidth = ((ringRadius + ringStrokeWidth / 2) * 2).toInt() + gap
+            val targetPaddingLeft = originalPaddingLeft + indicatorWidth
+            if (paddingLeft != targetPaddingLeft) {
+                setPadding(targetPaddingLeft, paddingTop, paddingRight, paddingBottom)
+            }
         }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

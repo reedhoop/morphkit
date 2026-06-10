@@ -51,6 +51,9 @@ class MorphCheckBox @JvmOverloads constructor(
     private var strokeWidth: Float = 0f
     private var checkStrokeWidth: Float = 0f
 
+    /** 原始左内边距，用于在 iOS 模式下为自定义指示器预留空间而不影响文字位置 */
+    private var originalPaddingLeft: Int = 0
+
     // ── 缓存颜色 ──
     private var primaryColor: Int = 0
     private var onPrimaryColor: Int = 0
@@ -76,6 +79,9 @@ class MorphCheckBox @JvmOverloads constructor(
         primaryColor = MorphTheme.morphColorPrimary(context)
         onPrimaryColor = MorphTheme.morphColorOnPrimary(context)
         surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+
+        // ── 保存原始左内边距（iOS 模式下需要调整） ──
+        originalPaddingLeft = paddingLeft
 
         when (interactionMode) {
             InteractionMode.IOS -> initIosMode()
@@ -128,7 +134,8 @@ class MorphCheckBox @JvmOverloads constructor(
     }
 
     private fun drawIosIndicator(canvas: Canvas) {
-        val left = paddingLeft.toFloat()
+        // 注意：paddingLeft 已被增加以推开文字，此处使用 originalPaddingLeft
+        val left = originalPaddingLeft.toFloat()
         val top = (height - boxSize) / 2f
         val right = left + boxSize
         val bottom = top + boxSize
@@ -182,13 +189,16 @@ class MorphCheckBox @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         if (interactionMode == InteractionMode.IOS) {
-            // ── 为指示器预留空间 ──
-            val indicatorWidth = (boxSize + 8f * context.resources.displayMetrics.density).toInt()
-            val newWidth = measuredWidth + indicatorWidth
-            setMeasuredDimension(newWidth, measuredHeight)
+            // ── 通过增加 paddingLeft 为指示器预留空间，避免文字与指示器重叠 ──
+            val gap = (8f * context.resources.displayMetrics.density).toInt()
+            val indicatorWidth = boxSize.toInt() + gap
+            val targetPaddingLeft = originalPaddingLeft + indicatorWidth
+            if (paddingLeft != targetPaddingLeft) {
+                setPadding(targetPaddingLeft, paddingTop, paddingRight, paddingBottom)
+            }
         }
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {

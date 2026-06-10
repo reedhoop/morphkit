@@ -41,9 +41,19 @@ import com.morphkit.R
  * @see MorphInstaller.patchAppCompatDelegate
  */
 class MorphFactory2(
-    @Volatile private var originalFactory: LayoutInflater.Factory2?,
+    originalFactory: LayoutInflater.Factory2?,
     private val finalThemeResId: Int = 0
 ) : LayoutInflater.Factory2 {
+
+    /**
+     * 原始 Factory2 委托（通常为 AppCompatDelegateImpl）。
+     *
+     * 使用 @Volatile 保证跨线程可见性：
+     * [MorphInstaller] 在 [onActivityCreated] 中通过 [updateOriginalFactory]
+     * 延迟设置此字段，而 [onCreateView] 在 UI 线程读取。
+     */
+    @Volatile
+    private var originalFactory: LayoutInflater.Factory2? = originalFactory
 
     companion object {
         private const val TAG = "MorphKit"

@@ -1,6 +1,7 @@
 package com.morphkit.widget.text
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
@@ -212,6 +213,12 @@ class MorphTextView @JvmOverloads constructor(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         // 适配暗黑模式切换
+        applyTextColor()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Activity 不重建时（configChanges 包含 uiMode），手动刷新文字颜色
         applyTextColor()
     }
 }

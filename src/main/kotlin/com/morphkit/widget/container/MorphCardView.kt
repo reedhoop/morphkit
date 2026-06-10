@@ -290,10 +290,11 @@ class MorphCardView @JvmOverloads constructor(
      */
     private fun removeBlurBackgroundView() {
         blurBackgroundView?.let {
-            removeView(it)
-            // 回收旧 Bitmap 释放内存
-            (it.drawable as? BitmapDrawable)?.bitmap?.recycle()
+            // 先解除 BitmapDrawable 引用，再安全回收 Bitmap，最后移除 View
+            val bitmapDrawable = it.drawable as? BitmapDrawable
             it.setImageDrawable(null)
+            bitmapDrawable?.bitmap?.recycle()
+            removeView(it)
         }
         blurBackgroundView = null
         isPreDrawListenerAttached = false
@@ -340,11 +341,10 @@ class MorphCardView @JvmOverloads constructor(
             parentCapture.recycle()
         }
 
-        // 4. 回收旧的模糊 Bitmap 避免内存泄漏
-        (iv.drawable as? BitmapDrawable)?.bitmap?.recycle()
-
-        // 5. 设置新的模糊 Bitmap
+        // 4. 先解除旧 BitmapDrawable 引用，设置新 Bitmap，再安全回收旧 Bitmap
+        val oldBitmapDrawable = iv.drawable as? BitmapDrawable
         iv.setImageDrawable(BitmapDrawable(resources, blurred))
+        oldBitmapDrawable?.bitmap?.recycle()
     }
 
     /**

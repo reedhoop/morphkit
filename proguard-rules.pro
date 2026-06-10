@@ -124,7 +124,7 @@
 # 并反射调用。R8 可能将这些 Lambda 识别为"无引用"而优化删除，
 # 导致 createView/modifyView 返回 null 或抛异常。
 
--keepclassmembers class * {
+-keepclassmembers class com.morphkit.** {
     ** create(android.content.Context, android.util.AttributeSet);
 }
 

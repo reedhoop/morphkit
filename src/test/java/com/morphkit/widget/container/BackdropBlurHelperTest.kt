@@ -57,26 +57,23 @@ class BackdropBlurHelperTest {
     }
 
     @Test
-    fun `内部包含 API 31 RenderEffect 模糊方法`() {
-        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
-        val methodNames = clazz.declaredMethods.map { it.name }
-        assertThat(methodNames).contains("blurWithRenderEffect")
-    }
-
-    @Test
-    fun `内部包含 API 29-30 RenderNode 方法`() {
-        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
-        val methodNames = clazz.declaredMethods.map { it.name }
-        assertThat(methodNames).contains("blurWithRenderNode")
-    }
-
-    @Test
     fun `内部包含软件 Stack Blur 降级方法`() {
         val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
         val methodNames = clazz.declaredMethods.map { it.name }
+        // minSdk=35: RenderEffect 内联到 blur() 中，blurWithRenderEffect/blurWithRenderNode 已移除
+        // 仅保留 blurSoftware 作为软件 Canvas 的极端降级路径
         assertThat(methodNames).contains("blurSoftware")
         assertThat(methodNames).contains("stackBlurHorizontal")
         assertThat(methodNames).contains("stackBlurVertical")
+    }
+
+    @Test
+    fun `不包含已废弃的低版本回退方法`() {
+        val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
+        val methodNames = clazz.declaredMethods.map { it.name }
+        // minSdk=35 后，API 29-30 的 RenderNode 直传和 API 31 的独立 RenderEffect 方法均已移除
+        assertThat(methodNames).doesNotContain("blurWithRenderEffect")
+        assertThat(methodNames).doesNotContain("blurWithRenderNode")
     }
 
     @Test

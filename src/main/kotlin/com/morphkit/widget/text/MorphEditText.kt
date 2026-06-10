@@ -1,6 +1,7 @@
 package com.morphkit.widget.text
 
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
@@ -212,6 +213,12 @@ class MorphEditText @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        applyStyle()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
         applyStyle()
     }
 

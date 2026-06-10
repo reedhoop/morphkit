@@ -2,13 +2,9 @@ package com.morphkit.widget.container
 
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Rect
 import android.graphics.RenderEffect
 import android.graphics.RenderNode
 import android.graphics.Shader
-import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 
@@ -18,13 +14,16 @@ import android.view.ViewGroup
  * 实现真正的「behind-blur」毛玻璃效果：截取父容器在卡片区域下方的像素，
  * 对其进行高斯模糊，然后将模糊后的 Bitmap 作为卡片背景图层显示。
  *
- * ## 模糊策略
+ * ## 模糊策略（minSdk=35）
  *
- * | API 范围     | 技术                              | 质量     |
- * |-------------|----------------------------------|---------|
- * | API 31+     | [RenderEffect.createBlurEffect]  | GPU 高斯 |
- * | API 29–30   | [RenderNode] 直接渲染（无模糊）    | 无模糊   |
- * | API < 29    | 软件 Stack Blur（水平+垂直两遍）   | 近似高斯 |
+ * minSdk=35（Android 15）保证 [RenderEffect.createBlurEffect]（API 31+）始终可用，
+ * 使用 GPU 加速的高斯模糊作为唯一路径。
+ * 当硬件加速不可用时（极少数场景），降级为软件 Stack Blur。
+ *
+ * | 场景             | 技术                              | 质量     |
+ * |-----------------|----------------------------------|---------|
+ * | 默认（硬件加速）  | [RenderEffect.createBlurEffect]  | GPU 高斯 |
+ * | 软件 Canvas 降级  | 软件 Stack Blur（水平+垂直两遍）   | 近似高斯 |
  *
  * ## 使用方式
  *
@@ -88,9 +87,9 @@ internal object BackdropBlurHelper {
     /**
      * 对 [source] Bitmap 应用高斯模糊。
      *
-     * - API 31+：使用 [RenderEffect.createBlurEffect] + [RenderNode] GPU 加速
-     * - API 29–30：使用 [RenderNode] 直接渲染（无模糊，仅复制像素）
-     * - API < 29：软件 Stack Blur（水平+垂直两遍均值滤波）
+     * minSdk=35 保证 [RenderEffect.createBlurEffect] 始终可用，
+     * 通过 [RenderNode] + GPU 加速实现高质量高斯模糊。
+     * 当硬件加速不可用时，降级为软件 Stack Blur。
      *
      * @param source 源 Bitmap
      * @param radius 模糊半径（px），推荐 15–35
@@ -98,21 +97,6 @@ internal object BackdropBlurHelper {
      */
     fun blur(source: Bitmap, radius: Float): Bitmap? {
         if (source.width <= 0 || source.height <= 0) return null
-
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            blurWithRenderEffect(source, radius)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // API 29-30: RenderNode 可用但 RenderEffect 不可用
-            blurWithRenderNode(source)
-        } else {
-            blurSoftware(source, radius.toInt().coerceAtLeast(1))
-        }
-    }
-
-    // ── API 31+：RenderEffect GPU 高斯模糊 ──
-
-    private fun blurWithRenderEffect(source: Bitmap, radius: Float): Bitmap? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) return null
 
         return try {
             val w = source.width
@@ -134,52 +118,19 @@ internal object BackdropBlurHelper {
             val outputCanvas = Canvas(output)
             if (outputCanvas.isHardwareAccelerated) {
                 outputCanvas.drawRenderNode(node)
+                output
             } else {
-                // 软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
+                // 极少数场景：软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
                 output.recycle()
                 blurSoftware(source, radius.toInt().coerceAtLeast(1))
             }
-
-            output
         } catch (_: Exception) {
             // RenderEffect 可能因硬件加速关闭等原因抛异常
             blurSoftware(source, radius.toInt().coerceAtLeast(1))
         }
     }
 
-    // ── API 29-30：RenderNode 无模糊直传 ──
-
-    private fun blurWithRenderNode(source: Bitmap): Bitmap? {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) return null
-
-        return try {
-            val w = source.width
-            val h = source.height
-            val output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
-
-            val node = RenderNode("morphCapture")
-            node.setPosition(0, 0, w, h)
-
-            val canvas = node.beginRecording(w, h)
-            canvas.drawBitmap(source, 0f, 0f, null)
-            node.endRecording()
-
-            val outputCanvas = Canvas(output)
-            if (outputCanvas.isHardwareAccelerated) {
-                outputCanvas.drawRenderNode(node)
-            } else {
-                // 软件 Canvas 降级：直接复制
-                output.recycle()
-                source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
-            }
-
-            output
-        } catch (_: Exception) {
-            source.copy(source.config ?: Bitmap.Config.ARGB_8888, false)
-        }
-    }
-
-    // ── API < 29 或降级：软件 Stack Blur ──
+    // ── 软件 Stack Blur 降级路径 ──
 
     /**
      * 软件 Stack Blur 实现。

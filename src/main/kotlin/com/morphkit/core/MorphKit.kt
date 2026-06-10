@@ -330,6 +330,7 @@ object MorphKit {
      * @return 替换后的 View，若未命中规则则返回 `null`
      */
     fun createView(originalName: String, context: Context, attrs: AttributeSet): View? {
+        if (!initialized.get()) return null // 未初始化时安全返回 null，避免 UninitializedPropertyAccessException
         val creator = config.replaceMap[originalName] ?: return null
         val view = creator(context, attrs)
         try {
@@ -356,6 +357,7 @@ object MorphKit {
      * @return 修改后的 View（同一实例）
      */
     fun modifyView(originalName: String, view: View): View {
+        if (!initialized.get()) return view // 未初始化时直接返回原 View
         val modifier = config.modifyMap[originalName] ?: return view
         modifier(view)
         return view
@@ -383,6 +385,7 @@ object MorphKit {
      * @param originalName 被替换的原始控件名称
      */
     internal fun stampAndValidateView(view: View, originalName: String) {
+        if (!initialized.get()) return
         // 打标：写入调试信息
         val tagValue = "${config.unifiedPrefix} (replaced: $originalName)"
         view.setTag(MORPH_TAG_KEY, tagValue)

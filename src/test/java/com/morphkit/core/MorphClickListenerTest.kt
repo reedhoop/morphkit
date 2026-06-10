@@ -26,7 +26,8 @@ class MorphClickListenerTest {
     @Test
     fun `300ms内连续点击两次_业务Listener仅被调用1次`() {
         var clickCount = 0
-        val listener = MorphClickListener(debounceInterval = 300L) {
+        var currentTime = 1000L
+        val listener = MorphClickListener(300L, { currentTime }) {
             clickCount++
         }
 
@@ -36,7 +37,8 @@ class MorphClickListenerTest {
         listener.onClick(mockView)
         assertEquals("第一次点击应被响应", 1, clickCount)
 
-        // 第二次点击（在 300ms 冷却期内）
+        // 第二次点击（在 300ms 冷却期内，时间未推进）
+        currentTime = 1100L // +100ms, still within 300ms
         listener.onClick(mockView)
         assertEquals("冷却期内第二次点击应被忽略", 1, clickCount)
     }
@@ -48,7 +50,8 @@ class MorphClickListenerTest {
     @Test
     fun `冷却期结束后再次点击_业务Listener被调用`() {
         var clickCount = 0
-        val listener = MorphClickListener(debounceInterval = 100L) {
+        var currentTime = 1000L
+        val listener = MorphClickListener(100L, { currentTime }) {
             clickCount++
         }
 
@@ -59,7 +62,7 @@ class MorphClickListenerTest {
         assertEquals(1, clickCount)
 
         // 等待冷却期结束
-        Thread.sleep(150)
+        currentTime = 1200L // +200ms, past 100ms debounce
 
         // 冷却期结束后的点击应被响应
         listener.onClick(mockView)
@@ -73,7 +76,8 @@ class MorphClickListenerTest {
     @Test
     fun `自定义冷却时间生效`() {
         var clickCount = 0
-        val listener = MorphClickListener(debounceInterval = 500L) {
+        var currentTime = 1000L
+        val listener = MorphClickListener(500L, { currentTime }) {
             clickCount++
         }
 
@@ -84,12 +88,12 @@ class MorphClickListenerTest {
         assertEquals(1, clickCount)
 
         // 200ms 后点击（仍在 500ms 冷却期内）
-        Thread.sleep(200)
+        currentTime = 1200L
         listener.onClick(mockView)
         assertEquals("200ms 后仍在 500ms 冷却期内", 1, clickCount)
 
         // 再等 350ms（总计 550ms，冷却期已过）
-        Thread.sleep(350)
+        currentTime = 1550L
         listener.onClick(mockView)
         assertEquals("550ms 后冷却期已过，应响应", 2, clickCount)
     }

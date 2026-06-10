@@ -82,8 +82,7 @@ object MorphInstaller {
         application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPreCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {
                 // ── 阶段 1：在 AppCompat 安装之前注入 MorphFactory2 ──
-                // 此时 AppCompat 尚未安装 Factory2，MorphKit 先占据位置
-                // Morph* 控件继承 AppCompat 系控件，初始布局功能完整
+                // minSdk=35，onActivityPreCreated 始终可用（API 29+）
                 injectFactory2(activity)
             }
 
