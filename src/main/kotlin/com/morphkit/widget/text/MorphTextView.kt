@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 
 /**
  * MorphKit iOS 字重规范 TextView。
@@ -168,7 +169,7 @@ class MorphTextView @JvmOverloads constructor(
      */
     private fun applyTextColor() {
         val color: Int = when {
-            isTertiaryText -> MorphTheme.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), 0.55f)
+            isTertiaryText -> MorphTheme.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), MorphTokens.tertiaryTextAlpha)
             isSecondaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
             else -> MorphTheme.morphColorOnSurface(context)
         }

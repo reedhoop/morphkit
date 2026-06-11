@@ -1,11 +1,13 @@
 package com.morphkit.widget.text
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.AppCompatEditText
 import com.morphkit.R
@@ -99,6 +101,12 @@ class MorphEditText @JvmOverloads constructor(
     /** 焦点态背景色（基于原始色微调透明度） */
     private var searchBackgroundFocusedColor: Int = 0
 
+    /** 焦点过渡动画器（与其他交互组件统一使用动画过渡） */
+    private var focusAnimator: ValueAnimator? = null
+
+    /** 当前显示的背景色（用于动画起始值） */
+    private var currentBgColor: Int = 0
+
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
     // ═══════════════════════════════════════════════════════════════════════
@@ -182,9 +190,30 @@ class MorphEditText @JvmOverloads constructor(
      * @param focused 是否处于焦点态
      */
     private fun applySearchState(focused: Boolean) {
-        val bgColor = if (focused) searchBackgroundFocusedColor else searchBackgroundColor
-        searchBackgroundDrawable.setColor(bgColor)
+        val targetColor = if (focused) searchBackgroundFocusedColor else searchBackgroundColor
+        animateFocusColor(targetColor)
         background = searchBackgroundDrawable
+    }
+
+    /**
+     * 动画过渡焦点背景色（150ms DecelerateInterpolator），
+     * 与其他交互组件的动画过渡风格一致。
+     */
+    private fun animateFocusColor(targetColor: Int) {
+        focusAnimator?.cancel()
+
+        val startColor = if (currentBgColor != 0) currentBgColor else searchBackgroundColor
+
+        focusAnimator = ValueAnimator.ofArgb(startColor, targetColor).apply {
+            duration = FOCUS_ANIMATION_DURATION
+            interpolator = DecelerateInterpolator()
+            addUpdateListener { animator ->
+                val color = animator.animatedValue as Int
+                currentBgColor = color
+                searchBackgroundDrawable.setColor(color)
+            }
+            start()
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -259,5 +288,8 @@ class MorphEditText @JvmOverloads constructor(
 
         /** 焦点态遮罩透明度 — 极轻微的 8% 变化，iOS 风格的微妙反馈 */
         private const val FOCUS_OVERLAY_ALPHA = 0.08f
+
+        /** 焦点颜色过渡动画时长（ms），对齐 MorphTokens.motionDurationSm */
+        private const val FOCUS_ANIMATION_DURATION = 150L
     }
 }

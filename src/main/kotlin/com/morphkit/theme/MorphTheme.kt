@@ -143,11 +143,11 @@ object MorphTheme {
      */
     fun blendColor(from: Int, to: Int, ratio: Float): Int {
         val inverseRatio = 1f - ratio
-        val r = Color.red(from) * inverseRatio + Color.red(to) * ratio
-        val g = Color.green(from) * inverseRatio + Color.green(to) * ratio
-        val b = Color.blue(from) * inverseRatio + Color.blue(to) * ratio
-        val a = Color.alpha(from) * inverseRatio + Color.alpha(to) * ratio
-        return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
+        val r = (Color.red(from) * inverseRatio + Color.red(to) * ratio).toInt().coerceIn(0, 255)
+        val g = (Color.green(from) * inverseRatio + Color.green(to) * ratio).toInt().coerceIn(0, 255)
+        val b = (Color.blue(from) * inverseRatio + Color.blue(to) * ratio).toInt().coerceIn(0, 255)
+        val a = (Color.alpha(from) * inverseRatio + Color.alpha(to) * ratio).toInt().coerceIn(0, 255)
+        return Color.argb(a, r, g, b)
     }
 
     /** 判断当前是否为暗黑模式 */
@@ -184,8 +184,13 @@ object MorphTheme {
     @Px
     fun cornerLarge(context: Context): Int = 16.dp(context)
 
-    /** 全圆角（胶囊形状） */
-    @Px
+    /**
+     * 全圆角（胶囊形状）— 哨兵值 [Int.MAX_VALUE]。
+     *
+     * 用于 [android.graphics.drawable.GradientDrawable.setCornerRadius]，
+     * 表示半径足够大以形成完美胶囊形状。
+     * 注意：此值非真实像素值，不标注 [Px]，与 [cornerSmall] / [cornerMedium] / [cornerLarge] 语义不同。
+     */
     val cornerFull: Int = Int.MAX_VALUE
 
     // ═══════════════════════════════════════════════════════════════════════

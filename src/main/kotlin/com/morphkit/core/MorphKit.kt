@@ -279,7 +279,9 @@ object MorphKit {
      */
     fun init(application: Application, block: MorphConfig.() -> Unit) {
         check(initialized.compareAndSet(false, true)) { "MorphKit 已初始化，禁止重复调用 init()" }
-        config = MorphConfig().apply(block)
+        // 先写 config，后设 AtomicBoolean → 其他线程看到 initialized=true 时 config 必然已就绪
+        val newConfig = MorphConfig().apply(block)
+        config = newConfig
 
         // ── 根据 StylePolicy 解析最终 Theme ──
         _finalThemeResId = MorphStyleResolver.resolve(application, config.policy)

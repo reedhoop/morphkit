@@ -4,6 +4,7 @@ import android.app.Application
 import android.util.Log
 import android.view.View
 import com.morphkit.core.MorphKit
+import com.morphkit.core.StylePolicy
 
 /**
  * iOS 设计系统一键接入配置。
@@ -67,6 +68,10 @@ import com.morphkit.core.MorphKit
  */
 fun Application.initIOSStyle() {
     MorphKit.init(this) {
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        //  风格策略：强制 iOS 极简风（禁止 AUTO 降级到 Pixel）
+        // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        stylePolicy(StylePolicy.IOS)
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  硬替换：iOS 风格控件全局接管

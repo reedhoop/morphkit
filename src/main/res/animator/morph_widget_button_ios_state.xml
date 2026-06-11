@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- iOS 模式按压态：Alpha 变暗（无涟漪） -->
-    <item android:state_pressed="true">
-        <objectAnimator
-            android:propertyName="alpha"
-            android:valueFrom="1.0"
-            android:valueTo="0.8"
-            android:duration="150"
-            android:interpolator="@android:interpolator/fast_out_slow_in" />
-    </item>
+    <!--
+        iOS 模式按钮状态动画。
+
+        按压反馈由 onTouchEvent + pressOverlay 颜色混合实现（更 iOS-like），
+        此 XML 仅负责键盘焦点反馈（translationZ 抬起），确保 A11y 合规。
+
+        按压 alpha 动画已移除，避免与 pressOverlay 叠加导致 ~36% 过度变暗。
+    -->
 
     <!-- 键盘焦点态：translationZ 抬起（无障碍合规） -->
     <item android:state_focused="true">
@@ -20,20 +19,12 @@
             android:interpolator="@android:interpolator/fast_out_slow_in" />
     </item>
 
-    <!-- 默认态：恢复 alpha + translationZ -->
+    <!-- 默认态：恢复 translationZ -->
     <item>
-        <set>
-            <objectAnimator
-                android:propertyName="alpha"
-                android:valueFrom="0.8"
-                android:valueTo="1.0"
-                android:duration="200"
-                android:interpolator="@android:interpolator/fast_out_slow_in" />
-            <objectAnimator
-                android:propertyName="translationZ"
-                android:valueTo="0dp"
-                android:duration="200"
-                android:interpolator="@android:interpolator/fast_out_slow_in" />
-        </set>
+        <objectAnimator
+            android:propertyName="translationZ"
+            android:valueTo="0dp"
+            android:duration="200"
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
     </item>
 </selector>

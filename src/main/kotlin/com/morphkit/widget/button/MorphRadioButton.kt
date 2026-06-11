@@ -1,6 +1,5 @@
 package com.morphkit.widget.button
 
-import android.animation.AnimatorInflater
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
@@ -9,7 +8,6 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
-import com.morphkit.core.MorphClickListener
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.widget.selection.MorphCompoundButtonHelper
@@ -86,18 +84,11 @@ class MorphRadioButton @JvmOverloads constructor(
     }
 
     private fun initIosMode() {
-        // ── 移除默认按钮指示器，改用自定义绘制 ──
-        buttonDrawable = null
-        setButtonDrawable(android.R.color.transparent)
-
-        // ── 无障碍合规：StateListAnimator 分离按压反馈与焦点反馈 ──
-        stateListAnimator = AnimatorInflater.loadStateListAnimator(
-            context,
-            R.animator.morph_widget_selection_ios_state
-        )
-
-        // ── 防抖包装 ──
-        setOnClickListener(MorphClickListener { /* 点击由 CompoundButton.OnCheckedChangeListener 处理 */ })
+        // MorphCompoundButtonHelper.initIosMode() 已完成：
+        // - setButtonDrawable(transparent)
+        // - StateListAnimator 加载
+        // - MorphClickListener 防抖包装
+        // 此处无需重复，避免 StateListAnimator 二次加载浪费内存
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -115,15 +106,18 @@ class MorphRadioButton @JvmOverloads constructor(
 
         ringPaint.strokeWidth = ringStrokeWidth
 
+        // ── disabled 态：应用 MorphTokens.disabledAlpha 透明度 ──
+        val alpha = if (isEnabled) 1f else MorphTokens.disabledAlpha
+
         if (isChecked) {
             // 选中态：主色圆环 + 主色实心圆点
-            ringPaint.color = primaryColor
-            dotPaint.color = primaryColor
+            ringPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
+            dotPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
             canvas.drawCircle(cx, cy, ringRadius, ringPaint)
             canvas.drawCircle(cx, cy, dotRadius, dotPaint)
         } else {
             // 未选中态：灰色圆环
-            ringPaint.color = surfaceVariantColor
+            ringPaint.color = MorphTheme.adjustAlpha(surfaceVariantColor, alpha)
             canvas.drawCircle(cx, cy, ringRadius, ringPaint)
         }
     }

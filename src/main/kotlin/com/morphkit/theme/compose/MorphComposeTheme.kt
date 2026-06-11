@@ -1,6 +1,7 @@
 package com.morphkit.theme.compose
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
@@ -186,6 +187,7 @@ private fun resolveAutoStyle(context: Context): StylePolicy {
         val themeResId = MorphStyleResolver.resolve(context, StylePolicy.AUTO)
         if (themeResId == com.morphkit.R.style.Theme_MorphKit_Pixel) StylePolicy.PIXEL else StylePolicy.IOS
     } catch (e: Exception) {
+        Log.d("MorphKit", "resolveAutoStyle: MorphStyleResolver 解析失败，降级为 IOS", e)
         StylePolicy.IOS  // 降级：解析失败时默认 IOS
     }
 }

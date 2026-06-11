@@ -402,13 +402,14 @@ class MorphCardView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        // 将模糊 Bitmap 归还对象池释放内存
+        // 将模糊 Bitmap 归还对象池释放内存，并置空引用防止 Context 泄漏
         blurBackgroundView?.let { iv ->
             (iv.drawable as? BitmapDrawable)?.bitmap?.let { bmp ->
                 BackdropBlurHelper.recycleToPool(bmp)
             }
             iv.setImageDrawable(null)
         }
+        blurBackgroundView = null
     }
 
     // ═══════════════════════════════════════════════════════════════════════

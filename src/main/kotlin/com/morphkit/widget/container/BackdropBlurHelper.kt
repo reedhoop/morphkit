@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.RenderEffect
 import android.graphics.RenderNode
 import android.graphics.Shader
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 
@@ -140,6 +141,7 @@ internal object BackdropBlurHelper {
             parent.draw(canvas)
         } catch (_: Exception) {
             // parent.draw() 在某些场景下可能失败（如硬件加速限制）
+            Log.d("MorphKit", "captureParentArea: parent.draw() 失败，返回 null")
             view.visibility = originalVisibility
             recycleToPool(bitmap)
             return null
@@ -195,8 +197,9 @@ internal object BackdropBlurHelper {
                 node.discardDisplayList()
                 blurSoftware(source, radius.toInt().coerceAtLeast(1))
             }
-        } catch (_: Exception) {
-            // RenderEffect 可能因硬件加速关闭等原因抛异常
+        } catch (e: Exception) {
+            // RenderEffect 可能因硬件加速关闭等原因抛异常，降级为软件模糊
+            Log.d("MorphKit", "GPU 模糊失败，降级为软件 Stack Blur: ${e.javaClass.simpleName}")
             blurSoftware(source, radius.toInt().coerceAtLeast(1))
         }
     }

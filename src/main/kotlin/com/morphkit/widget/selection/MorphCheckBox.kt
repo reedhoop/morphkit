@@ -104,18 +104,22 @@ class MorphCheckBox @JvmOverloads constructor(
         val right = left + boxSize
         val bottom = top + boxSize
 
+        // ── disabled 态：应用 MorphTokens.disabledAlpha 透明度 ──
+        val alpha = if (isEnabled) 1f else MorphTokens.disabledAlpha
+
         if (isChecked) {
             // 选中态：主色填充圆角方形
             boxPaint.style = Paint.Style.FILL
-            boxPaint.color = primaryColor
+            boxPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
             drawRoundRect(canvas, left, top, right, bottom)
 
-            // 白色勾选标记
+            // 白色勾选标记（disabled 时同样降低透明度）
+            checkPaint.color = MorphTheme.adjustAlpha(onPrimaryColor, alpha)
             drawCheckMark(canvas, left, top)
         } else {
             // 未选中态：灰色边框圆角方形
             strokePaint.strokeWidth = strokeWidth
-            strokePaint.color = surfaceVariantColor
+            strokePaint.color = MorphTheme.adjustAlpha(surfaceVariantColor, alpha)
             drawRoundRectStroke(canvas, left, top, right, bottom)
         }
     }
@@ -132,7 +136,7 @@ class MorphCheckBox @JvmOverloads constructor(
     }
 
     private fun drawCheckMark(canvas: Canvas, boxLeft: Float, boxTop: Float) {
-        checkPaint.color = onPrimaryColor
+        // checkPaint.color 由调用方 drawIosIndicator() 设置（含 disabled alpha）
         checkPaint.strokeWidth = checkStrokeWidth
 
         // 勾选标记路径：短左下斜线 + 长右斜线

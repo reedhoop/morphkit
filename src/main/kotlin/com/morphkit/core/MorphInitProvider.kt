@@ -1,6 +1,5 @@
 package com.morphkit.core
 
-import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
 import android.content.ComponentCallbacks2

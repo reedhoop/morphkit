@@ -81,11 +81,11 @@ dependencies {
     // 但 Compose 依赖为 compileOnly，不在测试类路径上。
     // testImplementation 使 Compose 类在测试运行时可用，
     // 修复 MorphColorPalette 等使用 Compose Color 的测试类初始化失败。
+    //
+    // ── Compose UI 测试依赖 ──
+    // BOM 统一管理所有 Compose 测试组件版本
     testImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
     testImplementation("androidx.compose.runtime:runtime")
-
-    // ── Compose UI 测试依赖 ──
-    testImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
     testImplementation("androidx.compose.ui:ui-test-junit4")
     testImplementation("androidx.compose.material3:material3")
     testImplementation("androidx.compose.ui:ui-test-manifest")

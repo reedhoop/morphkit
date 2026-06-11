@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        iOS 模式选择控件状态动画（RadioButton / CheckBox）。
+
+        按压反馈：Alpha 变暗（selection 控件无 pressOverlay，纯靠 StateListAnimator）。
+        键盘焦点：translationZ 抬起（无障碍合规）。
+
+        动画时长对齐 MorphTokens：
+        - 按压进入：motionDurationSm = 150ms
+        - 按压退出：pressOutDuration = 200ms
+    -->
+
     <!-- iOS 模式按压态：Alpha 变暗（无涟漪） -->
     <item android:state_pressed="true">
         <objectAnimator
             android:propertyName="alpha"
             android:valueFrom="1.0"
             android:valueTo="0.7"
-            android:duration="120"
+            android:duration="150"
             android:interpolator="@android:interpolator/fast_out_slow_in" />
     </item>
 
@@ -16,7 +27,7 @@
             android:propertyName="translationZ"
             android:valueFrom="0dp"
             android:valueTo="2dp"
-            android:duration="150"
+            android:duration="200"
             android:interpolator="@android:interpolator/fast_out_slow_in" />
     </item>
 
@@ -27,12 +38,12 @@
                 android:propertyName="alpha"
                 android:valueFrom="0.7"
                 android:valueTo="1.0"
-                android:duration="180"
+                android:duration="200"
                 android:interpolator="@android:interpolator/fast_out_slow_in" />
             <objectAnimator
                 android:propertyName="translationZ"
                 android:valueTo="0dp"
-                android:duration="150"
+                android:duration="200"
                 android:interpolator="@android:interpolator/fast_out_slow_in" />
         </set>
     </item>

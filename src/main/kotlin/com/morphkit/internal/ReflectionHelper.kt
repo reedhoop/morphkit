@@ -119,8 +119,8 @@ internal object ReflectionHelper {
                 if (factoryField != null) {
                     try {
                         setFieldValue(factoryField, inflater, factory)
-                    } catch (_: Exception) {
-                        // mFactory 写入失败不影响核心功能，mFactory2 已设置成功
+                    } catch (e: Exception) {
+                        Log.d(TAG, "safeSetFactory2: mFactory 写入失败（mFactory2 已设置成功，不影响核心功能）: ${e.javaClass.simpleName}")
                     }
                 }
                 Log.d(TAG, "safeSetFactory2: 反射直接写入 mFactory2 成功")
