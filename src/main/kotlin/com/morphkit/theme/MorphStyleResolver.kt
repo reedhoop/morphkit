@@ -168,6 +168,7 @@ object MorphStyleResolver {
      */
     @Volatile
     private var cachedDynamicColorMethod: java.lang.reflect.Method? = null
+    @Volatile
     private var dynamicColorMethodResolved = false
 
     /**

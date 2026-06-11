@@ -123,7 +123,7 @@ data class MorphColorPalette(
         fun iosDark() = MorphColorPalette(
             // Primary
             primary = Color(MorphTokens.colorBlue100),
-            onPrimary = Color(0xFF001D3F),
+            onPrimary = Color(MorphTokens.colorOnPrimaryDark),
             primaryContainer = Color(MorphTokens.colorBlue700),
             onPrimaryContainer = Color(MorphTokens.colorBlue100),
             // Secondary
@@ -137,7 +137,7 @@ data class MorphColorPalette(
             tertiaryContainer = Color(MorphTokens.colorTertiaryContainerDark),
             onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainerDark),
             // Error
-            error = Color(0xFFFF6961),
+            error = Color(MorphTokens.colorErrorDark),
             onError = Color(MorphTokens.colorOnErrorDark),
             errorContainer = Color(MorphTokens.colorErrorContainerDark),
             onErrorContainer = Color(MorphTokens.colorOnErrorContainerDark),
@@ -165,8 +165,8 @@ data class MorphColorPalette(
             inversePrimary = Color(MorphTokens.colorBlue500),
             // Misc
             scrim = Color.Black,
-            success = Color(0xFF30D158),
-            warning = Color(0xFFFFB340)
+            success = Color(MorphTokens.colorSuccessDark),
+            warning = Color(MorphTokens.colorWarningDark)
         )
 
         /**
@@ -297,7 +297,7 @@ data class MorphColorPalette(
          */
         private val pixelDarkFallback = FallbackColors(
             primary = Color(MorphTokens.colorBlue100),
-            onPrimary = Color(0xFF001D3F),
+            onPrimary = Color(MorphTokens.colorOnPrimaryDark),
             primaryContainer = Color(MorphTokens.colorBlue700),
             onPrimaryContainer = Color(MorphTokens.colorBlue100),
             secondary = Color(MorphTokens.colorSecondaryDark),
@@ -308,7 +308,7 @@ data class MorphColorPalette(
             onTertiary = Color(MorphTokens.colorOnTertiaryDark),
             tertiaryContainer = Color(MorphTokens.colorTertiaryContainerDark),
             onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainerDark),
-            error = Color(0xFFFF6961),
+            error = Color(MorphTokens.colorErrorDark),
             onError = Color(MorphTokens.colorOnErrorDark),
             errorContainer = Color(MorphTokens.colorErrorContainerDark),
             onErrorContainer = Color(MorphTokens.colorOnErrorContainerDark),
@@ -330,8 +330,8 @@ data class MorphColorPalette(
             inverseSurface = Color(MorphTokens.colorOnSurfaceDark),
             inverseOnSurface = Color(MorphTokens.colorSurfaceDark),
             inversePrimary = Color(MorphTokens.colorBlue500),
-            success = Color(0xFF30D158),
-            warning = Color(0xFFFFB340)
+            success = Color(MorphTokens.colorSuccessDark),
+            warning = Color(MorphTokens.colorWarningDark)
         )
     }
 

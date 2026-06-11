@@ -230,6 +230,22 @@ object MorphTokens {
     @ColorInt
     val colorOnErrorContainerDark: Int = 0xFFFFDAD6.toInt()
 
+    /** 暗色模式错误色 */
+    @ColorInt
+    val colorErrorDark: Int = 0xFFFF6961.toInt()
+
+    /** 暗色模式成功色 */
+    @ColorInt
+    val colorSuccessDark: Int = 0xFF30D158.toInt()
+
+    /** 暗色模式警告色 */
+    @ColorInt
+    val colorWarningDark: Int = 0xFFFFB340.toInt()
+
+    /** 暗色模式主色上的文字/图标色 */
+    @ColorInt
+    val colorOnPrimaryDark: Int = 0xFF001D3F.toInt()
+
     // ── Outline 补充（M3 对齐） ──
 
     /** 轮廓色（输入框边框、焦点环） */

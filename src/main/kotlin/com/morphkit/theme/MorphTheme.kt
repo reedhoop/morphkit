@@ -133,6 +133,23 @@ object MorphTheme {
         )
     }
 
+    /**
+     * 线性混合两个颜色。
+     *
+     * @param from   基础色（ARGB）
+     * @param to     目标色（ARGB）
+     * @param ratio  混合比例 [0f, 1f]，0 返回 from，1 返回 to
+     * @return 混合后的颜色
+     */
+    fun blendColor(from: Int, to: Int, ratio: Float): Int {
+        val inverseRatio = 1f - ratio
+        val r = Color.red(from) * inverseRatio + Color.red(to) * ratio
+        val g = Color.green(from) * inverseRatio + Color.green(to) * ratio
+        val b = Color.blue(from) * inverseRatio + Color.blue(to) * ratio
+        val a = Color.alpha(from) * inverseRatio + Color.alpha(to) * ratio
+        return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
+    }
+
     /** 判断当前是否为暗黑模式 */
     fun isDarkMode(context: Context): Boolean {
         val nightModeFlags = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK

@@ -1,20 +1,15 @@
 package com.morphkit.widget.button
 
-import android.animation.AnimatorInflater
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.view.MotionEvent
-import android.widget.CompoundButton
 import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
-import com.morphkit.core.MorphClickListener
+import com.morphkit.widget.selection.MorphCompoundButtonHelper
 
 /**
  * MorphKit 多风格单选按钮 — iOS 圆形指示器 / Material 原生涟漪。
@@ -35,7 +30,20 @@ class MorphRadioButton @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.morphRadioButtonStyle
 ) : AppCompatRadioButton(context, attrs, defStyleAttr) {
 
-    private val interactionMode: InteractionMode
+    private val iosHelper = MorphCompoundButtonHelper(
+        button = this,
+        attrs = attrs,
+        defStyleAttr = defStyleAttr,
+        styleableArray = R.styleable.MorphRadioButton,
+        interactionModeIndex = R.styleable.MorphRadioButton_morphInteractionMode,
+        onRefreshColors = ::refreshColorCache,
+        indicatorWidthProvider = {
+            val gap = (8f * context.resources.displayMetrics.density).toInt()
+            ((ringRadius + ringStrokeWidth / 2) * 2).toInt() + gap
+        }
+    )
+
+    private val interactionMode: InteractionMode get() = iosHelper.interactionMode
 
     // ── iOS 指示器绘制 ──
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { style = Paint.Style.STROKE }
@@ -44,23 +52,12 @@ class MorphRadioButton @JvmOverloads constructor(
     private var dotRadius: Float = 0f
     private var ringStrokeWidth: Float = 0f
 
-    /** 原始左内边距，用于在 iOS 模式下为自定义指示器预留空间而不影响文字位置 */
-    private var originalPaddingLeft: Int = 0
-
     // ── 缓存颜色 ──
     private var primaryColor: Int = 0
     private var onSurfaceColor: Int = 0
     private var surfaceVariantColor: Int = 0
 
     init {
-        val a = context.obtainStyledAttributes(attrs, R.styleable.MorphRadioButton, defStyleAttr, 0)
-        try {
-            val modeValue = a.getInt(R.styleable.MorphRadioButton_morphInteractionMode, 0)
-            interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
-        } finally {
-            a.recycle()
-        }
-
         // ── 初始化尺寸 ──
         val density = context.resources.displayMetrics.density
         ringRadius = 10f * density
@@ -68,54 +65,17 @@ class MorphRadioButton @JvmOverloads constructor(
         ringStrokeWidth = 2f * density
 
         // ── 缓存语义颜色 ──
-        primaryColor = MorphTheme.morphColorPrimary(context)
-        onSurfaceColor = MorphTheme.morphColorOnSurface(context)
-        surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
-
-        // ── 保存原始左内边距（iOS 模式下需要调整） ──
-        originalPaddingLeft = paddingLeft
-
-        when (interactionMode) {
-            InteractionMode.IOS -> initIosMode()
-            InteractionMode.MATERIAL -> { /* 保留 M3 默认 */ }
-        }
+        refreshColorCache()
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // 暗色/亮色模式切换后重新获取主题颜色
-        if (interactionMode == InteractionMode.IOS) {
-            primaryColor = MorphTheme.morphColorPrimary(context)
-            onSurfaceColor = MorphTheme.morphColorOnSurface(context)
-            surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
-            invalidate()
-        }
+        iosHelper.onAttachedToWindow()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
-        if (interactionMode == InteractionMode.IOS) {
-            primaryColor = MorphTheme.morphColorPrimary(context)
-            onSurfaceColor = MorphTheme.morphColorOnSurface(context)
-            surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
-            invalidate()
-        }
-    }
-
-    private fun initIosMode() {
-        // ── 移除默认按钮指示器，改用自定义绘制 ──
-        buttonDrawable = null
-        setButtonDrawable(android.R.color.transparent)
-
-        // ── 无障碍合规：StateListAnimator 分离按压反馈与焦点反馈 ──
-        stateListAnimator = AnimatorInflater.loadStateListAnimator(
-            context,
-            R.animator.morph_widget_selection_ios_state
-        )
-
-        // ── 防抖包装 ──
-        setOnClickListener(MorphClickListener { /* 点击由 CompoundButton.OnCheckedChangeListener 处理 */ })
+        iosHelper.onConfigurationChanged()
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -128,7 +88,7 @@ class MorphRadioButton @JvmOverloads constructor(
     private fun drawIosIndicator(canvas: Canvas) {
         // ── 指示器位置：垂直居中，水平在原始 paddingLeft 偏移处 ──
         // 注意：paddingLeft 已被增加以推开文字，此处使用 originalPaddingLeft
-        val cx = ringRadius + ringStrokeWidth / 2 + originalPaddingLeft
+        val cx = ringRadius + ringStrokeWidth / 2 + iosHelper.originalPaddingLeft
         val cy = height / 2f
 
         ringPaint.strokeWidth = ringStrokeWidth
@@ -147,23 +107,13 @@ class MorphRadioButton @JvmOverloads constructor(
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        if (interactionMode == InteractionMode.IOS) {
-            // ── 通过增加 paddingLeft 为指示器预留空间，避免文字与指示器重叠 ──
-            // 原始 paddingLeft 保存在 originalPaddingLeft 中
-            // 指示器绘制在 [0, indicatorWidth) 区域
-            // 文字起始位置从 paddingLeft = originalPaddingLeft + indicatorWidth 开始
-            val gap = (8f * context.resources.displayMetrics.density).toInt()
-            val indicatorWidth = ((ringRadius + ringStrokeWidth / 2) * 2).toInt() + gap
-            val targetPaddingLeft = originalPaddingLeft + indicatorWidth
-            if (paddingLeft != targetPaddingLeft) {
-                setPadding(targetPaddingLeft, paddingTop, paddingRight, paddingBottom)
-            }
-        }
+        iosHelper.onMeasure()
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        // iOS 模式下按压变色由 StateListAnimator 处理，无需手动干预
-        return super.onTouchEvent(event)
+    private fun refreshColorCache() {
+        primaryColor = MorphTheme.morphColorPrimary(context)
+        onSurfaceColor = MorphTheme.morphColorOnSurface(context)
+        surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
     }
 }

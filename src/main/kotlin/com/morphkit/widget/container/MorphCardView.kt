@@ -126,9 +126,6 @@ class MorphCardView @JvmOverloads constructor(
     /** 模糊背景图层 — 仅在毛玻璃模式下创建 */
     private var blurBackgroundView: ImageView? = null
 
-    /** 是否已注册 OnPreDrawListener */
-    private var isPreDrawListenerAttached = false
-
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
     // ═══════════════════════════════════════════════════════════════════════
@@ -297,7 +294,6 @@ class MorphCardView @JvmOverloads constructor(
             removeView(it)
         }
         blurBackgroundView = null
-        isPreDrawListenerAttached = false
     }
 
     // ═══════════════════════════════════════════════════════════════════════

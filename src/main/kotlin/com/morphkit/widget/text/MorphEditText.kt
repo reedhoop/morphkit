@@ -9,7 +9,6 @@ import android.view.View
 import androidx.appcompat.widget.AppCompatEditText
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
-import androidx.core.view.doOnLayout
 
 /**
  * MorphKit iOS 极简风格输入框。
@@ -153,7 +152,7 @@ class MorphEditText @JvmOverloads constructor(
         // 焦点态背景色：在原始色基础上微调透明度
         // 浅色模式：略加深（叠加少量黑色，在浅灰背景上更明显）
         // 深色模式：略提亮（叠加少量白色）
-        searchBackgroundFocusedColor = blendColor(
+        searchBackgroundFocusedColor = MorphTheme.blendColor(
             searchBackgroundColor,
             if (MorphTheme.isDarkMode(context)) Color.WHITE else Color.BLACK,
             FOCUS_OVERLAY_ALPHA
@@ -220,27 +219,6 @@ class MorphEditText @JvmOverloads constructor(
         super.onConfigurationChanged(newConfig)
         // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
         applyStyle()
-    }
-
-    // ═══════════════════════════════════════════════════════════════════════
-    // 颜色混合工具
-    // ═══════════════════════════════════════════════════════════════════════
-
-    /**
-     * 线性混合两个颜色。
-     *
-     * @param from  基础色（ARGB）
-     * @param to    遮罩色（ARGB）
-     * @param ratio 混合比例 [0f, 1f]
-     * @return 混合后的颜色
-     */
-    private fun blendColor(from: Int, to: Int, ratio: Float): Int {
-        val inverseRatio = 1f - ratio
-        val r = Color.red(from) * inverseRatio + Color.red(to) * ratio
-        val g = Color.green(from) * inverseRatio + Color.green(to) * ratio
-        val b = Color.blue(from) * inverseRatio + Color.blue(to) * ratio
-        val a = Color.alpha(from) * inverseRatio + Color.alpha(to) * ratio
-        return Color.argb(a.toInt(), r.toInt(), g.toInt(), b.toInt())
     }
 
     // ═══════════════════════════════════════════════════════════════════════

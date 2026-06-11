@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
@@ -156,7 +157,7 @@ private fun IosButton(
     // 按压态颜色：将白色遮罩混合到主色上，模拟 iOS 按压变亮效果
     val displayColor = if (enabled) {
         val overlayAlpha = pressAlpha.value * MorphTokens.pressOverlayMaxAlpha
-        backgroundColor.lerp(Color.White, overlayAlpha)
+        lerp(backgroundColor, Color.White, overlayAlpha)
     } else {
         backgroundColor
     }
@@ -243,15 +244,3 @@ private fun MaterialButton(
     }
 }
 
-// ═════════════════════════════════════════════════════════════════════════════════
-// 工具函数
-// ═════════════════════════════════════════════════════════════════════════════════
-
-private fun Color.lerp(target: Color, fraction: Float): Color {
-    return Color(
-        red = red + (target.red - red) * fraction,
-        green = green + (target.green - green) * fraction,
-        blue = blue + (target.blue - blue) * fraction,
-        alpha = alpha + (target.alpha - alpha) * fraction
-    )
-}
