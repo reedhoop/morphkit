@@ -1,5 +1,6 @@
 package com.morphkit.widget.button
 
+import android.animation.AnimatorInflater
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Canvas
@@ -8,6 +9,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.core.MorphClickListener
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.widget.selection.MorphCompoundButtonHelper
@@ -55,7 +57,6 @@ class MorphRadioButton @JvmOverloads constructor(
 
     // ── 缓存颜色 ──
     private var primaryColor: Int = 0
-    private var onSurfaceColor: Int = 0
     private var surfaceVariantColor: Int = 0
 
     init {
@@ -67,6 +68,11 @@ class MorphRadioButton @JvmOverloads constructor(
 
         // ── 缓存语义颜色 ──
         refreshColorCache()
+
+        when (interactionMode) {
+            InteractionMode.IOS -> initIosMode()
+            InteractionMode.MATERIAL -> { /* 保留 M3 默认 */ }
+        }
     }
 
     override fun onAttachedToWindow() {
@@ -77,6 +83,21 @@ class MorphRadioButton @JvmOverloads constructor(
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         iosHelper.onConfigurationChanged()
+    }
+
+    private fun initIosMode() {
+        // ── 移除默认按钮指示器，改用自定义绘制 ──
+        buttonDrawable = null
+        setButtonDrawable(android.R.color.transparent)
+
+        // ── 无障碍合规：StateListAnimator 分离按压反馈与焦点反馈 ──
+        stateListAnimator = AnimatorInflater.loadStateListAnimator(
+            context,
+            R.animator.morph_widget_selection_ios_state
+        )
+
+        // ── 防抖包装 ──
+        setOnClickListener(MorphClickListener { /* 点击由 CompoundButton.OnCheckedChangeListener 处理 */ })
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -114,7 +135,6 @@ class MorphRadioButton @JvmOverloads constructor(
 
     private fun refreshColorCache() {
         primaryColor = MorphTheme.morphColorPrimary(context)
-        onSurfaceColor = MorphTheme.morphColorOnSurface(context)
         surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
     }
 }

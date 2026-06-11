@@ -99,9 +99,6 @@ class MorphEditText @JvmOverloads constructor(
     /** 焦点态背景色（基于原始色微调透明度） */
     private var searchBackgroundFocusedColor: Int = 0
 
-    /** 缓存：tintColor 用于光标着色 */
-    private var tintColor: Int = MorphTheme.morphColorPrimary(context)
-
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
     // ═══════════════════════════════════════════════════════════════════════
@@ -159,7 +156,6 @@ class MorphEditText @JvmOverloads constructor(
      */
     private fun refreshColors() {
         searchBackgroundColor = MorphTheme.morphColorSurfaceVariant(context)
-        tintColor = MorphTheme.morphColorPrimary(context)
 
         // 焦点态背景色：在原始色基础上微调透明度
         // 浅色模式：略加深（叠加少量黑色，在浅灰背景上更明显）

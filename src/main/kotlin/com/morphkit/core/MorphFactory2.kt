@@ -60,8 +60,8 @@ class MorphFactory2(
         private const val PERF_THRESHOLD_MS = 5L
     }
 
-    private var hostThemeChecked = false
-    private var hostHasMorphAttr = false
+    @Volatile private var hostThemeChecked = false
+    @Volatile private var hostHasMorphAttr = false
 
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
     // @Volatile: MorphInstaller 在 onActivityCreated 中写入，onCreateView 在 UI 线程读取
@@ -111,12 +111,12 @@ class MorphFactory2(
                 checkPerformance(name, replacedView, startTime)
                 try {
                     return MorphKit.modifyView(name, replacedView)
-                } catch (e: Exception) {
+                } catch (e: Throwable) {
                     Log.e(TAG, "硬替换成功但 modifyView 异常，返回未修改的替换控件: $name", e)
                     return replacedView
                 }
             }
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
             Log.e(TAG, "硬替换异常，降级到 originalFactory 创建的控件: $name", e)
         }
 
@@ -128,7 +128,7 @@ class MorphFactory2(
         if (originalView != null) {
             try {
                 return MorphKit.modifyView(name, originalView)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Log.e(TAG, "软修改异常，静默忽略，返回原生控件: $name", e)
             }
         }

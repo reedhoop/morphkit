@@ -239,6 +239,7 @@ object MorphKit {
      * @see MorphStyleResolver
      * @see MorphFactory2
      */
+    @Volatile
     private var _finalThemeResId: Int = 0
 
     /**

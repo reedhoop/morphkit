@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -166,8 +165,6 @@ private fun IosButton(
 
     Surface(
         modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp)
             .clip(buttonShape)
             .then(
                 if (enabled) {
@@ -221,9 +218,7 @@ private fun MaterialButton(
 ) {
     androidx.compose.material3.Button(
         onClick = onClick,
-        modifier = modifier
-            .fillMaxWidth()
-            .height(50.dp),
+        modifier = modifier,
         enabled = enabled,
         shape = RoundedCornerShape(cornerRadius.dp),
         colors = ButtonDefaults.buttonColors(

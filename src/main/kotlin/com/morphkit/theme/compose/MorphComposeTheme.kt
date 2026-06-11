@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -115,7 +116,7 @@ fun MorphTheme(
         StylePolicy.AUTO -> InteractionMode.IOS // unreachable
     }
 
-    val typography = morphTypography()
+    val typography = remember { morphTypography() }
 
     CompositionLocalProvider(
         LocalMorphColors provides colors,
@@ -124,7 +125,7 @@ fun MorphTheme(
         LocalMorphStylePolicy provides resolvedStyle
     ) {
         MaterialTheme(
-            colorScheme = material3ColorScheme(colors),
+            colorScheme = remember(colors) { material3ColorScheme(colors) },
             typography = typography,
             content = content
         )

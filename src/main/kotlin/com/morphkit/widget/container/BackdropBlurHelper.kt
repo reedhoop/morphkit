@@ -184,10 +184,12 @@ internal object BackdropBlurHelper {
             val outputCanvas = Canvas(output)
             if (outputCanvas.isHardwareAccelerated) {
                 outputCanvas.drawRenderNode(node)
+                node.discardDisplayList()
                 output
             } else {
                 // 极少数场景：软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
                 recycleToPool(output)
+                node.discardDisplayList()
                 blurSoftware(source, radius.toInt().coerceAtLeast(1))
             }
         } catch (_: Exception) {
