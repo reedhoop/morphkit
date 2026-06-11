@@ -106,6 +106,17 @@ class MorphEditText @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     init {
+        // ── 读取 XML 属性 ──
+        attrs?.let {
+            val a = context.obtainStyledAttributes(it, R.styleable.MorphEditText, defStyleAttr, 0)
+            try {
+                val variantValue = a.getInt(R.styleable.MorphEditText_morphEditTextVariant, 0)
+                style = if (variantValue == 1) Style.BARE else Style.SEARCH
+            } finally {
+                a.recycle()
+            }
+        }
+
         // ── 去除 Android 原生底线 ──
         // AppCompatEditText 默认带一条底部横线（EditText 底线），
         // iOS 输入框无此线条，必须彻底清除

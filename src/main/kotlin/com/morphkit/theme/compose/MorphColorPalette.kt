@@ -124,8 +124,8 @@ data class MorphColorPalette(
             // Primary
             primary = Color(MorphTokens.colorBlue100),
             onPrimary = Color(MorphTokens.colorOnPrimaryDark),
-            primaryContainer = Color(MorphTokens.colorBlue700),
-            onPrimaryContainer = Color(MorphTokens.colorBlue100),
+            primaryContainer = Color(MorphTokens.colorPrimaryContainerDark),
+            onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainerDark),
             // Secondary
             secondary = Color(MorphTokens.colorSecondaryDark),
             onSecondary = Color(MorphTokens.colorOnSecondaryDark),
@@ -298,8 +298,8 @@ data class MorphColorPalette(
         private val pixelDarkFallback = FallbackColors(
             primary = Color(MorphTokens.colorBlue100),
             onPrimary = Color(MorphTokens.colorOnPrimaryDark),
-            primaryContainer = Color(MorphTokens.colorBlue700),
-            onPrimaryContainer = Color(MorphTokens.colorBlue100),
+            primaryContainer = Color(MorphTokens.colorPrimaryContainerDark),
+            onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainerDark),
             secondary = Color(MorphTokens.colorSecondaryDark),
             onSecondary = Color(MorphTokens.colorOnSecondaryDark),
             secondaryContainer = Color(MorphTokens.colorSecondaryContainerDark),

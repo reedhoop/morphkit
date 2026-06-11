@@ -80,6 +80,10 @@ object MorphTokens {
     @ColorInt
     val colorPrimaryContainer: Int = 0xFFD1E8FF.toInt()
 
+    /** 暗色模式主色容器色 */
+    @ColorInt
+    val colorPrimaryContainerDark: Int = 0xFF0055CC.toInt()
+
     /** 主色上的文字/图标色 */
     @ColorInt
     val colorOnPrimary: Int = 0xFFFFFFFF.toInt()
@@ -87,6 +91,10 @@ object MorphTokens {
     /** 主色容器上的文字/图标色 */
     @ColorInt
     val colorOnPrimaryContainer: Int = 0xFF001D3F.toInt()
+
+    /** 暗色模式主色容器上的文字/图标色 */
+    @ColorInt
+    val colorOnPrimaryContainerDark: Int = 0xFFD1E8FF.toInt()
 
     /** 表面色（页面背景） */
     @ColorInt
@@ -403,4 +411,82 @@ object MorphTokens {
 
     /** 禁用态不透明度 */
     const val disabledAlpha = 0.38f
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 间距 Token — dp 值
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 极小间距（4dp）— 图标与文字间距、紧凑列表项内边距 */
+    const val spacingXs = 4
+
+    /** 小间距（8dp）— 同组元素间距、列表项水平内边距 */
+    const val spacingSm = 8
+
+    /** 中间距（12dp）— 卡片内边距、表单字段间距 */
+    const val spacingMd = 12
+
+    /** 标准间距（16dp）— 页面水平边距、卡片间距 */
+    const val spacingBase = 16
+
+    /** 大间距（20dp）— 区块间距、详情页段落间距 */
+    const val spacingLg = 20
+
+    /** 超大间距（24dp）— 页面顶部/底部安全区域、大区块间距 */
+    const val spacingXl = 24
+
+    /** 极大间距（32dp）— 页面标题与内容区间距 */
+    const val spacingXxl = 32
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 阴影层级 Token — dp 值
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 无阴影 — iOS 风格默认 */
+    const val elevationNone = 0
+
+    /** 一级阴影（1dp）— 微弱浮起感，如搜索栏 */
+    const val elevationLevel1 = 1
+
+    /** 二级阴影（3dp）— 轻浮卡片、Snackbar */
+    const val elevationLevel2 = 3
+
+    /** 三级阴影（6dp）— 浮动按钮、弹窗 */
+    const val elevationLevel3 = 6
+
+    /** 四级阴影（8dp）— 对话框、底部抽屉 */
+    const val elevationLevel4 = 8
+
+    /** 五级阴影（12dp）— 模态底部抽屉 */
+    const val elevationLevel5 = 12
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 动效 Token — 时长（毫秒）与缓动曲线
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 极短动画时长 — 微交互反馈（涟漪、开关） */
+    const val motionDurationXs = 100L
+
+    /** 短动画时长 — 小范围状态切换（选中、展开折叠） */
+    const val motionDurationSm = 150L
+
+    /** 中等动画时长 — 页面转场、控件出现 */
+    const val motionDurationMd = 250L
+
+    /** 长动画时长 — 复杂转场、弹窗出现 */
+    const val motionDurationLg = 350L
+
+    /** 超长动画时长 — 全屏转场、大区域展开 */
+    const val motionDurationXl = 500L
+
+    /** 标准缓动曲线 — 大多数 UI 动画 */
+    const val motionEasingStandard = "cubic-bezier(0.2, 0.0, 0, 1.0)"
+
+    /** 减速缓动曲线 — 元素进入屏幕 */
+    const val motionEasingDecelerate = "cubic-bezier(0.0, 0.0, 0, 1.0)"
+
+    /** 加速缓动曲线 — 元素离开屏幕 */
+    const val motionEasingAccelerate = "cubic-bezier(0.3, 0.0, 1.0, 1.0)"
+
+    /** 线性缓动曲线 — 持续动画（进度条、旋转） */
+    const val motionEasingLinear = "cubic-bezier(0.0, 0.0, 1.0, 1.0)"
 }

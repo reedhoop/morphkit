@@ -25,6 +25,22 @@
     </attr>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
+         控件样式枚举 — 可通过 XML 声明
+         ═══════════════════════════════════════════════════════════════════════ -->
+
+    <!-- MorphButton 样式：FILLED(0) 填充按钮 / PLAIN(1) 透明按钮 -->
+    <attr name="morphButtonVariant" format="enum">
+        <enum name="filled" value="0" />
+        <enum name="plain" value="1" />
+    </attr>
+
+    <!-- MorphEditText 样式：SEARCH(0) 搜索栏 / BARE(1) 裸输入 -->
+    <attr name="morphEditTextVariant" format="enum">
+        <enum name="search" value="0" />
+        <enum name="bare" value="1" />
+    </attr>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════
          MorphButton 自定义属性
          ═══════════════════════════════════════════════════════════════════════ -->
 
@@ -33,6 +49,8 @@
         <attr name="morphCornerRadius" format="dimension" />
         <!-- 交互模式 -->
         <attr name="morphInteractionMode" />
+        <!-- 按钮样式变体 -->
+        <attr name="morphButtonVariant" />
     </declare-styleable>
 
     <!-- ═══════════════════════════════════════════════════════════════════════
@@ -50,6 +68,8 @@
     <declare-styleable name="MorphEditText">
         <attr name="morphCornerRadius" />
         <attr name="morphInteractionMode" />
+        <!-- 输入框样式变体 -->
+        <attr name="morphEditTextVariant" />
     </declare-styleable>
 
     <!-- ═══════════════════════════════════════════════════════════════════════

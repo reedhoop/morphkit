@@ -4,11 +4,6 @@ import android.app.Application
 import android.util.Log
 import android.view.View
 import com.morphkit.core.MorphKit
-import com.morphkit.core.MorphConfig
-import com.morphkit.widget.button.MorphButton
-import com.morphkit.widget.text.MorphTextView
-import com.morphkit.widget.text.MorphEditText
-import com.morphkit.widget.container.MorphCardView
 
 /**
  * iOS 设计系统一键接入配置。
@@ -77,50 +72,8 @@ fun Application.initIOSStyle() {
         //  硬替换：iOS 风格控件全局接管
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-        // TextView → MorphTextView
-        // 拦截原生 TextView 及 AppCompat 别名，统一替换为 iOS 字重/颜色规范的 MorphTextView
-        groupReplace(
-            listOf(
-                "TextView",
-                "androidx.appcompat.widget.AppCompatTextView"
-            )
-        ) { context, attrs ->
-            MorphTextView(context, attrs)
-        }
-
-        // Button → MorphButton
-        // 拦截原生 Button 及 AppCompat 别名，统一替换为 iOS 触控反馈风格的 MorphButton
-        groupReplace(
-            listOf(
-                "Button",
-                "androidx.appcompat.widget.AppCompatButton"
-            )
-        ) { context, attrs ->
-            MorphButton(context, attrs)
-        }
-
-        // EditText → MorphEditText
-        // 拦截原生 EditText 及 AppCompat 别名，统一替换为 iOS 极简风格的 MorphEditText
-        groupReplace(
-            listOf(
-                "EditText",
-                "androidx.appcompat.widget.AppCompatEditText"
-            )
-        ) { context, attrs ->
-            MorphEditText(context, attrs)
-        }
-
-        // CardView → MorphCardView
-        // 拦截 androidx CardView，替换为 iOS 极简卡片（无阴影 + 毛玻璃能力）
-        replace("androidx.cardview.widget.CardView") { context, attrs ->
-            MorphCardView(context, attrs)
-        }
-
-        // MaterialCardView → MorphCardView
-        // 拦截 Material CardView，同样替换为 MorphCardView
-        replace("com.google.android.material.card.MaterialCardView") { context, attrs ->
-            MorphCardView(context, attrs)
-        }
+        // 注册所有内置控件替换规则（与 autoInit 共享同一份规则清单）
+        registerDefaultWidgets()
 
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  软修改兜底：属性级 iOS 风格统一

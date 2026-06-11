@@ -78,7 +78,6 @@ internal class MorphCompoundButtonHelper(
     }
 
     private fun initIosMode() {
-        button.buttonDrawable = null
         button.setButtonDrawable(android.R.color.transparent)
 
         button.stateListAnimator = AnimatorInflater.loadStateListAnimator(

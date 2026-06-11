@@ -7,12 +7,6 @@ import android.util.Log
 import android.view.View
 import com.morphkit.R
 import com.morphkit.theme.MorphStyleResolver
-import com.morphkit.widget.button.MorphButton
-import com.morphkit.widget.button.MorphRadioButton
-import com.morphkit.widget.text.MorphTextView
-import com.morphkit.widget.text.MorphEditText
-import com.morphkit.widget.container.MorphCardView
-import com.morphkit.widget.selection.MorphCheckBox
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -298,24 +292,7 @@ object MorphKit {
     fun autoInit(application: Application) {
         init(application) {
             // 零代码接入时注册默认控件替换规则
-            groupReplace(listOf("TextView", "androidx.appcompat.widget.AppCompatTextView")) { ctx, attrs ->
-                MorphTextView(ctx, attrs)
-            }
-            groupReplace(listOf("Button", "androidx.appcompat.widget.AppCompatButton")) { ctx, attrs ->
-                MorphButton(ctx, attrs)
-            }
-            groupReplace(listOf("EditText", "androidx.appcompat.widget.AppCompatEditText")) { ctx, attrs ->
-                MorphEditText(ctx, attrs)
-            }
-            replace("com.google.android.material.card.MaterialCardView") { ctx, attrs ->
-                MorphCardView(ctx, attrs)
-            }
-            groupReplace(listOf("RadioButton", "androidx.appcompat.widget.AppCompatRadioButton")) { ctx, attrs ->
-                MorphRadioButton(ctx, attrs)
-            }
-            groupReplace(listOf("CheckBox", "androidx.appcompat.widget.AppCompatCheckBox")) { ctx, attrs ->
-                MorphCheckBox(ctx, attrs)
-            }
+            registerDefaultWidgets()
         }
     }
 

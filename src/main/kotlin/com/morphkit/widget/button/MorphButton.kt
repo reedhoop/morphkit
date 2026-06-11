@@ -58,6 +58,9 @@ class MorphButton @JvmOverloads constructor(
                 R.styleable.MorphButton_morphCornerRadius,
                 MorphTheme.cornerMedium(context).toFloat()
             )
+            // 从 XML 读取样式变体
+            val variantValue = a.getInt(R.styleable.MorphButton_morphButtonVariant, 0)
+            style = if (variantValue == 1) Style.PLAIN else Style.FILLED
         } finally {
             a.recycle()
         }

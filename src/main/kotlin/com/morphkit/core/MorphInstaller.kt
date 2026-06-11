@@ -61,18 +61,6 @@ object MorphInstaller {
 
     private val installed = AtomicBoolean(false)
 
-    private val sFactory2Field by lazy {
-        ReflectionHelper.resolveField(LayoutInflater::class.java, "mFactory2")
-    }
-
-    private val sFactoryField by lazy {
-        ReflectionHelper.resolveField(LayoutInflater::class.java, "mFactory")
-    }
-
-    private val sFactorySetField by lazy {
-        ReflectionHelper.resolveField(LayoutInflater::class.java, "mFactorySet")
-    }
-
     fun install(application: Application) {
         if (!installed.compareAndSet(false, true)) {
             Log.d(TAG, "MorphInstaller.install 已执行过，跳过重复注册")
@@ -155,46 +143,11 @@ object MorphInstaller {
     }
 
     private fun setFactoryFields(inflater: LayoutInflater, factory: MorphFactory2) {
-        val factory2Field = sFactory2Field
-        val factoryField = sFactoryField
-
-        if (factory2Field != null) {
-            try {
-                ReflectionHelper.setFieldValue(factory2Field, inflater, factory)
-                if (factoryField != null) {
-                    ReflectionHelper.setFieldValue(factoryField, inflater, factory)
-                }
-                return
-            } catch (e: Exception) {
-                Log.w(TAG, "反射设置 mFactory2 失败，尝试降级策略", e)
-            }
-        }
-
-        fallbackSetFactory2(inflater, factory)
-    }
-
-    private fun fallbackSetFactory2(inflater: LayoutInflater, factory: MorphFactory2) {
-        // 优先使用 ReflectionHelper 的安全降级方案（处理 Android 14+ 反射限制）
-        if (ReflectionHelper.safeSetFactory2(inflater, factory)) {
-            return
-        }
-
-        // 如果 safeSetFactory2 也失败，尝试原始降级逻辑
-        try {
-            sFactorySetField?.let { field ->
-                try {
-                    field.setBoolean(inflater, false)
-                } catch (e: Exception) {
-                    Log.d(TAG, "重置 mFactorySet 失败，尝试直接 setFactory2", e)
-                }
-            }
-
-            inflater.factory2 = factory
-            Log.d(TAG, "setFactory2 降级方案成功")
-        } catch (e: IllegalStateException) {
-            Log.w(TAG, "setFactory2 降级失败（mFactorySet 重置无效），MorphKit 注入无法生效", e)
-        } catch (e: Exception) {
-            Log.w(TAG, "setFactory2 降级异常", e)
+        // 委托给 ReflectionHelper.safeSetFactory2，内部已实现完整的降级链路：
+        // 1. 反射直接写入 mFactory2 + mFactory（最可靠）
+        // 2. 重置 mFactorySet + 公开 API setFactory2（降级）
+        if (!ReflectionHelper.safeSetFactory2(inflater, factory)) {
+            Log.e(TAG, "所有 Factory2 注入策略均失败，MorphKit 无法生效")
         }
     }
 }
