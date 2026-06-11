@@ -11,6 +11,8 @@ import android.view.animation.DecelerateInterpolator
 import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.AppCompatEditText
 import com.morphkit.R
+import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 
 /**
@@ -83,6 +85,14 @@ class MorphEditText @JvmOverloads constructor(
     // 内部状态
     // ═══════════════════════════════════════════════════════════════════════
 
+    /**
+     * 交互模式，从 XML 属性 `morphInteractionMode` 读取。
+     *
+     * - [InteractionMode.IOS]（默认）：启用 iOS 搜索栏样式、自定义排版和焦点反馈
+     * - [InteractionMode.MATERIAL]：跳过 iOS 特定处理，保持 M3 默认 EditText 外观
+     */
+    val interactionMode: InteractionMode
+
     /** 当前输入框样式 */
     var style: Style = Style.SEARCH
         set(value) {
@@ -113,34 +123,43 @@ class MorphEditText @JvmOverloads constructor(
 
     init {
         // ── 读取 XML 属性 ──
+        var resolvedMode = InteractionMode.IOS
         attrs?.let {
             val a = context.obtainStyledAttributes(it, R.styleable.MorphEditText, defStyleAttr, 0)
             try {
                 val variantValue = a.getInt(R.styleable.MorphEditText_morphEditTextVariant, 0)
                 style = if (variantValue == 1) Style.BARE else Style.SEARCH
+
+                val modeValue = a.getInt(R.styleable.MorphEditText_morphInteractionMode, 0)
+                resolvedMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
             } finally {
                 a.recycle()
             }
         }
+        interactionMode = resolvedMode
 
-        // ── 去除 Android 原生底线 ──
-        // AppCompatEditText 默认带一条底部横线（EditText 底线），
-        // iOS 输入框无此线条，必须彻底清除
-        background = null
+        if (interactionMode == InteractionMode.IOS) {
+            // ── 去除 Android 原生底线 ──
+            // AppCompatEditText 默认带一条底部横线（EditText 底线），
+            // iOS 输入框无此线条，必须彻底清除
+            background = null
 
-        // ── 应用排版 ──
-        val typo = MorphTheme.typography.body
-        textSize = typo.fontSize
-        typeface = typo.weight.toTypeface()
+            // ── 应用排版 ──
+            val typo = MorphTheme.typography.body
+            textSize = typo.fontSize
+            typeface = typo.weight.toTypeface()
 
-        // ── 提示文字颜色 ──
-        setHintTextColor(MorphTheme.morphColorOnSurfaceVariant(context))
+            // ── 提示文字颜色 ──
+            setHintTextColor(MorphTheme.morphColorOnSurfaceVariant(context))
 
-        // ── 默认文字颜色 ──
-        setTextColor(MorphTheme.morphColorOnSurface(context))
+            // ── 默认文字颜色 ──
+            setTextColor(MorphTheme.morphColorOnSurface(context))
 
-        // ── 应用样式 ──
-        applyStyle()
+            // ── 应用样式 ──
+            applyStyle()
+        }
+        // MATERIAL mode: skip iOS-specific overrides, keep Android's default
+        // EditText appearance with M3 theme (underline, ripple, default colors)
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -168,9 +187,9 @@ class MorphEditText @JvmOverloads constructor(
         // 焦点态背景色：在原始色基础上微调透明度
         // 浅色模式：略加深（叠加少量黑色，在浅灰背景上更明显）
         // 深色模式：略提亮（叠加少量白色）
-        searchBackgroundFocusedColor = MorphTheme.blendColor(
+        searchBackgroundFocusedColor = MorphColors.blendColor(
             searchBackgroundColor,
-            if (MorphTheme.isDarkMode(context)) Color.WHITE else Color.BLACK,
+            if (MorphColors.isDarkMode(context)) Color.WHITE else Color.BLACK,
             FOCUS_OVERLAY_ALPHA
         )
 
@@ -238,7 +257,7 @@ class MorphEditText @JvmOverloads constructor(
 
         if (!isEnabled) return
 
-        if (style == Style.SEARCH) {
+        if (interactionMode == InteractionMode.IOS && style == Style.SEARCH) {
             applySearchState(focused)
         }
     }
@@ -249,13 +268,17 @@ class MorphEditText @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        applyStyle()
+        if (interactionMode == InteractionMode.IOS) {
+            applyStyle()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
-        applyStyle()
+        // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色（仅 iOS 模式）
+        if (interactionMode == InteractionMode.IOS) {
+            applyStyle()
+        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════

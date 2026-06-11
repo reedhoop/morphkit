@@ -10,6 +10,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 
@@ -110,16 +111,16 @@ class MorphCheckBox @JvmOverloads constructor(
         if (isChecked) {
             // 选中态：主色填充圆角方形
             boxPaint.style = Paint.Style.FILL
-            boxPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
+            boxPaint.color = MorphColors.adjustAlpha(primaryColor, alpha)
             drawRoundRect(canvas, left, top, right, bottom)
 
             // 白色勾选标记（disabled 时同样降低透明度）
-            checkPaint.color = MorphTheme.adjustAlpha(onPrimaryColor, alpha)
+            checkPaint.color = MorphColors.adjustAlpha(onPrimaryColor, alpha)
             drawCheckMark(canvas, left, top)
         } else {
             // 未选中态：灰色边框圆角方形
             strokePaint.strokeWidth = strokeWidth
-            strokePaint.color = MorphTheme.adjustAlpha(surfaceVariantColor, alpha)
+            strokePaint.color = MorphColors.adjustAlpha(surfaceVariantColor, alpha)
             drawRoundRectStroke(canvas, left, top, right, bottom)
         }
     }

@@ -8,6 +8,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.widget.selection.MorphCompoundButtonHelper
@@ -111,13 +112,13 @@ class MorphRadioButton @JvmOverloads constructor(
 
         if (isChecked) {
             // 选中态：主色圆环 + 主色实心圆点
-            ringPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
-            dotPaint.color = MorphTheme.adjustAlpha(primaryColor, alpha)
+            ringPaint.color = MorphColors.adjustAlpha(primaryColor, alpha)
+            dotPaint.color = MorphColors.adjustAlpha(primaryColor, alpha)
             canvas.drawCircle(cx, cy, ringRadius, ringPaint)
             canvas.drawCircle(cx, cy, dotRadius, dotPaint)
         } else {
             // 未选中态：灰色圆环
-            ringPaint.color = MorphTheme.adjustAlpha(surfaceVariantColor, alpha)
+            ringPaint.color = MorphColors.adjustAlpha(surfaceVariantColor, alpha)
             canvas.drawCircle(cx, cy, ringRadius, ringPaint)
         }
     }

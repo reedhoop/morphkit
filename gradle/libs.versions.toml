@@ -1,0 +1,68 @@
+[versions]
+agp = "8.9.1"
+kotlin = "2.1.21"
+appcompat = "1.7.0"
+material = "1.12.0"
+annotation = "1.9.1"
+composeBom = "2025.05.01"
+junit4 = "4.13.2"
+mockk = "1.13.5"
+robolectric = "4.10.3"
+truth = "1.1.5"
+junitJupiter = "5.10.2"
+
+[libraries]
+# Android core
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "annotation" }
+google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+# Compose (version managed by BOM)
+androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
+androidx-compose-ui-text = { group = "androidx.compose.ui", name = "ui-text" }
+androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
+androidx-compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+
+# Testing
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+truth = { group = "com.google.truth", name = "truth", version.ref = "truth" }
+kotlin-test-junit5 = { group = "org.jetbrains.kotlin", name = "kotlin-test-junit5", version.ref = "kotlin" }
+junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junitJupiter" }
+junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junitJupiter" }
+
+[bundles]
+# Compose libraries for compileOnly scope (host app provides runtime)
+compose = [
+    "androidx-compose-material3",
+    "androidx-compose-ui",
+    "androidx-compose-ui-text",
+    "androidx-compose-foundation",
+]
+# Compose libraries for testImplementation scope
+composeTest = [
+    "androidx-compose-runtime",
+    "androidx-compose-ui-test-junit4",
+    "androidx-compose-material3",
+    "androidx-compose-ui-test-manifest",
+]
+# Unit test libraries (non-Compose)
+test = [
+    "junit4",
+    "mockk",
+    "robolectric",
+    "truth",
+    "kotlin-test-junit5",
+    "junit-jupiter-engine",
+    "junit-vintage-engine",
+]
+
+[plugins]
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

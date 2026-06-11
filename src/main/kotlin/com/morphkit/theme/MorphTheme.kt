@@ -1,8 +1,6 @@
 package com.morphkit.theme
 
 import android.content.Context
-import android.content.res.Configuration
-import android.graphics.Color
 import android.util.TypedValue
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorInt
@@ -99,39 +97,19 @@ object MorphTheme {
      * - 按下态：叠加 20% 遮罩
      * - 禁用态：降低不透明度至 38%
      */
-    fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList {
-        val pressedColor = overlayColor(baseColor, if (isDarkMode) Color.WHITE else Color.BLACK, 0.2f)
-        val disabledColor = adjustAlpha(baseColor, 0.38f)
-
-        return android.content.res.ColorStateList(
-            arrayOf(
-                intArrayOf(-android.R.attr.state_enabled),
-                intArrayOf(android.R.attr.state_pressed),
-                intArrayOf()
-            ),
-            intArrayOf(disabledColor, pressedColor, baseColor)
-        )
-    }
+    @Deprecated("Use MorphColors.createColorStateList()", ReplaceWith("MorphColors.createColorStateList(baseColor, isDarkMode)"))
+    fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList =
+        MorphColors.createColorStateList(baseColor, isDarkMode)
 
     /** 给颜色叠加遮罩 */
-    fun overlayColor(baseColor: Int, overlayColor: Int, alpha: Float): Int {
-        val ratio = (Color.alpha(overlayColor) * alpha) / 255f
-        val inverseRatio = 1f - ratio
-        return Color.argb(
-            Color.alpha(baseColor),
-            (Color.red(baseColor) * inverseRatio + Color.red(overlayColor) * ratio).toInt().coerceIn(0, 255),
-            (Color.green(baseColor) * inverseRatio + Color.green(overlayColor) * ratio).toInt().coerceIn(0, 255),
-            (Color.blue(baseColor) * inverseRatio + Color.blue(overlayColor) * ratio).toInt().coerceIn(0, 255)
-        )
-    }
+    @Deprecated("Use MorphColors.overlayColor()", ReplaceWith("MorphColors.overlayColor(baseColor, overlayColor, alpha)"))
+    fun overlayColor(baseColor: Int, overlayColor: Int, alpha: Float): Int =
+        MorphColors.overlayColor(baseColor, overlayColor, alpha)
 
     /** 调整颜色的不透明度 */
-    fun adjustAlpha(color: Int, alpha: Float): Int {
-        return Color.argb(
-            (Color.alpha(color) * alpha).toInt().coerceIn(0, 255),
-            Color.red(color), Color.green(color), Color.blue(color)
-        )
-    }
+    @Deprecated("Use MorphColors.adjustAlpha()", ReplaceWith("MorphColors.adjustAlpha(color, alpha)"))
+    fun adjustAlpha(color: Int, alpha: Float): Int =
+        MorphColors.adjustAlpha(color, alpha)
 
     /**
      * 线性混合两个颜色。
@@ -141,20 +119,14 @@ object MorphTheme {
      * @param ratio  混合比例 [0f, 1f]，0 返回 from，1 返回 to
      * @return 混合后的颜色
      */
-    fun blendColor(from: Int, to: Int, ratio: Float): Int {
-        val inverseRatio = 1f - ratio
-        val r = (Color.red(from) * inverseRatio + Color.red(to) * ratio).toInt().coerceIn(0, 255)
-        val g = (Color.green(from) * inverseRatio + Color.green(to) * ratio).toInt().coerceIn(0, 255)
-        val b = (Color.blue(from) * inverseRatio + Color.blue(to) * ratio).toInt().coerceIn(0, 255)
-        val a = (Color.alpha(from) * inverseRatio + Color.alpha(to) * ratio).toInt().coerceIn(0, 255)
-        return Color.argb(a, r, g, b)
-    }
+    @Deprecated("Use MorphColors.blendColor()", ReplaceWith("MorphColors.blendColor(from, to, ratio)"))
+    fun blendColor(from: Int, to: Int, ratio: Float): Int =
+        MorphColors.blendColor(from, to, ratio)
 
     /** 判断当前是否为暗黑模式 */
-    fun isDarkMode(context: Context): Boolean {
-        val nightModeFlags = context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
-    }
+    @Deprecated("Use MorphColors.isDarkMode()", ReplaceWith("MorphColors.isDarkMode(context)"))
+    fun isDarkMode(context: Context): Boolean =
+        MorphColors.isDarkMode(context)
 
     // ═══════════════════════════════════════════════════════════════════════
     // 形状体系 — iOS 连续性圆角近似

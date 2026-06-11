@@ -9,6 +9,8 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import com.google.android.material.card.MaterialCardView
 import com.morphkit.R
+import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
@@ -69,6 +71,17 @@ class MorphCardView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
     // 内部状态
     // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * 交互模式，从 XML 属性 `morphInteractionMode` 读取。
+     *
+     * - [InteractionMode.IOS]（默认）：零阴影、无涟漪、iOS 极简卡片风格
+     * - [InteractionMode.MATERIAL]：保留 M3 默认阴影、涟漪和状态动画
+     *
+     * 在 init 块中通过 XML 属性初始化，之后不再变更。
+     */
+    var interactionMode: InteractionMode = InteractionMode.IOS
+        private set
 
     /** 模糊半径（px），可通过 XML 或 setter 修改 */
     private var blurRadius: Float = DEFAULT_BLUR_RADIUS
@@ -132,21 +145,36 @@ class MorphCardView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     init {
-        // ── 关闭 Material 默认阴影动画 ──
-        // MaterialCardView 默认带 elevation 阴影和按压态阴影动画，
-        // 与 iOS 极简风格完全冲突，必须彻底清除
-        cardElevation = MorphTokens.elevationNone.toFloat()
-        maxCardElevation = MorphTokens.elevationNone.toFloat()
+        // ── 读取交互模式（在其他属性之前，以决定是否应用 iOS 特定覆盖） ──
+        attrs?.let {
+            val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView)
+            try {
+                val modeValue = a.getInt(R.styleable.MorphCardView_morphInteractionMode, 0)
+                interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
+            } finally {
+                a.recycle()
+            }
+        }
 
-        // ── 关闭涟漪效果 ──
-        // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
-        // iOS 卡片无涟漪反馈，需禁用
-        isClickable = false
-        rippleColor = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
+        if (interactionMode == InteractionMode.IOS) {
+            // ── 关闭 Material 默认阴影动画 ──
+            // MaterialCardView 默认带 elevation 阴影和按压态阴影动画，
+            // 与 iOS 极简风格完全冲突，必须彻底清除
+            cardElevation = MorphTokens.elevationNone.toFloat()
+            maxCardElevation = MorphTokens.elevationNone.toFloat()
 
-        // ── 关闭状态动画 ──
-        // 禁用按压态阴影变化动画
-        stateListAnimator = null
+            // ── 关闭涟漪效果 ──
+            // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
+            // iOS 卡片无涟漪反馈，需禁用
+            isClickable = false
+            rippleColor = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
+
+            // ── 关闭状态动画 ──
+            // 禁用按压态阴影变化动画
+            stateListAnimator = null
+        }
+        // MATERIAL mode: keep standard Material Card appearance
+        // (elevation shadow, ripple on click, stateListAnimator)
 
         // ── 圆角 ──
         radius = MorphTheme.cornerLarge(context).toFloat()
@@ -190,8 +218,13 @@ class MorphCardView @JvmOverloads constructor(
      * 此方法在以下时机调用：
      * - [isGlassmorphism] 被赋值时
      * - [onAttachedToWindow] 时（适配暗黑模式切换）
+     *
+     * 在 [InteractionMode.MATERIAL] 模式下跳过所有 iOS 特定的视觉状态，
+     * 保留标准 Material Card 外观（阴影、涟漪、默认配色）。
      */
     private fun applyVisualState() {
+        if (interactionMode == InteractionMode.MATERIAL) return
+
         refreshColors()
 
         if (isGlassmorphism) {
@@ -241,7 +274,7 @@ class MorphCardView @JvmOverloads constructor(
         ensureBlurBackgroundView()
 
         // 半透明背景（作为模糊图层的底色叠加）
-        val bgColor = if (MorphTheme.isDarkMode(context)) glassmorphismDarkBg else glassmorphismLightBg
+        val bgColor = if (MorphColors.isDarkMode(context)) glassmorphismDarkBg else glassmorphismLightBg
         setCardBackgroundColor(bgColor)
 
         // 毛玻璃模式无边框

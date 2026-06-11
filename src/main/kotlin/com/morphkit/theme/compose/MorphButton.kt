@@ -56,14 +56,20 @@ import kotlinx.coroutines.flow.collectLatest
  * @param onClick 点击回调
  * @param modifier Modifier
  * @param enabled 是否启用
+ * @param style 按钮样式变体：[ButtonStyle.FILLED] 填充 / [ButtonStyle.PLAIN] 透明
  * @param interactionMode 交互模式，默认从 [LocalMorphInteractionMode] 读取
  */
+
+/** Compose 按钮样式变体（对齐 View 层 [com.morphkit.widget.button.MorphButton.Style]） */
+enum class ButtonStyle { FILLED, PLAIN }
+
 @Composable
 fun MorphButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    style: ButtonStyle = ButtonStyle.FILLED,
     interactionMode: InteractionMode = LocalMorphInteractionMode.current
 ) {
     val colors = LocalMorphColors.current
@@ -76,6 +82,7 @@ fun MorphButton(
                 onClick = onClick,
                 modifier = modifier,
                 enabled = enabled,
+                style = style,
                 colors = colors,
                 cornerRadius = shape.cornerRadiusButton
             )
@@ -86,6 +93,7 @@ fun MorphButton(
                 onClick = onClick,
                 modifier = modifier,
                 enabled = enabled,
+                style = style,
                 colors = colors,
                 cornerRadius = shape.cornerRadiusButton
             )
@@ -113,6 +121,7 @@ private fun IosButton(
     onClick: () -> Unit,
     modifier: Modifier,
     enabled: Boolean,
+    style: ButtonStyle,
     colors: MorphColorPalette,
     cornerRadius: Int
 ) {
@@ -158,24 +167,31 @@ private fun IosButton(
         }
     }
 
+    // ── 根据 style 决定背景色与文字色 ──
+    val isPlain = style == ButtonStyle.PLAIN
     val backgroundColor = if (enabled) {
-        colors.primary
+        if (isPlain) Color.Transparent else colors.primary
     } else {
-        colors.primary.copy(alpha = MorphTokens.disabledAlpha)
+        if (isPlain) Color.Transparent else colors.primary.copy(alpha = MorphTokens.disabledAlpha)
     }
     val contentColor = if (enabled) {
-        colors.onPrimary
+        if (isPlain) colors.primary else colors.onPrimary
     } else {
-        colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
+        (if (isPlain) colors.primary else colors.onPrimary).copy(alpha = MorphTokens.disabledAlpha)
     }
 
     // 按压态颜色：与 View 层 MorphButton 一致
-    // 亮色模式：叠加黑色变暗（View 用 Color.BLACK）
-    // 暗色模式：叠加白色变亮（View 用 Color.WHITE）
+    // FILLED: 亮色模式叠加黑色变暗，暗色模式叠加白色变亮
+    // PLAIN:  透明背景叠加 primary 色微弱底色
     val displayColor = if (enabled) {
         val overlayAlpha = pressAlpha.value * MorphTokens.pressOverlayMaxAlpha
-        val overlayColor = if (isDarkMode()) Color.White else Color.Black
-        lerp(backgroundColor, overlayColor, overlayAlpha)
+        if (isPlain) {
+            // PLAIN 按压：透明底 + primary 色微弱叠加
+            colors.primary.copy(alpha = overlayAlpha * 0.12f)
+        } else {
+            val overlayColor = if (isDarkMode()) Color.White else Color.Black
+            lerp(backgroundColor, overlayColor, overlayAlpha)
+        }
     } else {
         backgroundColor
     }
@@ -243,27 +259,45 @@ private fun MaterialButton(
     onClick: () -> Unit,
     modifier: Modifier,
     enabled: Boolean,
+    style: ButtonStyle,
     colors: MorphColorPalette,
     cornerRadius: Int
 ) {
-    androidx.compose.material3.Button(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        shape = RoundedCornerShape(cornerRadius.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = colors.primary,
-            contentColor = colors.onPrimary,
-            disabledContainerColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha),
-            disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
-        ),
-        contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
-    ) {
-        Text(
-            text = text,
-            style = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.Medium
-            )
-        )
+    val isPlain = style == ButtonStyle.PLAIN
+    val buttonShape = RoundedCornerShape(cornerRadius.dp)
+    val textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+
+    if (isPlain) {
+        // PLAIN 变体：使用 TextButton 风格（透明背景 + primary 色文字）
+        androidx.compose.material3.TextButton(
+            onClick = onClick,
+            modifier = modifier,
+            enabled = enabled,
+            shape = buttonShape,
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = colors.primary,
+                disabledContentColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha)
+            ),
+            contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
+        ) {
+            Text(text = text, style = textStyle)
+        }
+    } else {
+        // FILLED 变体：标准 Material3 Button
+        androidx.compose.material3.Button(
+            onClick = onClick,
+            modifier = modifier,
+            enabled = enabled,
+            shape = buttonShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colors.primary,
+                contentColor = colors.onPrimary,
+                disabledContainerColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha),
+                disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
+            ),
+            contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
+        ) {
+            Text(text = text, style = textStyle)
+        }
     }
 }

@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 
@@ -178,14 +179,14 @@ class MorphButton @JvmOverloads constructor(
         when (interactionMode) {
             InteractionMode.IOS -> {
                 if (!hasCustomBackground) {
-                    shapeDrawable.setColor(MorphTheme.adjustAlpha(baseColor, MorphTokens.disabledAlpha))
+                    shapeDrawable.setColor(MorphColors.adjustAlpha(baseColor, MorphTokens.disabledAlpha))
                 }
             }
             InteractionMode.MATERIAL -> {
                 // 不干预 M3 默认禁用态
             }
         }
-        setTextColor(MorphTheme.adjustAlpha(baseTextColor, MorphTokens.disabledAlpha))
+        setTextColor(MorphColors.adjustAlpha(baseTextColor, MorphTokens.disabledAlpha))
     }
 
     override fun setEnabled(enabled: Boolean) {
@@ -201,7 +202,7 @@ class MorphButton @JvmOverloads constructor(
         if (interactionMode == InteractionMode.IOS && isEnabled && !hasCustomBackground) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
-                    animatePressOverlay(targetAlpha = PRESS_OVERLAY_MAX_ALPHA)
+                    animatePressOverlay(targetAlpha = pressOverlayMaxAlpha)
                 }
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
                     animatePressOverlay(targetAlpha = 0f)
@@ -214,7 +215,7 @@ class MorphButton @JvmOverloads constructor(
     private fun animatePressOverlay(targetAlpha: Float) {
         pressAnimator?.cancel()
 
-        val duration = if (targetAlpha > 0f) PRESS_IN_DURATION else PRESS_OUT_DURATION
+        val duration = if (targetAlpha > 0f) pressInDuration else pressOutDuration
 
         pressAnimator = ValueAnimator.ofFloat(pressOverlayAlpha, targetAlpha).apply {
             this.duration = duration
@@ -235,10 +236,10 @@ class MorphButton @JvmOverloads constructor(
             Style.PLAIN -> Color.TRANSPARENT
         }
 
-        val isDark = MorphTheme.isDarkMode(context)
+        val isDark = MorphColors.isDarkMode(context)
         val overlayColor = if (isDark) Color.WHITE else Color.BLACK
 
-        val blended: Int = MorphTheme.overlayColor(baseColor, overlayColor, pressOverlayAlpha)
+        val blended: Int = MorphColors.overlayColor(baseColor, overlayColor, pressOverlayAlpha)
         shapeDrawable.setColor(blended)
     }
 
@@ -260,9 +261,9 @@ class MorphButton @JvmOverloads constructor(
     }
 
     companion object {
-        private val PRESS_OVERLAY_MAX_ALPHA = MorphTokens.pressOverlayMaxAlpha
-        private val PRESS_IN_DURATION = MorphTokens.motionDurationSm
-        private val PRESS_OUT_DURATION = MorphTokens.pressOutDuration
+        private val pressOverlayMaxAlpha = MorphTokens.pressOverlayMaxAlpha
+        private val pressInDuration = MorphTokens.motionDurationSm
+        private val pressOutDuration = MorphTokens.pressOutDuration
     }
 
     // ═══════════════════════════════════════════════════════════════════════

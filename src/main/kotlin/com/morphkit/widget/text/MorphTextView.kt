@@ -6,6 +6,8 @@ import android.graphics.Typeface
 import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.morphkit.R
+import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 
@@ -51,6 +53,14 @@ class MorphTextView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     /**
+     * 交互模式，从 XML 属性 `morphInteractionMode` 读取。
+     *
+     * - [InteractionMode.IOS]（默认）：启用 iOS 字重补偿和颜色规范
+     * - [InteractionMode.MATERIAL]：跳过 iOS 特定处理，使用 M3 默认文字样式
+     */
+    val interactionMode: InteractionMode
+
+    /**
      * 是否为次级文字模式。
      *
      * 设置为 `true` 时，文字颜色自动切换为 [MorphTheme.morphColorOnSurfaceVariant]，
@@ -84,13 +94,30 @@ class MorphTextView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     init {
-        // ── 拦截并重新映射 textStyle ──
-        // Android XML 中 android:textStyle 的值在 super 构造时已被应用，
-        // 此处读取当前 typeface.style，按 iOS 规范重新映射
-        remapTextStyle()
+        // ── 读取 XML 属性 ──
+        interactionMode = if (attrs != null) {
+            val a = context.obtainStyledAttributes(attrs, R.styleable.MorphTextView, defStyleAttr, 0)
+            try {
+                val modeValue = a.getInt(R.styleable.MorphTextView_morphInteractionMode, 0)
+                if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
+            } finally {
+                a.recycle()
+            }
+        } else {
+            InteractionMode.IOS
+        }
 
-        // ── 应用默认文字颜色 ──
-        applyTextColor()
+        if (interactionMode == InteractionMode.IOS) {
+            // ── 拦截并重新映射 textStyle ──
+            // Android XML 中 android:textStyle 的值在 super 构造时已被应用，
+            // 此处读取当前 typeface.style，按 iOS 规范重新映射
+            remapTextStyle()
+
+            // ── 应用默认文字颜色 ──
+            applyTextColor()
+        }
+        // MATERIAL mode: skip iOS-specific textStyle remapping and text color,
+        // use default M3 text styling from the theme
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -169,7 +196,7 @@ class MorphTextView @JvmOverloads constructor(
      */
     private fun applyTextColor() {
         val color: Int = when {
-            isTertiaryText -> MorphTheme.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), MorphTokens.tertiaryTextAlpha)
+            isTertiaryText -> MorphColors.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), MorphTokens.tertiaryTextAlpha)
             isSecondaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
             else -> MorphTheme.morphColorOnSurface(context)
         }
@@ -213,13 +240,17 @@ class MorphTextView @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        // 适配暗黑模式切换
-        applyTextColor()
+        // 适配暗黑模式切换（仅 iOS 模式）
+        if (interactionMode == InteractionMode.IOS) {
+            applyTextColor()
+        }
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        // Activity 不重建时（configChanges 包含 uiMode），手动刷新文字颜色
-        applyTextColor()
+        // Activity 不重建时（configChanges 包含 uiMode），手动刷新文字颜色（仅 iOS 模式）
+        if (interactionMode == InteractionMode.IOS) {
+            applyTextColor()
+        }
     }
 }
