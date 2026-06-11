@@ -35,13 +35,6 @@ class MorphButtonBehaviorTest {
         pixelContext = ContextThemeWrapper(materialContext, R.style.Theme_MorphKit_Pixel)
     }
 
-    @Suppress("UNCHECKED_CAST")
-    private fun <T> Any.readField(name: String): T {
-        val field = this.javaClass.getDeclaredField(name)
-        field.isAccessible = true
-        return field.get(this) as T
-    }
-
     // ═══════════════════════════════════════════════════════════════════════
     // 1. Initialization — 默认值
     // ═══════════════════════════════════════════════════════════════════════
@@ -55,16 +48,14 @@ class MorphButtonBehaviorTest {
     @Test
     fun defaultInteractionMode_isIos() {
         val button = MorphButton(iosContext)
-        val mode: InteractionMode = button.readField("interactionMode")
-        assertThat(mode).isEqualTo(InteractionMode.IOS)
+        assertThat(button.testInteractionMode).isEqualTo(InteractionMode.IOS)
     }
 
     @Test
     fun defaultCornerRadius_matchesCornerMedium() {
         val button = MorphButton(iosContext)
-        val cornerRadius: Float = button.readField("cornerRadius")
         val expected = MorphTheme.cornerMedium(iosContext).toFloat()
-        assertThat(cornerRadius).isEqualTo(expected)
+        assertThat(button.testCornerRadius).isEqualTo(expected)
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -75,8 +66,7 @@ class MorphButtonBehaviorTest {
     fun filledStyle_ios_setsBackgroundToPrimaryColor() {
         val button = MorphButton(iosContext)
         val primary = MorphTheme.morphColorPrimary(iosContext)
-        val shapeDrawable: GradientDrawable = button.readField("shapeDrawable")
-        assertThat(shapeDrawable.color?.defaultColor).isEqualTo(primary)
+        assertThat(button.testShapeDrawable.color?.defaultColor).isEqualTo(primary)
     }
 
     @Test
@@ -96,8 +86,7 @@ class MorphButtonBehaviorTest {
     fun plainStyle_ios_setsBackgroundTransparent() {
         val button = MorphButton(iosContext)
         button.style = MorphButton.Style.PLAIN
-        val shapeDrawable: GradientDrawable = button.readField("shapeDrawable")
-        assertThat(shapeDrawable.color?.defaultColor).isEqualTo(Color.TRANSPARENT)
+        assertThat(button.testShapeDrawable.color?.defaultColor).isEqualTo(Color.TRANSPARENT)
     }
 
     @Test
@@ -144,15 +133,13 @@ class MorphButtonBehaviorTest {
     @Test
     fun materialMode_interactionModeIsMaterial() {
         val button = MorphButton(pixelContext)
-        val mode: InteractionMode = button.readField("interactionMode")
-        assertThat(mode).isEqualTo(InteractionMode.MATERIAL)
+        assertThat(button.testInteractionMode).isEqualTo(InteractionMode.MATERIAL)
     }
 
     @Test
     fun materialMode_doesNotReplaceBackground() {
         val button = MorphButton(pixelContext)
-        val hasCustomBg: Boolean = button.readField("hasCustomBackground")
-        assertThat(hasCustomBg).isTrue()
+        assertThat(button.testHasCustomBackground).isTrue()
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -173,9 +160,8 @@ class MorphButtonBehaviorTest {
         val button = MorphButton(iosContext)
         val primary = MorphTheme.morphColorPrimary(iosContext)
         button.isEnabled = false
-        val shapeDrawable: GradientDrawable = button.readField("shapeDrawable")
         val expected = MorphTheme.adjustAlpha(primary, MorphTokens.disabledAlpha)
-        assertThat(shapeDrawable.color?.defaultColor).isEqualTo(expected)
+        assertThat(button.testShapeDrawable.color?.defaultColor).isEqualTo(expected)
     }
 
     @Test
@@ -212,15 +198,13 @@ class MorphButtonBehaviorTest {
     @Test
     fun xmlMorphInteractionMode_ios_resolvesToIosMode() {
         val button = MorphButton(iosContext)
-        val mode: InteractionMode = button.readField("interactionMode")
-        assertThat(mode).isEqualTo(InteractionMode.IOS)
+        assertThat(button.testInteractionMode).isEqualTo(InteractionMode.IOS)
     }
 
     @Test
     fun xmlMorphInteractionMode_material_resolvesToMaterialMode() {
         val button = MorphButton(pixelContext)
-        val mode: InteractionMode = button.readField("interactionMode")
-        assertThat(mode).isEqualTo(InteractionMode.MATERIAL)
+        assertThat(button.testInteractionMode).isEqualTo(InteractionMode.MATERIAL)
     }
 
     @Test
@@ -232,16 +216,14 @@ class MorphButtonBehaviorTest {
     @Test
     fun xmlMorphCornerRadius_ios_is12dp() {
         val button = MorphButton(iosContext)
-        val cornerRadius: Float = button.readField("cornerRadius")
         val expected = 12f.dp(iosContext)
-        assertThat(cornerRadius).isEqualTo(expected)
+        assertThat(button.testCornerRadius).isEqualTo(expected)
     }
 
     @Test
     fun xmlMorphCornerRadius_pixel_is8dp() {
         val button = MorphButton(pixelContext)
-        val cornerRadius: Float = button.readField("cornerRadius")
         val expected = 8f.dp(pixelContext)
-        assertThat(cornerRadius).isEqualTo(expected)
+        assertThat(button.testCornerRadius).isEqualTo(expected)
     }
 }

@@ -246,94 +246,67 @@ data class MorphColorPalette(
         }
 
         /**
-         * Pixel 亮色降级色板 — 当 Context Theme 缺少 M3 属性时使用。
+         * Pixel 亮色降级色板 — 直接复用 iOS 亮色 Token。
          *
          * 值来源于 [MorphTokens]，与 iOS 亮色共享 Token 基色，确保一致性。
+         * 通过 [MorphColorPalette.toFallback] 转换，新增 Token 只需在 iosLight() 中添加一次。
          */
-        private val pixelLightFallback = FallbackColors(
-            primary = Color(MorphTokens.colorBlue500),
-            onPrimary = Color(MorphTokens.colorOnPrimary),
-            primaryContainer = Color(MorphTokens.colorPrimaryContainer),
-            onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainer),
-            secondary = Color(MorphTokens.colorSecondary),
-            onSecondary = Color(MorphTokens.colorOnSecondary),
-            secondaryContainer = Color(MorphTokens.colorSecondaryContainer),
-            onSecondaryContainer = Color(MorphTokens.colorOnSecondaryContainer),
-            tertiary = Color(MorphTokens.colorTertiary),
-            onTertiary = Color(MorphTokens.colorOnTertiary),
-            tertiaryContainer = Color(MorphTokens.colorTertiaryContainer),
-            onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainer),
-            error = Color(MorphTokens.colorRed500),
-            onError = Color(MorphTokens.colorOnError),
-            errorContainer = Color(MorphTokens.colorErrorContainer),
-            onErrorContainer = Color(MorphTokens.colorOnErrorContainer),
-            surface = Color(MorphTokens.colorSurface),
-            onSurface = Color(MorphTokens.colorOnSurface),
-            surfaceVariant = Color(MorphTokens.colorSurfaceVariant),
-            onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariant),
-            surfaceDim = Color(MorphTokens.colorSurfaceDim),
-            surfaceBright = Color(MorphTokens.colorSurfaceBright),
-            surfaceContainerLowest = Color(MorphTokens.colorSurfaceContainerLowest),
-            surfaceContainerLow = Color(MorphTokens.colorSurfaceContainerLow),
-            surfaceContainer = Color(MorphTokens.colorSurfaceContainer),
-            surfaceContainerHigh = Color(MorphTokens.colorSurfaceContainerHigh),
-            surfaceContainerHighest = Color(MorphTokens.colorSurfaceContainerHighest),
-            outline = Color(MorphTokens.colorOutline),
-            outlineVariant = Color(MorphTokens.colorOutlineVariant),
-            background = Color(MorphTokens.colorBackground),
-            onBackground = Color(MorphTokens.colorOnSurface),
-            inverseSurface = Color(MorphTokens.colorOnSurface),
-            inverseOnSurface = Color(MorphTokens.colorSurface),
-            inversePrimary = Color(MorphTokens.colorBlue100),
-            success = Color(MorphTokens.colorGreen500),
-            warning = Color(MorphTokens.colorOrange500)
-        )
+        private val pixelLightFallback: FallbackColors by lazy { iosLight().toFallback() }
 
         /**
-         * Pixel 暗色降级色板 — 当 Context Theme 缺少 M3 暗色属性时使用。
+         * Pixel 暗色降级色板 — 直接复用 iOS 暗色 Token。
          *
          * 值来源于 [MorphTokens] 的 Dark 系列常量。此前 Pixel 模式仅有亮色降级，
          * 暗色模式下会错误地回退到亮色 Token，导致暗色模式下出现刺眼的亮色背景。
+         * 通过 [MorphColorPalette.toFallback] 转换，新增 Token 只需在 iosDark() 中添加一次。
          */
-        private val pixelDarkFallback = FallbackColors(
-            primary = Color(MorphTokens.colorBlue100),
-            onPrimary = Color(MorphTokens.colorOnPrimaryDark),
-            primaryContainer = Color(MorphTokens.colorPrimaryContainerDark),
-            onPrimaryContainer = Color(MorphTokens.colorOnPrimaryContainerDark),
-            secondary = Color(MorphTokens.colorSecondaryDark),
-            onSecondary = Color(MorphTokens.colorOnSecondaryDark),
-            secondaryContainer = Color(MorphTokens.colorSecondaryContainerDark),
-            onSecondaryContainer = Color(MorphTokens.colorOnSecondaryContainerDark),
-            tertiary = Color(MorphTokens.colorTertiaryDark),
-            onTertiary = Color(MorphTokens.colorOnTertiaryDark),
-            tertiaryContainer = Color(MorphTokens.colorTertiaryContainerDark),
-            onTertiaryContainer = Color(MorphTokens.colorOnTertiaryContainerDark),
-            error = Color(MorphTokens.colorErrorDark),
-            onError = Color(MorphTokens.colorOnErrorDark),
-            errorContainer = Color(MorphTokens.colorErrorContainerDark),
-            onErrorContainer = Color(MorphTokens.colorOnErrorContainerDark),
-            surface = Color(MorphTokens.colorSurfaceDark),
-            onSurface = Color(MorphTokens.colorOnSurfaceDark),
-            surfaceVariant = Color(MorphTokens.colorSurfaceVariantDark),
-            onSurfaceVariant = Color(MorphTokens.colorOnSurfaceVariantDark),
-            surfaceDim = Color(MorphTokens.colorSurfaceDimDark),
-            surfaceBright = Color(MorphTokens.colorSurfaceBrightDark),
-            surfaceContainerLowest = Color(MorphTokens.colorSurfaceContainerLowestDark),
-            surfaceContainerLow = Color(MorphTokens.colorSurfaceContainerLowDark),
-            surfaceContainer = Color(MorphTokens.colorSurfaceContainerDark),
-            surfaceContainerHigh = Color(MorphTokens.colorSurfaceContainerHighDark),
-            surfaceContainerHighest = Color(MorphTokens.colorSurfaceContainerHighestDark),
-            outline = Color(MorphTokens.colorOutlineDark),
-            outlineVariant = Color(MorphTokens.colorOutlineVariantDark),
-            background = Color(MorphTokens.colorBackgroundDark),
-            onBackground = Color(MorphTokens.colorOnSurfaceDark),
-            inverseSurface = Color(MorphTokens.colorOnSurfaceDark),
-            inverseOnSurface = Color(MorphTokens.colorSurfaceDark),
-            inversePrimary = Color(MorphTokens.colorBlue500),
-            success = Color(MorphTokens.colorSuccessDark),
-            warning = Color(MorphTokens.colorWarningDark)
-        )
+        private val pixelDarkFallback: FallbackColors by lazy { iosDark().toFallback() }
     }
+
+    /**
+     * 将 [MorphColorPalette] 转换为 [FallbackColors]。
+     *
+     * 用于 Pixel 模式降级色板的自动生成，确保新增 Token 字段只需在
+     * [iosLight] / [iosDark] 中添加一次，pixelFallback 自动同步。
+     */
+    private fun toFallback() = FallbackColors(
+        primary = primary,
+        onPrimary = onPrimary,
+        primaryContainer = primaryContainer,
+        onPrimaryContainer = onPrimaryContainer,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        secondaryContainer = secondaryContainer,
+        onSecondaryContainer = onSecondaryContainer,
+        tertiary = tertiary,
+        onTertiary = onTertiary,
+        tertiaryContainer = tertiaryContainer,
+        onTertiaryContainer = onTertiaryContainer,
+        error = error,
+        onError = onError,
+        errorContainer = errorContainer,
+        onErrorContainer = onErrorContainer,
+        surface = surface,
+        onSurface = onSurface,
+        surfaceVariant = surfaceVariant,
+        onSurfaceVariant = onSurfaceVariant,
+        surfaceDim = surfaceDim,
+        surfaceBright = surfaceBright,
+        surfaceContainerLowest = surfaceContainerLowest,
+        surfaceContainerLow = surfaceContainerLow,
+        surfaceContainer = surfaceContainer,
+        surfaceContainerHigh = surfaceContainerHigh,
+        surfaceContainerHighest = surfaceContainerHighest,
+        outline = outline,
+        outlineVariant = outlineVariant,
+        background = background,
+        onBackground = onBackground,
+        inverseSurface = inverseSurface,
+        inverseOnSurface = inverseOnSurface,
+        inversePrimary = inversePrimary,
+        success = success,
+        warning = warning
+    )
 
     /**
      * 降级色板内部数据结构。

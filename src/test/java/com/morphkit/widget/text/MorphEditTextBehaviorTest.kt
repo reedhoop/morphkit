@@ -9,7 +9,6 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
-import java.lang.reflect.Method
 
 /**
  * MorphEditText 行为测试（Robolectric）。
@@ -159,8 +158,8 @@ class MorphEditTextBehaviorTest {
         // 未聚焦态的背景色
         val unfocusedDrawable = editText.background as GradientDrawable
 
-        // 模拟获取焦点（通过反射调用 protected 方法）
-        invokeOnFocusChanged(editText, true)
+        // 模拟获取焦点（通过 internal test-only 方法）
+        editText.dispatchFocusChangedForTest(true)
 
         // 获取焦点后背景应仍为 GradientDrawable
         assertThat(editText.background).isInstanceOf(GradientDrawable::class.java)
@@ -172,9 +171,9 @@ class MorphEditTextBehaviorTest {
         editText.style = MorphEditText.Style.SEARCH
 
         // 先获取焦点
-        invokeOnFocusChanged(editText, true)
+        editText.dispatchFocusChangedForTest(true)
         // 再失去焦点
-        invokeOnFocusChanged(editText, false)
+        editText.dispatchFocusChangedForTest(false)
 
         assertThat(editText.background).isInstanceOf(GradientDrawable::class.java)
     }
@@ -186,10 +185,10 @@ class MorphEditTextBehaviorTest {
         assertThat(editText.background).isNull()
 
         // BARE 模式下焦点变化不应设置背景
-        invokeOnFocusChanged(editText, true)
+        editText.dispatchFocusChangedForTest(true)
         assertThat(editText.background).isNull()
 
-        invokeOnFocusChanged(editText, false)
+        editText.dispatchFocusChangedForTest(false)
         assertThat(editText.background).isNull()
     }
 
@@ -200,7 +199,7 @@ class MorphEditTextBehaviorTest {
         val bgBefore = editText.background
 
         editText.isEnabled = false
-        invokeOnFocusChanged(editText, true)
+        editText.dispatchFocusChangedForTest(true)
 
         // 禁用态下背景应保持不变
         assertThat(editText.background).isSameInstanceAs(bgBefore)
@@ -258,8 +257,8 @@ class MorphEditTextBehaviorTest {
         val editText = MorphEditText(context)
         editText.style = MorphEditText.Style.SEARCH
 
-        // 模拟 attached to window（通过反射调用 protected 方法）
-        invokeOnAttachedToWindow(editText)
+        // 模拟 attached to window（通过 internal test-only 方法）
+        editText.dispatchAttachedToWindowForTest()
 
         assertThat(editText.background).isNotNull()
         assertThat(editText.background).isInstanceOf(GradientDrawable::class.java)
@@ -270,7 +269,7 @@ class MorphEditTextBehaviorTest {
         val editText = MorphEditText(context)
         editText.style = MorphEditText.Style.BARE
 
-        invokeOnAttachedToWindow(editText)
+        editText.dispatchAttachedToWindowForTest()
 
         assertThat(editText.background).isNull()
     }
@@ -285,7 +284,7 @@ class MorphEditTextBehaviorTest {
         editText.style = MorphEditText.Style.SEARCH
 
         val config = android.content.res.Configuration(context.resources.configuration)
-        invokeOnConfigurationChanged(editText, config)
+        editText.dispatchConfigChangedForTest(config)
 
         assertThat(editText.background).isNotNull()
         assertThat(editText.background).isInstanceOf(GradientDrawable::class.java)
@@ -297,7 +296,7 @@ class MorphEditTextBehaviorTest {
         val expectedColor = MorphTheme.morphColorOnSurfaceVariant(context)
 
         val config = android.content.res.Configuration(context.resources.configuration)
-        invokeOnConfigurationChanged(editText, config)
+        editText.dispatchConfigChangedForTest(config)
 
         assertThat(editText.currentHintTextColor).isEqualTo(expectedColor)
     }
@@ -316,30 +315,5 @@ class MorphEditTextBehaviorTest {
         // 在 Robolectric 中无法轻易构造带自定义属性的 AttributeSet，
         // 改为直接通过 setter 设置样式来验证 XML 属性等价行为
         return null
-    }
-
-    /** 通过反射调用 protected onFocusChanged */
-    private fun invokeOnFocusChanged(view: MorphEditText, focused: Boolean) {
-        val method: Method = MorphEditText::class.java.getDeclaredMethod(
-            "onFocusChanged", Boolean::class.javaPrimitiveType, Int::class.javaPrimitiveType, android.graphics.Rect::class.java
-        )
-        method.isAccessible = true
-        method.invoke(view, focused, 0, null)
-    }
-
-    /** 通过反射调用 protected onAttachedToWindow */
-    private fun invokeOnAttachedToWindow(view: MorphEditText) {
-        val method: Method = MorphEditText::class.java.getDeclaredMethod("onAttachedToWindow")
-        method.isAccessible = true
-        method.invoke(view)
-    }
-
-    /** 通过反射调用 protected onConfigurationChanged */
-    private fun invokeOnConfigurationChanged(view: MorphEditText, config: android.content.res.Configuration) {
-        val method: Method = MorphEditText::class.java.getDeclaredMethod(
-            "onConfigurationChanged", android.content.res.Configuration::class.java
-        )
-        method.isAccessible = true
-        method.invoke(view, config)
     }
 }

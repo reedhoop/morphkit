@@ -82,4 +82,10 @@ dependencies {
     // 添加 testCompileOnly 使 Compose Compiler 在测试编译时能找到 Runtime。
     testCompileOnly(platform("androidx.compose:compose-bom:2025.05.01"))
     testCompileOnly("androidx.compose.runtime:runtime")
+
+    // ── Compose UI 测试依赖 ──
+    testImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
+    testImplementation("androidx.compose.ui:ui-test-junit4")
+    testImplementation("androidx.compose.material3:material3")
+    testImplementation("androidx.compose.ui:ui-test-manifest")
 }

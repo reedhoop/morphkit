@@ -476,6 +476,69 @@ class BackdropBlurHelperBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 7. Bitmap 对象池
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `obtainBitmap 返回指定尺寸的 Bitmap`() {
+        val bitmap = BackdropBlurHelper.obtainBitmap(10, 20)
+        assertThat(bitmap.width).isEqualTo(10)
+        assertThat(bitmap.height).isEqualTo(20)
+        bitmap.recycle()
+    }
+
+    @Test
+    fun `recycleToPool 后 obtainBitmap 复用同尺寸 Bitmap`() {
+        val bitmap1 = BackdropBlurHelper.obtainBitmap(10, 10)
+        bitmap1.setPixel(0, 0, Color.RED) // 写入像素
+        BackdropBlurHelper.recycleToPool(bitmap1)
+
+        val bitmap2 = BackdropBlurHelper.obtainBitmap(10, 10)
+        // 复用的 Bitmap 应已被擦除为透明
+        assertThat(Color.alpha(bitmap2.getPixel(0, 0))).isEqualTo(0)
+        assertThat(bitmap2.width).isEqualTo(10)
+        assertThat(bitmap2.height).isEqualTo(10)
+        bitmap2.recycle()
+    }
+
+    @Test
+    fun `obtainBitmap 不同尺寸不命中池`() {
+        val bitmap1 = BackdropBlurHelper.obtainBitmap(10, 10)
+        BackdropBlurHelper.recycleToPool(bitmap1)
+
+        val bitmap2 = BackdropBlurHelper.obtainBitmap(20, 20)
+        // 不同尺寸，不应复用
+        assertThat(bitmap2.width).isEqualTo(20)
+        assertThat(bitmap2.height).isEqualTo(20)
+        bitmap2.recycle()
+    }
+
+    @Test
+    fun `recycleToPool 对已回收 Bitmap 不崩溃`() {
+        val bitmap = BackdropBlurHelper.obtainBitmap(5, 5)
+        bitmap.recycle()
+        // 不应崩溃
+        BackdropBlurHelper.recycleToPool(bitmap)
+    }
+
+    @Test
+    fun `blur 使用对象池复用 Bitmap`() {
+        val source = createSolidBitmap(10, 10, Color.RED)
+        val result1 = BackdropBlurHelper.blur(source, 3f)
+        assertThat(result1).isNotNull()
+
+        // 将结果归还池
+        BackdropBlurHelper.recycleToPool(result1!!)
+
+        // 再次 blur 同尺寸，应从池中获取
+        val result2 = BackdropBlurHelper.blur(source, 3f)
+        assertThat(result2).isNotNull()
+        assertThat(result2!!.width).isEqualTo(10)
+        assertThat(result2.height).isEqualTo(10)
+        result2.recycle()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法
     // ═══════════════════════════════════════════════════════════════════════
 

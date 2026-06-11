@@ -25,20 +25,63 @@ import android.view.ViewGroup
  * | 默认（硬件加速）  | [RenderEffect.createBlurEffect]  | GPU 高斯 |
  * | 软件 Canvas 降级  | 软件 Stack Blur（水平+垂直两遍）   | 近似高斯 |
  *
- * ## 使用方式
+ * ## Bitmap 对象池
  *
- * ```kotlin
- * // 1. 截取父容器区域
- * val parentBitmap = BackdropBlurHelper.captureParentArea(cardView)
- * // 2. 模糊
- * val blurredBitmap = BackdropBlurHelper.blur(parentBitmap, 25f)
- * // 3. 设为背景 ImageView 的 drawable
- * blurImageView.setImageBitmap(blurredBitmap)
- * ```
+ * 毛玻璃卡片在滚动时每帧都需要截取和模糊 Bitmap，频繁创建/回收会造成 GC 抖动。
+ * 内置 Bitmap 对象池（最大 [POOL_MAX_SIZE] 个），复用同尺寸 Bitmap 消除 GC 压力。
+ *
+ * - [obtainBitmap]：从池中获取或创建新 Bitmap
+ * - [recycleToPool]：将 Bitmap 归还池中复用，池满时真正回收
  *
  * @see MorphCardView 毛玻璃卡片容器
  */
 internal object BackdropBlurHelper {
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Bitmap 对象池 — 滚动场景下复用 Bitmap 减少 GC
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 对象池最大容量 */
+    private const val POOL_MAX_SIZE = 3
+
+    /** 池中缓存的 Bitmap，按尺寸复用 */
+    private val bitmapPool = ArrayDeque<Bitmap>(POOL_MAX_SIZE)
+
+    /**
+     * 从池中获取指定尺寸的 Bitmap，池中无匹配时创建新 Bitmap。
+     *
+     * @param width  宽度（px）
+     * @param height 高度（px）
+     * @return 可用的 Bitmap（已擦除为透明）
+     */
+    fun obtainBitmap(width: Int, height: Int): Bitmap {
+        // 从池中查找同尺寸 Bitmap
+        val iterator = bitmapPool.iterator()
+        while (iterator.hasNext()) {
+            val bitmap = iterator.next()
+            if (!bitmap.isRecycled && bitmap.width == width && bitmap.height == height) {
+                iterator.remove()
+                bitmap.eraseColor(0) // 清除旧像素
+                return bitmap
+            }
+        }
+        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+    }
+
+    /**
+     * 将 Bitmap 归还池中复用。池满时真正回收最旧的 Bitmap。
+     *
+     * @param bitmap 要归还的 Bitmap
+     */
+    fun recycleToPool(bitmap: Bitmap) {
+        if (bitmap.isRecycled) return
+        if (bitmapPool.size >= POOL_MAX_SIZE) {
+            // 池满，回收最旧的 Bitmap
+            val oldest = bitmapPool.removeFirst()
+            oldest.recycle()
+        }
+        bitmapPool.addLast(bitmap)
+    }
 
     // ═══════════════════════════════════════════════════════════════════════
     // 父容器截图
@@ -62,7 +105,7 @@ internal object BackdropBlurHelper {
         val originalVisibility = view.visibility
         view.visibility = View.INVISIBLE
 
-        val bitmap = Bitmap.createBitmap(view.width, view.height, Bitmap.Config.ARGB_8888)
+        val bitmap = obtainBitmap(view.width, view.height)
         val canvas = Canvas(bitmap)
 
         try {
@@ -72,7 +115,7 @@ internal object BackdropBlurHelper {
         } catch (_: Exception) {
             // parent.draw() 在某些场景下可能失败（如硬件加速限制）
             view.visibility = originalVisibility
-            bitmap.recycle()
+            recycleToPool(bitmap)
             return null
         }
 
@@ -101,7 +144,7 @@ internal object BackdropBlurHelper {
         return try {
             val w = source.width
             val h = source.height
-            val output = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+            val output = obtainBitmap(w, h)
 
             val node = RenderNode("morphBlur")
             node.setPosition(0, 0, w, h)
@@ -121,7 +164,7 @@ internal object BackdropBlurHelper {
                 output
             } else {
                 // 极少数场景：软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
-                output.recycle()
+                recycleToPool(output)
                 blurSoftware(source, radius.toInt().coerceAtLeast(1))
             }
         } catch (_: Exception) {

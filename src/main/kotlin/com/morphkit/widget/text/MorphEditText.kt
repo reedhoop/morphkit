@@ -6,6 +6,7 @@ import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.AppCompatEditText
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
@@ -230,6 +231,28 @@ class MorphEditText @JvmOverloads constructor(
         super.onConfigurationChanged(newConfig)
         // Activity 不重建时（configChanges 包含 uiMode），手动刷新颜色
         applyStyle()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 测试专用访问方法 — 避免 reflect 调用 protected 方法
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 测试专用：分发焦点变化事件 */
+    @VisibleForTesting
+    internal fun dispatchFocusChangedForTest(focused: Boolean) {
+        onFocusChanged(focused, 0, null)
+    }
+
+    /** 测试专用：分发 onAttachedToWindow */
+    @VisibleForTesting
+    internal fun dispatchAttachedToWindowForTest() {
+        onAttachedToWindow()
+    }
+
+    /** 测试专用：分发 onConfigurationChanged */
+    @VisibleForTesting
+    internal fun dispatchConfigChangedForTest(newConfig: Configuration) {
+        onConfigurationChanged(newConfig)
     }
 
     // ═══════════════════════════════════════════════════════════════════════

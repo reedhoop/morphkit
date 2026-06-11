@@ -9,11 +9,13 @@ import android.graphics.drawable.GradientDrawable
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.MotionEvent
+import androidx.annotation.VisibleForTesting
 import androidx.appcompat.widget.AppCompatButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 
 /**
  * MorphKit 多风格按钮 — 引擎与皮肤分离架构核心示例。
@@ -171,14 +173,14 @@ class MorphButton @JvmOverloads constructor(
         when (interactionMode) {
             InteractionMode.IOS -> {
                 if (!hasCustomBackground) {
-                    shapeDrawable.setColor(MorphTheme.adjustAlpha(baseColor, 0.38f))
+                    shapeDrawable.setColor(MorphTheme.adjustAlpha(baseColor, MorphTokens.disabledAlpha))
                 }
             }
             InteractionMode.MATERIAL -> {
                 // 不干预 M3 默认禁用态
             }
         }
-        setTextColor(MorphTheme.adjustAlpha(baseTextColor, 0.38f))
+        setTextColor(MorphTheme.adjustAlpha(baseTextColor, MorphTokens.disabledAlpha))
     }
 
     override fun setEnabled(enabled: Boolean) {
@@ -253,8 +255,28 @@ class MorphButton @JvmOverloads constructor(
     }
 
     companion object {
-        private const val PRESS_OVERLAY_MAX_ALPHA = 0.2f
-        private const val PRESS_IN_DURATION = 150L
-        private const val PRESS_OUT_DURATION = 200L
+        private val PRESS_OVERLAY_MAX_ALPHA = MorphTokens.pressOverlayMaxAlpha
+        private val PRESS_IN_DURATION = MorphTokens.motionDurationSm
+        private val PRESS_OUT_DURATION = MorphTokens.pressOutDuration
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 测试专用访问方法 — 避免 reflect 读取私有字段
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /** 测试专用：获取交互模式 */
+    @VisibleForTesting
+    internal val testInteractionMode: InteractionMode get() = interactionMode
+
+    /** 测试专用：获取圆角半径 */
+    @VisibleForTesting
+    internal val testCornerRadius: Float get() = cornerRadius
+
+    /** 测试专用：获取背景 ShapeDrawable */
+    @VisibleForTesting
+    internal val testShapeDrawable: GradientDrawable get() = shapeDrawable
+
+    /** 测试专用：是否使用了自定义背景 */
+    @VisibleForTesting
+    internal val testHasCustomBackground: Boolean get() = hasCustomBackground
 }

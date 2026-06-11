@@ -11,6 +11,7 @@ import androidx.appcompat.widget.AppCompatCheckBox
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 
 /**
  * MorphKit 多风格多选按钮 — iOS 圆角方形勾选 / Material 原生涟漪。
@@ -39,7 +40,7 @@ class MorphCheckBox @JvmOverloads constructor(
         interactionModeIndex = R.styleable.MorphCheckBox_morphInteractionMode,
         onRefreshColors = ::refreshColorCache,
         indicatorWidthProvider = {
-            val gap = (8f * context.resources.displayMetrics.density).toInt()
+            val gap = (MorphTokens.spacingSm.toFloat() * context.resources.displayMetrics.density).toInt()
             boxSize.toInt() + gap
         }
     )

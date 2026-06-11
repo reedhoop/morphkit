@@ -9,6 +9,7 @@ import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 import com.morphkit.widget.selection.MorphCompoundButtonHelper
 
 /**
@@ -38,7 +39,7 @@ class MorphRadioButton @JvmOverloads constructor(
         interactionModeIndex = R.styleable.MorphRadioButton_morphInteractionMode,
         onRefreshColors = ::refreshColorCache,
         indicatorWidthProvider = {
-            val gap = (8f * context.resources.displayMetrics.density).toInt()
+            val gap = (MorphTokens.spacingSm.toFloat() * context.resources.displayMetrics.density).toInt()
             ((ringRadius + ringStrokeWidth / 2) * 2).toInt() + gap
         }
     )

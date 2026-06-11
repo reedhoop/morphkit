@@ -194,7 +194,7 @@ private fun IosButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                    .padding(horizontal = MorphTokens.spacingLg.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
@@ -232,7 +232,7 @@ private fun MaterialButton(
             disabledContainerColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha),
             disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
         ),
-        contentPadding = PaddingValues(horizontal = 24.dp, vertical = 0.dp)
+        contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
     ) {
         Text(
             text = text,

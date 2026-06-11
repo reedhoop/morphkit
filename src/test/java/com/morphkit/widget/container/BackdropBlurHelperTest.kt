@@ -119,13 +119,13 @@ class BackdropBlurHelperTest {
     }
 
     @Test
-    fun `公开方法恰好两个`() {
+    fun `公开方法恰好四个`() {
         val clazz = Class.forName("com.morphkit.widget.container.BackdropBlurHelper")
         val publicMethods = clazz.declaredMethods
             .filter { Modifier.isPublic(it.modifiers) }
             .map { it.name }
             .toSet()
 
-        assertThat(publicMethods).containsExactly("captureParentArea", "blur")
+        assertThat(publicMethods).containsExactly("captureParentArea", "blur", "obtainBitmap", "recycleToPool")
     }
 }

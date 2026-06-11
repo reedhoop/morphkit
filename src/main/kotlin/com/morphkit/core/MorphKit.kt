@@ -249,6 +249,16 @@ object MorphKit {
     fun getFinalThemeResId(): Int = _finalThemeResId
 
     /**
+     * 查询 MorphKit 是否已完成初始化。
+     *
+     * 适用于需要延迟初始化或条件性初始化的场景，
+     * 避免在未初始化时调用 [createView] / [modifyView] 等方法。
+     *
+     * @return 已初始化返回 true，否则返回 false
+     */
+    fun isInitialized(): Boolean = initialized.get()
+
+    /**
      * 初始化 MorphKit 引擎。
      *
      * 完成以下操作（原子性，不可部分执行）：

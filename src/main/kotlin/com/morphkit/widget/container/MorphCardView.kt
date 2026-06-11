@@ -10,6 +10,7 @@ import android.widget.ImageView
 import com.google.android.material.card.MaterialCardView
 import com.morphkit.R
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
 
 /**
@@ -134,8 +135,8 @@ class MorphCardView @JvmOverloads constructor(
         // ── 关闭 Material 默认阴影动画 ──
         // MaterialCardView 默认带 elevation 阴影和按压态阴影动画，
         // 与 iOS 极简风格完全冲突，必须彻底清除
-        cardElevation = 0f
-        maxCardElevation = 0f
+        cardElevation = MorphTokens.elevationNone.toFloat()
+        maxCardElevation = MorphTokens.elevationNone.toFloat()
 
         // ── 关闭涟漪效果 ──
         // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
@@ -287,10 +288,10 @@ class MorphCardView @JvmOverloads constructor(
      */
     private fun removeBlurBackgroundView() {
         blurBackgroundView?.let {
-            // 先解除 BitmapDrawable 引用，再安全回收 Bitmap，最后移除 View
+            // 先解除 BitmapDrawable 引用，再将 Bitmap 归还对象池，最后移除 View
             val bitmapDrawable = it.drawable as? BitmapDrawable
             it.setImageDrawable(null)
-            bitmapDrawable?.bitmap?.recycle()
+            bitmapDrawable?.bitmap?.let { bmp -> BackdropBlurHelper.recycleToPool(bmp) }
             removeView(it)
         }
         blurBackgroundView = null
@@ -332,15 +333,15 @@ class MorphCardView @JvmOverloads constructor(
         // 2. 高斯模糊
         val blurred = BackdropBlurHelper.blur(parentCapture, blurRadius)
 
-        // 3. 回收中间 Bitmap
-        if (blurred !== parentCapture) {
-            parentCapture.recycle()
-        }
+        // 3. 将截取 Bitmap 归还对象池
+        BackdropBlurHelper.recycleToPool(parentCapture)
 
-        // 4. 先解除旧 BitmapDrawable 引用，设置新 Bitmap，再安全回收旧 Bitmap
+        if (blurred == null) return
+
+        // 4. 先解除旧 BitmapDrawable 引用，设置新 Bitmap，再将旧 Bitmap 归还对象池
         val oldBitmapDrawable = iv.drawable as? BitmapDrawable
         iv.setImageDrawable(BitmapDrawable(resources, blurred))
-        oldBitmapDrawable?.bitmap?.recycle()
+        oldBitmapDrawable?.bitmap?.let { bmp -> BackdropBlurHelper.recycleToPool(bmp) }
     }
 
     /**
@@ -401,9 +402,11 @@ class MorphCardView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
-        // 回收模糊 Bitmap 释放内存
+        // 将模糊 Bitmap 归还对象池释放内存
         blurBackgroundView?.let { iv ->
-            (iv.drawable as? BitmapDrawable)?.bitmap?.recycle()
+            (iv.drawable as? BitmapDrawable)?.bitmap?.let { bmp ->
+                BackdropBlurHelper.recycleToPool(bmp)
+            }
             iv.setImageDrawable(null)
         }
     }
