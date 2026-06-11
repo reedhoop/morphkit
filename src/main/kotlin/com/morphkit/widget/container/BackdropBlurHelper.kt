@@ -83,6 +83,29 @@ internal object BackdropBlurHelper {
         bitmapPool.addLast(bitmap)
     }
 
+    /**
+     * 响应系统内存压力，清空对象池中所有缓存的 Bitmap。
+     *
+     * 应在 [android.app.Application.onTrimMemory] 或
+     * [android.content.ComponentCallbacks2.onTrimMemory] 回调中调用，
+     * 当 level >= [android.content.ComponentCallbacks2.TRIM_MEMORY_MODERATE] 时触发。
+     *
+     * 典型接入方式：
+     * ```kotlin
+     * override fun onTrimMemory(level: Int) {
+     *     super.onTrimMemory(level)
+     *     if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+     *         BackdropBlurHelper.clearPool()
+     *     }
+     * }
+     * ```
+     */
+    fun clearPool() {
+        while (bitmapPool.isNotEmpty()) {
+            bitmapPool.removeFirst().recycle()
+        }
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     // 父容器截图
     // ═══════════════════════════════════════════════════════════════════════

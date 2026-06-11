@@ -538,6 +538,37 @@ class BackdropBlurHelperBehaviorTest {
         result2.recycle()
     }
 
+    @Test
+    fun `clearPool 回收所有缓存 Bitmap`() {
+        // 放入 3 个 Bitmap 到池中
+        val b1 = BackdropBlurHelper.obtainBitmap(10, 10)
+        val b2 = BackdropBlurHelper.obtainBitmap(20, 20)
+        val b3 = BackdropBlurHelper.obtainBitmap(30, 30)
+        BackdropBlurHelper.recycleToPool(b1)
+        BackdropBlurHelper.recycleToPool(b2)
+        BackdropBlurHelper.recycleToPool(b3)
+
+        // 清空池
+        BackdropBlurHelper.clearPool()
+
+        // 清空后 obtainBitmap 应创建新 Bitmap（池已空）
+        val b4 = BackdropBlurHelper.obtainBitmap(10, 10)
+        assertThat(b4.width).isEqualTo(10)
+        b4.recycle()
+    }
+
+    @Test
+    fun `clearPool 后 obtainBitmap 不命中已回收的 Bitmap`() {
+        val b1 = BackdropBlurHelper.obtainBitmap(10, 10)
+        BackdropBlurHelper.recycleToPool(b1)
+        BackdropBlurHelper.clearPool()
+
+        // 池已清空，obtainBitmap 应创建新 Bitmap
+        val b2 = BackdropBlurHelper.obtainBitmap(10, 10)
+        assertThat(b2.isRecycled).isFalse()
+        b2.recycle()
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法
     // ═══════════════════════════════════════════════════════════════════════

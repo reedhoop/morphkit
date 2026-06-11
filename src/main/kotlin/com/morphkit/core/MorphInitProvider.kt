@@ -3,6 +3,7 @@ package com.morphkit.core
 import android.app.Activity
 import android.app.ActivityManager
 import android.app.Application
+import android.content.ComponentCallbacks2
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -54,6 +55,20 @@ class MorphInitProvider : android.content.ContentProvider() {
             }
 
             MorphKit.autoInit(application)
+
+            // ── 注册内存压力回调：清理 Bitmap 对象池 ──
+            application.registerComponentCallbacks(object : ComponentCallbacks2 {
+                override fun onTrimMemory(level: Int) {
+                    if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
+                        com.morphkit.widget.container.BackdropBlurHelper.clearPool()
+                    }
+                }
+                override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {}
+                override fun onLowMemory() {
+                    com.morphkit.widget.container.BackdropBlurHelper.clearPool()
+                }
+            })
+
             Log.d(TAG, "MorphInitProvider: 零侵入自动初始化完成")
         } catch (e: Exception) {
             Log.e(TAG, "MorphInitProvider: 自动初始化异常，宿主 App 需手动调用 MorphKit.init()", e)

@@ -3,6 +3,7 @@ package com.morphkit.core
 import android.content.Context
 import android.util.AttributeSet
 import android.view.View
+import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 统一控件前缀常量。
@@ -91,11 +92,11 @@ class MorphConfig internal constructor() {
         const val DEFAULT_PREFIX = "Morph"
     }
 
-    /** 替换规则映射：原始控件名 → 创建器 */
-    private val _replaceMap = mutableMapOf<String, (Context, AttributeSet) -> View>()
+    /** 替换规则映射：原始控件名 → 创建器（线程安全） */
+    private val _replaceMap = ConcurrentHashMap<String, (Context, AttributeSet) -> View>()
 
-    /** 属性修改规则映射：原始控件名 → 修改器 */
-    private val _modifyMap = mutableMapOf<String, (View) -> Unit>()
+    /** 属性修改规则映射：原始控件名 → 修改器（线程安全） */
+    private val _modifyMap = ConcurrentHashMap<String, (View) -> Unit>()
 
     /** 对外只读的替换规则映射 */
     val replaceMap: Map<String, (Context, AttributeSet) -> View> get() = _replaceMap

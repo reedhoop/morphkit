@@ -131,6 +131,44 @@ fun MorphTheme(
     }
 }
 
+/**
+ * Compose-only 主题入口 — 不依赖 Android Context。
+ *
+ * 直接传入 [MorphColorPalette] 和 [MorphShape]，适用于：
+ * - 纯 Compose 环境（无 Activity Context）
+ * - 预览（@Preview）
+ * - 测试环境（Robolectric 等 Context Theme 不完整）
+ * - 自定义皮肤（非 iOS/Pixel 内置风格）
+ *
+ * @param colors 颜色色板
+ * @param shape 形状体系，默认根据交互模式自动选择
+ * @param interactionMode 交互模式，默认 [InteractionMode.IOS]
+ * @param content 子 Composable 内容
+ */
+@Composable
+fun MorphTheme(
+    colors: MorphColorPalette,
+    shape: MorphShape = if (LocalMorphInteractionMode.current == InteractionMode.MATERIAL) MorphShape.pixel() else MorphShape.ios(),
+    interactionMode: InteractionMode = InteractionMode.IOS,
+    content: @Composable () -> Unit
+) {
+    val typography = morphTypography()
+    val stylePolicy = if (interactionMode == InteractionMode.MATERIAL) StylePolicy.PIXEL else StylePolicy.IOS
+
+    CompositionLocalProvider(
+        LocalMorphColors provides colors,
+        LocalMorphShape provides shape,
+        LocalMorphInteractionMode provides interactionMode,
+        LocalMorphStylePolicy provides stylePolicy
+    ) {
+        MaterialTheme(
+            colorScheme = material3ColorScheme(colors),
+            typography = typography,
+            content = content
+        )
+    }
+}
+
 @Composable
 private fun resolveStyle(style: StylePolicy): StylePolicy {
     if (style != StylePolicy.AUTO) return style
