@@ -69,8 +69,13 @@ class MorphButton @JvmOverloads constructor(
 
         // ── 检测业务方是否设置了自定义背景 ──
         // 在 super 构造函数执行后，background 已被 XML 属性设置
-        // 如果 background 不是默认的（非 null 且非 ColorDrawable），说明业务方设置了自定义背景
-        hasCustomBackground = background != null && background !is android.graphics.drawable.ColorDrawable
+        // 排除框架默认 Drawable（ColorDrawable、RippleDrawable、StateListDrawable 等）
+        // 只有业务方显式设置的自定义 Drawable 才视为"自定义背景"
+        val bg = background
+        hasCustomBackground = bg != null
+                && bg !is android.graphics.drawable.ColorDrawable
+                && !bg.javaClass.name.startsWith("android.graphics.drawable.")
+                && !bg.javaClass.name.startsWith("com.google.android.material.")
 
         cachedPrimaryColor = MorphTheme.morphColorPrimary(context)
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)

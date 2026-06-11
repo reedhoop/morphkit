@@ -44,7 +44,7 @@ internal object BackdropBlurHelper {
     /** 对象池最大容量 */
     private const val POOL_MAX_SIZE = 3
 
-    /** 池中缓存的 Bitmap，按尺寸复用 */
+    /** 池中缓存的 Bitmap，按尺寸复用（所有访问通过 synchronized 保护） */
     private val bitmapPool = ArrayDeque<Bitmap>(POOL_MAX_SIZE)
 
     /**
@@ -54,6 +54,7 @@ internal object BackdropBlurHelper {
      * @param height 高度（px）
      * @return 可用的 Bitmap（已擦除为透明）
      */
+    @Synchronized
     fun obtainBitmap(width: Int, height: Int): Bitmap {
         // 从池中查找同尺寸 Bitmap
         val iterator = bitmapPool.iterator()
@@ -73,6 +74,7 @@ internal object BackdropBlurHelper {
      *
      * @param bitmap 要归还的 Bitmap
      */
+    @Synchronized
     fun recycleToPool(bitmap: Bitmap) {
         if (bitmap.isRecycled) return
         if (bitmapPool.size >= POOL_MAX_SIZE) {
@@ -100,6 +102,7 @@ internal object BackdropBlurHelper {
      * }
      * ```
      */
+    @Synchronized
     fun clearPool() {
         while (bitmapPool.isNotEmpty()) {
             bitmapPool.removeFirst().recycle()

@@ -8,6 +8,7 @@ import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -165,6 +166,7 @@ private fun IosButton(
 
     Surface(
         modifier = modifier
+            .defaultMinSize(minWidth = 88.dp, minHeight = 48.dp)
             .clip(buttonShape)
             .then(
                 if (enabled) {

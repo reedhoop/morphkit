@@ -153,7 +153,7 @@ fun MorphTheme(
     interactionMode: InteractionMode = InteractionMode.IOS,
     content: @Composable () -> Unit
 ) {
-    val typography = morphTypography()
+    val typography = remember { morphTypography() }
     val stylePolicy = if (interactionMode == InteractionMode.MATERIAL) StylePolicy.PIXEL else StylePolicy.IOS
 
     CompositionLocalProvider(
@@ -163,7 +163,7 @@ fun MorphTheme(
         LocalMorphStylePolicy provides stylePolicy
     ) {
         MaterialTheme(
-            colorScheme = material3ColorScheme(colors),
+            colorScheme = remember(colors) { material3ColorScheme(colors) },
             typography = typography,
             content = content
         )

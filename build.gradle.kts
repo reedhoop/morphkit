@@ -76,12 +76,13 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.10.2")
     testImplementation("org.junit.vintage:junit-vintage-engine:5.10.2")
 
-    // ── Compose Runtime（仅测试编译需要）──
+    // ── Compose Runtime（测试编译+运行时需要）──
     // buildFeatures.compose=true 会全局启用 Compose Compiler 插件，
     // 但 Compose 依赖为 compileOnly，不在测试类路径上。
-    // 添加 testCompileOnly 使 Compose Compiler 在测试编译时能找到 Runtime。
-    testCompileOnly(platform("androidx.compose:compose-bom:2025.05.01"))
-    testCompileOnly("androidx.compose.runtime:runtime")
+    // testImplementation 使 Compose 类在测试运行时可用，
+    // 修复 MorphColorPalette 等使用 Compose Color 的测试类初始化失败。
+    testImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
+    testImplementation("androidx.compose.runtime:runtime")
 
     // ── Compose UI 测试依赖 ──
     testImplementation(platform("androidx.compose:compose-bom:2025.05.01"))
