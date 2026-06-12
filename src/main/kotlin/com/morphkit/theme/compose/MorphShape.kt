@@ -14,21 +14,21 @@ data class MorphShape(
 ) {
     companion object {
         fun ios() = MorphShape(
-            cornerRadiusButton = MorphTokens.cornerRadiusButtonIos,
-            cornerRadiusCard = MorphTokens.cornerRadiusCardIos,
-            cornerRadiusTextField = MorphTokens.cornerRadiusTextFieldIos,
-            cornerRadiusSmall = MorphTokens.cornerRadiusSmall,
-            cornerRadiusMedium = MorphTokens.cornerRadiusMedium,
-            cornerRadiusLarge = MorphTokens.cornerRadiusLarge
+            cornerRadiusButton = MorphTokens.Shapes.cornerRadiusButtonIos,
+            cornerRadiusCard = MorphTokens.Shapes.cornerRadiusCardIos,
+            cornerRadiusTextField = MorphTokens.Shapes.cornerRadiusTextFieldIos,
+            cornerRadiusSmall = MorphTokens.Shapes.cornerRadiusSmall,
+            cornerRadiusMedium = MorphTokens.Shapes.cornerRadiusMedium,
+            cornerRadiusLarge = MorphTokens.Shapes.cornerRadiusLarge
         )
 
         fun pixel() = MorphShape(
-            cornerRadiusButton = MorphTokens.cornerRadiusButtonPixel,
-            cornerRadiusCard = MorphTokens.cornerRadiusCardPixel,
-            cornerRadiusTextField = MorphTokens.cornerRadiusTextFieldPixel,
-            cornerRadiusSmall = MorphTokens.cornerRadiusSmall,
-            cornerRadiusMedium = MorphTokens.cornerRadiusMedium,
-            cornerRadiusLarge = MorphTokens.cornerRadiusLarge
+            cornerRadiusButton = MorphTokens.Shapes.cornerRadiusButtonPixel,
+            cornerRadiusCard = MorphTokens.Shapes.cornerRadiusCardPixel,
+            cornerRadiusTextField = MorphTokens.Shapes.cornerRadiusTextFieldPixel,
+            cornerRadiusSmall = MorphTokens.Shapes.cornerRadiusSmall,
+            cornerRadiusMedium = MorphTokens.Shapes.cornerRadiusMedium,
+            cornerRadiusLarge = MorphTokens.Shapes.cornerRadiusLarge
         )
     }
 }

@@ -229,14 +229,14 @@ class MorphCardViewBehaviorTest {
     @Test
     fun `cornerRadius equals MorphTokens cornerRadiusCardIos in pixels`() {
         val card = MorphCardView(context)
-        val expectedPx = MorphTokens.cornerRadiusCardIos.dp(context).toFloat()
+        val expectedPx = MorphTokens.Shapes.cornerRadiusCardIos.dp(context).toFloat()
         assertThat(card.radius).isEqualTo(expectedPx)
     }
 
     @Test
     fun `cornerRadius equals MorphTokens cornerRadiusLarge in pixels`() {
         val card = MorphCardView(context)
-        val expectedPx = MorphTokens.cornerRadiusLarge.dp(context).toFloat()
+        val expectedPx = MorphTokens.Shapes.cornerRadiusLarge.dp(context).toFloat()
         assertThat(card.radius).isEqualTo(expectedPx)
     }
 

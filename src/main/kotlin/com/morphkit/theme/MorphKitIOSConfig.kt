@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import com.morphkit.core.MorphKit
 import com.morphkit.core.StylePolicy
+import com.morphkit.widget.registerDefaultWidgets
 
 /**
  * iOS 设计系统一键接入配置。

@@ -1,6 +1,7 @@
 package com.morphkit.theme.compose
 
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -130,37 +131,53 @@ private fun IosButton(
     val interactionSource = remember { MutableInteractionSource() }
 
     // 监听 InteractionSource 的按压/松开/焦点事件，驱动动画
+    // 插值器对齐 View 层 FastOutSlowInInterpolator（MorphButton.kt animatePressOverlay）
     LaunchedEffect(interactionSource) {
         interactionSource.interactions.collectLatest { interaction ->
             when (interaction) {
                 is PressInteraction.Press -> {
                     pressAlpha.animateTo(
                         targetValue = 1f,
-                        animationSpec = tween(MorphTokens.pressInDuration.toInt())
+                        animationSpec = tween(
+                            durationMillis = MorphTokens.Interaction.pressInDuration.toInt(),
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
                 is PressInteraction.Release -> {
                     pressAlpha.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(MorphTokens.pressOutDuration.toInt())
+                        animationSpec = tween(
+                            durationMillis = MorphTokens.Interaction.pressOutDuration.toInt(),
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
                 is PressInteraction.Cancel -> {
                     pressAlpha.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(MorphTokens.pressOutDuration.toInt())
+                        animationSpec = tween(
+                            durationMillis = MorphTokens.Interaction.pressOutDuration.toInt(),
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
                 is FocusInteraction.Focus -> {
                     focusElevation.animateTo(
                         targetValue = 4f,
-                        animationSpec = tween(200)
+                        animationSpec = tween(
+                            durationMillis = 200,
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
                 is FocusInteraction.Unfocus -> {
                     focusElevation.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(200)
+                        animationSpec = tween(
+                            durationMillis = 200,
+                            easing = FastOutSlowInEasing
+                        )
                     )
                 }
             }
@@ -172,19 +189,19 @@ private fun IosButton(
     val backgroundColor = if (enabled) {
         if (isPlain) Color.Transparent else colors.primary
     } else {
-        if (isPlain) Color.Transparent else colors.primary.copy(alpha = MorphTokens.disabledAlpha)
+        if (isPlain) Color.Transparent else colors.primary.copy(alpha = MorphTokens.Interaction.disabledAlpha)
     }
     val contentColor = if (enabled) {
         if (isPlain) colors.primary else colors.onPrimary
     } else {
-        (if (isPlain) colors.primary else colors.onPrimary).copy(alpha = MorphTokens.disabledAlpha)
+        (if (isPlain) colors.primary else colors.onPrimary).copy(alpha = MorphTokens.Interaction.disabledAlpha)
     }
 
     // 按压态颜色：与 View 层 MorphButton 一致
     // FILLED: 亮色模式叠加黑色变暗，暗色模式叠加白色变亮
     // PLAIN:  透明背景叠加 primary 色微弱底色
     val displayColor = if (enabled) {
-        val overlayAlpha = pressAlpha.value * MorphTokens.pressOverlayMaxAlpha
+        val overlayAlpha = pressAlpha.value * MorphTokens.Interaction.pressOverlayMaxAlpha
         if (isPlain) {
             // PLAIN 按压：透明底 + primary 色微弱叠加
             colors.primary.copy(alpha = overlayAlpha * 0.12f)
@@ -228,7 +245,7 @@ private fun IosButton(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = MorphTokens.spacingLg.dp),
+                    .padding(horizontal = MorphTokens.Spacing.spacingLg.dp),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -276,9 +293,9 @@ private fun MaterialButton(
             shape = buttonShape,
             colors = ButtonDefaults.textButtonColors(
                 contentColor = colors.primary,
-                disabledContentColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha)
+                disabledContentColor = colors.primary.copy(alpha = MorphTokens.Interaction.disabledAlpha)
             ),
-            contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
+            contentPadding = PaddingValues(horizontal = MorphTokens.Spacing.spacingXl.dp, vertical = 0.dp)
         ) {
             Text(text = text, style = textStyle)
         }
@@ -292,10 +309,10 @@ private fun MaterialButton(
             colors = ButtonDefaults.buttonColors(
                 containerColor = colors.primary,
                 contentColor = colors.onPrimary,
-                disabledContainerColor = colors.primary.copy(alpha = MorphTokens.disabledAlpha),
-                disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.disabledAlpha)
+                disabledContainerColor = colors.primary.copy(alpha = MorphTokens.Interaction.disabledAlpha),
+                disabledContentColor = colors.onPrimary.copy(alpha = MorphTokens.Interaction.disabledAlpha)
             ),
-            contentPadding = PaddingValues(horizontal = MorphTokens.spacingXl.dp, vertical = 0.dp)
+            contentPadding = PaddingValues(horizontal = MorphTokens.Spacing.spacingXl.dp, vertical = 0.dp)
         ) {
             Text(text = text, style = textStyle)
         }

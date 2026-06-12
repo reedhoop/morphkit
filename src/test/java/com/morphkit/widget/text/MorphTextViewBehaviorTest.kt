@@ -352,17 +352,17 @@ class MorphTextViewBehaviorTest {
 
     @Test
     fun `MorphTokens fontSizeLargeTitle等于34f`() {
-        assertThat(MorphTokens.fontSizeLargeTitle).isEqualTo(34f)
+        assertThat(MorphTokens.Typography.fontSizeLargeTitle).isEqualTo(34f)
     }
 
     @Test
     fun `MorphTokens fontSizeBody等于17f`() {
-        assertThat(MorphTokens.fontSizeBody).isEqualTo(17f)
+        assertThat(MorphTokens.Typography.fontSizeBody).isEqualTo(17f)
     }
 
     @Test
     fun `MorphTokens fontSizeCaption1等于12f`() {
-        assertThat(MorphTokens.fontSizeCaption1).isEqualTo(12f)
+        assertThat(MorphTokens.Typography.fontSizeCaption1).isEqualTo(12f)
     }
 
     @Test

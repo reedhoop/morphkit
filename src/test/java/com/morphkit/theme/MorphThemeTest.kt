@@ -256,4 +256,148 @@ class MorphThemeTest {
         assertEquals(Color.green(color), Color.green(result))
         assertEquals(Color.blue(color), Color.blue(result))
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // Deprecated API 向后兼容测试
+    // 验证 MorphTheme.xxx() 已废弃方法委托到 MorphColors 后行为一致
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_overlayColor_与MorphColors结果一致`() {
+        val base = 0xFFFFFFFF.toInt()
+        val overlay = 0xFF000000.toInt()
+        val themeResult = MorphTheme.overlayColor(base, overlay, 0.2f)
+        val colorsResult = MorphColors.overlayColor(base, overlay, 0.2f)
+        assertEquals(themeResult, colorsResult)
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_overlayColor_alpha为0时返回原色`() {
+        val base = 0xFF007AFF.toInt()
+        val result = MorphTheme.overlayColor(base, 0xFF000000.toInt(), 0f)
+        assertEquals(base, result)
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_adjustAlpha_与MorphColors结果一致`() {
+        val color = 0xFF007AFF.toInt()
+        val themeResult = MorphTheme.adjustAlpha(color, 0.38f)
+        val colorsResult = MorphColors.adjustAlpha(color, 0.38f)
+        assertEquals(themeResult, colorsResult)
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_adjustAlpha_alpha1_0时保持不变`() {
+        val color = 0xFF007AFF.toInt()
+        val result = MorphTheme.adjustAlpha(color, 1.0f)
+        assertEquals(Color.alpha(color), Color.alpha(result))
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_adjustAlpha_alpha0时完全透明`() {
+        val color = 0xFF007AFF.toInt()
+        val result = MorphTheme.adjustAlpha(color, 0f)
+        assertEquals(0, Color.alpha(result))
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_blendColor_与MorphColors结果一致`() {
+        val from = 0xFF000000.toInt()
+        val to = 0xFFFFFFFF.toInt()
+        val themeResult = MorphTheme.blendColor(from, to, 0.5f)
+        val colorsResult = MorphColors.blendColor(from, to, 0.5f)
+        assertEquals(themeResult, colorsResult)
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_createColorStateList_返回非空`() {
+        val baseColor = 0xFF007AFF.toInt()
+        val csl = MorphTheme.createColorStateList(baseColor, isDarkMode = false)
+        assertNotNull("deprecated createColorStateList 应返回非空 ColorStateList", csl)
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_createColorStateList_与MorphColors结果一致`() {
+        val baseColor = 0xFF007AFF.toInt()
+        val themeCsl = MorphTheme.createColorStateList(baseColor, isDarkMode = false)
+        val colorsCsl = MorphColors.createColorStateList(baseColor, isDarkMode = false)
+        // 验证两 ColorStateList 的 default color 相同
+        assertEquals(
+            themeCsl.defaultColor,
+            colorsCsl.defaultColor
+        )
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_isDarkMode_亮色模式返回false`() {
+        val context = mockk<Context>(relaxed = true)
+        val config = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_NO
+        }
+        every { context.resources.configuration } returns config
+        assertFalse(MorphTheme.isDarkMode(context))
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_isDarkMode_暗黑模式返回true`() {
+        val context = mockk<Context>(relaxed = true)
+        val config = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_YES
+        }
+        every { context.resources.configuration } returns config
+        assertTrue(MorphTheme.isDarkMode(context))
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_isDarkMode_与MorphColors结果一致`() {
+        val contextLight = mockk<Context>(relaxed = true)
+        val configLight = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_NO
+        }
+        every { contextLight.resources.configuration } returns configLight
+
+        assertEquals(
+            MorphTheme.isDarkMode(contextLight),
+            MorphColors.isDarkMode(contextLight)
+        )
+
+        val contextDark = mockk<Context>(relaxed = true)
+        val configDark = Configuration().apply {
+            uiMode = Configuration.UI_MODE_NIGHT_YES
+        }
+        every { contextDark.resources.configuration } returns configDark
+
+        assertEquals(
+            MorphTheme.isDarkMode(contextDark),
+            MorphColors.isDarkMode(contextDark)
+        )
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_overlayColor_结果clamp到合法范围`() {
+        val result = MorphTheme.overlayColor(0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 1.0f)
+        assertEquals(255, Color.red(result))
+        assertEquals(255, Color.green(result))
+        assertEquals(255, Color.blue(result))
+    }
+
+    @Suppress("DEPRECATION", "DEPRECATION_ERROR")
+    @Test
+    fun `deprecated_adjustAlpha_0_5不透明度`() {
+        val color = 0xFF007AFF.toInt()
+        val result = MorphTheme.adjustAlpha(color, 0.5f)
+        assertEquals(127, Color.alpha(result))
+    }
 }

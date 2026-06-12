@@ -49,31 +49,31 @@ class MorphComposeThemeTest {
     @Test
     fun morphTokens_colorConstantsAreAccessible() {
         // Verify key color tokens used by MorphColorPalette are present and non-zero
-        assertThat(MorphTokens.colorBlue500).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnPrimary).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSurface).isNotEqualTo(0)
-        assertThat(MorphTokens.colorRed500).isNotEqualTo(0)
-        assertThat(MorphTokens.colorGreen500).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOrange500).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorBlue500).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnPrimary).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSurface).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorRed500).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorGreen500).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOrange500).isNotEqualTo(0)
         // S14: verify new M3 semantic color tokens
-        assertThat(MorphTokens.colorSecondary).isNotEqualTo(0)
-        assertThat(MorphTokens.colorTertiary).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnError).isNotEqualTo(0)
-        assertThat(MorphTokens.colorErrorContainer).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOutline).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSurfaceDim).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSurfaceContainer).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSecondary).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorTertiary).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnError).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorErrorContainer).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOutline).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSurfaceDim).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSurfaceContainer).isNotEqualTo(0)
     }
 
     @Test
     fun morphTokens_cornerRadiusConstantsAreAccessible() {
         // Verify shape tokens used by MorphShape are present
-        assertThat(MorphTokens.cornerRadiusButtonIos).isEqualTo(12)
-        assertThat(MorphTokens.cornerRadiusButtonPixel).isEqualTo(8)
-        assertThat(MorphTokens.cornerRadiusCardIos).isEqualTo(16)
-        assertThat(MorphTokens.cornerRadiusSmall).isEqualTo(8)
-        assertThat(MorphTokens.cornerRadiusMedium).isEqualTo(12)
-        assertThat(MorphTokens.cornerRadiusLarge).isEqualTo(16)
+        assertThat(MorphTokens.Shapes.cornerRadiusButtonIos).isEqualTo(12)
+        assertThat(MorphTokens.Shapes.cornerRadiusButtonPixel).isEqualTo(8)
+        assertThat(MorphTokens.Shapes.cornerRadiusCardIos).isEqualTo(16)
+        assertThat(MorphTokens.Shapes.cornerRadiusSmall).isEqualTo(8)
+        assertThat(MorphTokens.Shapes.cornerRadiusMedium).isEqualTo(12)
+        assertThat(MorphTokens.Shapes.cornerRadiusLarge).isEqualTo(16)
     }
 
     // ── 3. Data class field verification ──────────────────────────────────
@@ -337,37 +337,37 @@ class MorphComposeThemeTest {
         // Verify that for every light-mode color token used in iosLight(),
         // there is a corresponding dark-mode token used in iosDark()
         // Primary
-        assertThat(MorphTokens.colorBlue100).isNotEqualTo(0) // dark primary
-        assertThat(MorphTokens.colorBlue700).isNotEqualTo(0) // dark primaryContainer
+        assertThat(MorphTokens.Colors.colorBlue100).isNotEqualTo(0) // dark primary
+        assertThat(MorphTokens.Colors.colorBlue700).isNotEqualTo(0) // dark primaryContainer
         // Secondary
-        assertThat(MorphTokens.colorSecondaryDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnSecondaryDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSecondaryContainerDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnSecondaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSecondaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnSecondaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSecondaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnSecondaryContainerDark).isNotEqualTo(0)
         // Tertiary
-        assertThat(MorphTokens.colorTertiaryDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnTertiaryDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorTertiaryContainerDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnTertiaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorTertiaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnTertiaryDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorTertiaryContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnTertiaryContainerDark).isNotEqualTo(0)
         // Error
-        assertThat(MorphTokens.colorOnErrorDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorErrorContainerDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnErrorContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnErrorDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorErrorContainerDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnErrorContainerDark).isNotEqualTo(0)
         // Surface hierarchy
-        assertThat(MorphTokens.colorSurfaceDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnSurfaceDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSurfaceVariantDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOnSurfaceVariantDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorSurfaceDimDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceBrightDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceContainerLowestDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceContainerLowDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceContainerDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceContainerHighDark).isNotNull()
-        assertThat(MorphTokens.colorSurfaceContainerHighestDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnSurfaceDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSurfaceVariantDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOnSurfaceVariantDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorSurfaceDimDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceBrightDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceContainerLowestDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceContainerLowDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceContainerDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceContainerHighDark).isNotNull()
+        assertThat(MorphTokens.Colors.colorSurfaceContainerHighestDark).isNotNull()
         // Outline
-        assertThat(MorphTokens.colorOutlineDark).isNotEqualTo(0)
-        assertThat(MorphTokens.colorOutlineVariantDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOutlineDark).isNotEqualTo(0)
+        assertThat(MorphTokens.Colors.colorOutlineVariantDark).isNotEqualTo(0)
     }
 
     // ── 10. S15: Token value correctness ──────────────────────────────────
@@ -375,26 +375,26 @@ class MorphComposeThemeTest {
     @Test
     fun morphTokens_primaryColorIsIOSBlue() {
         // iOS system blue: #007AFF
-        assertThat(MorphTokens.colorBlue500).isEqualTo(0xFF007AFF.toInt())
+        assertThat(MorphTokens.Colors.colorBlue500).isEqualTo(0xFF007AFF.toInt())
     }
 
     @Test
     fun morphTokens_surfaceColorsAreDistinctFromBackground() {
         // surface, surfaceVariant, and background should all be different
-        assertThat(MorphTokens.colorSurface).isNotEqualTo(MorphTokens.colorSurfaceVariant)
-        assertThat(MorphTokens.colorSurface).isNotEqualTo(MorphTokens.colorBackground)
-        assertThat(MorphTokens.colorSurfaceVariant).isNotEqualTo(MorphTokens.colorBackground)
+        assertThat(MorphTokens.Colors.colorSurface).isNotEqualTo(MorphTokens.Colors.colorSurfaceVariant)
+        assertThat(MorphTokens.Colors.colorSurface).isNotEqualTo(MorphTokens.Colors.colorBackground)
+        assertThat(MorphTokens.Colors.colorSurfaceVariant).isNotEqualTo(MorphTokens.Colors.colorBackground)
     }
 
     @Test
     fun morphTokens_surfaceContainerHierarchyIsOrdered() {
         // The 5-level surface container hierarchy should have distinct values
         val containers = listOf(
-            MorphTokens.colorSurfaceContainerLowest,
-            MorphTokens.colorSurfaceContainerLow,
-            MorphTokens.colorSurfaceContainer,
-            MorphTokens.colorSurfaceContainerHigh,
-            MorphTokens.colorSurfaceContainerHighest
+            MorphTokens.Colors.colorSurfaceContainerLowest,
+            MorphTokens.Colors.colorSurfaceContainerLow,
+            MorphTokens.Colors.colorSurfaceContainer,
+            MorphTokens.Colors.colorSurfaceContainerHigh,
+            MorphTokens.Colors.colorSurfaceContainerHighest
         )
         // All 5 levels should be distinct
         assertThat(containers.toSet()).hasSize(5)
@@ -402,48 +402,48 @@ class MorphComposeThemeTest {
 
     @Test
     fun morphTokens_typographyTokensArePositive() {
-        assertThat(MorphTokens.fontSizeLargeTitle).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeTitle1).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeTitle2).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeTitle3).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeHeadline).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeBody).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeCallout).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeSubheadline).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeFootnote).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeCaption1).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeCaption2).isGreaterThan(0f)
-        assertThat(MorphTokens.fontSizeButton).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeLargeTitle).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeTitle1).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeTitle2).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeTitle3).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeHeadline).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeBody).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeCallout).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeSubheadline).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeFootnote).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeCaption1).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeCaption2).isGreaterThan(0f)
+        assertThat(MorphTokens.Typography.fontSizeButton).isGreaterThan(0f)
     }
 
     @Test
     fun morphTokens_typographyHierarchyIsOrdered() {
         // iOS typography scale: LargeTitle > Title1 > Title2 > Title3 > Headline >= Body
-        assertThat(MorphTokens.fontSizeLargeTitle).isGreaterThan(MorphTokens.fontSizeTitle1)
-        assertThat(MorphTokens.fontSizeTitle1).isGreaterThan(MorphTokens.fontSizeTitle2)
-        assertThat(MorphTokens.fontSizeTitle2).isGreaterThan(MorphTokens.fontSizeTitle3)
-        assertThat(MorphTokens.fontSizeTitle3).isGreaterThan(MorphTokens.fontSizeHeadline)
-        assertThat(MorphTokens.fontSizeHeadline).isAtLeast(MorphTokens.fontSizeBody)
-        assertThat(MorphTokens.fontSizeBody).isGreaterThan(MorphTokens.fontSizeFootnote)
-        assertThat(MorphTokens.fontSizeFootnote).isGreaterThan(MorphTokens.fontSizeCaption1)
-        assertThat(MorphTokens.fontSizeCaption1).isGreaterThan(MorphTokens.fontSizeCaption2)
+        assertThat(MorphTokens.Typography.fontSizeLargeTitle).isGreaterThan(MorphTokens.Typography.fontSizeTitle1)
+        assertThat(MorphTokens.Typography.fontSizeTitle1).isGreaterThan(MorphTokens.Typography.fontSizeTitle2)
+        assertThat(MorphTokens.Typography.fontSizeTitle2).isGreaterThan(MorphTokens.Typography.fontSizeTitle3)
+        assertThat(MorphTokens.Typography.fontSizeTitle3).isGreaterThan(MorphTokens.Typography.fontSizeHeadline)
+        assertThat(MorphTokens.Typography.fontSizeHeadline).isAtLeast(MorphTokens.Typography.fontSizeBody)
+        assertThat(MorphTokens.Typography.fontSizeBody).isGreaterThan(MorphTokens.Typography.fontSizeFootnote)
+        assertThat(MorphTokens.Typography.fontSizeFootnote).isGreaterThan(MorphTokens.Typography.fontSizeCaption1)
+        assertThat(MorphTokens.Typography.fontSizeCaption1).isGreaterThan(MorphTokens.Typography.fontSizeCaption2)
     }
 
     @Test
     fun morphTokens_interactionTokensHaveReasonableValues() {
         // Press overlay alpha should be subtle (0 < alpha < 0.5)
-        assertThat(MorphTokens.pressOverlayMaxAlpha).isGreaterThan(0f)
-        assertThat(MorphTokens.pressOverlayMaxAlpha).isLessThan(0.5f)
+        assertThat(MorphTokens.Interaction.pressOverlayMaxAlpha).isGreaterThan(0f)
+        assertThat(MorphTokens.Interaction.pressOverlayMaxAlpha).isLessThan(0.5f)
 
         // Press durations should be quick (50-500ms)
-        assertThat(MorphTokens.pressInDuration).isAtLeast(50L)
-        assertThat(MorphTokens.pressInDuration).isAtMost(500L)
-        assertThat(MorphTokens.pressOutDuration).isAtLeast(50L)
-        assertThat(MorphTokens.pressOutDuration).isAtMost(500L)
+        assertThat(MorphTokens.Interaction.pressInDuration).isAtLeast(50L)
+        assertThat(MorphTokens.Interaction.pressInDuration).isAtMost(500L)
+        assertThat(MorphTokens.Interaction.pressOutDuration).isAtLeast(50L)
+        assertThat(MorphTokens.Interaction.pressOutDuration).isAtMost(500L)
 
         // Disabled alpha should make things visibly faded
-        assertThat(MorphTokens.disabledAlpha).isGreaterThan(0f)
-        assertThat(MorphTokens.disabledAlpha).isLessThan(1f)
+        assertThat(MorphTokens.Interaction.disabledAlpha).isGreaterThan(0f)
+        assertThat(MorphTokens.Interaction.disabledAlpha).isLessThan(1f)
     }
 
     // ── 11. S15: M3 ColorScheme compatibility ─────────────────────────────

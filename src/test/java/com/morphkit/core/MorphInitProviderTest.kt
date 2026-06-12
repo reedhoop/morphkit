@@ -141,10 +141,15 @@ class MorphInitProviderTest {
 
     private fun resetMorphKit() {
         try {
+            // Reset initGuard (AtomicBoolean) — 防止重复初始化的守卫
+            val initGuardField = MorphKit::class.java.getDeclaredField("initGuard")
+            initGuardField.isAccessible = true
+            (initGuardField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean).set(false)
+
+            // Reset initialized (@Volatile Boolean) — 初始化完成标志
             val initializedField = MorphKit::class.java.getDeclaredField("initialized")
             initializedField.isAccessible = true
-            val atomicBool = initializedField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean
-            atomicBool.set(false)
+            initializedField.setBoolean(MorphKit, false)
 
             val configField = MorphKit::class.java.getDeclaredField("config")
             configField.isAccessible = true

@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import com.morphkit.R
 import com.morphkit.theme.MorphStyleResolver
+import com.morphkit.widget.registerDefaultWidgets
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -225,8 +226,18 @@ object MorphKit {
     @Volatile
     private lateinit var config: MorphConfig
 
-    /** 是否已初始化（使用 AtomicBoolean 保证 init() 的原子性 check-then-act） */
-    private val initialized = AtomicBoolean(false)
+    /**
+     * 初始化守卫 — 防止重复调用 init()。
+     *
+     * 与 [initialized] 分离：`initGuard` 在 init() 入口 CAS 获取，
+     * `initialized` 在 init() 全部完成后才设为 true。
+     * 这消除了「initialized=true 但 config 未赋值」的竞态窗口。
+     */
+    private val initGuard = AtomicBoolean(false)
+
+    /** 是否已完成初始化（所有配置、主题解析、注入器安装均就绪后才为 true） */
+    @Volatile
+    private var initialized: Boolean = false
 
     /**
      * MorphKit 解析出的最终 Theme 资源 ID。
@@ -258,7 +269,7 @@ object MorphKit {
      *
      * @return 已初始化返回 true，否则返回 false
      */
-    fun isInitialized(): Boolean = initialized.get()
+    fun isInitialized(): Boolean = initialized
 
     /**
      * 初始化 MorphKit 引擎。
@@ -279,8 +290,10 @@ object MorphKit {
      * @throws IllegalStateException 若重复初始化
      */
     fun init(application: Application, block: MorphConfig.() -> Unit) {
-        check(initialized.compareAndSet(false, true)) { "MorphKit 已初始化，禁止重复调用 init()" }
-        // 先写 config，后设 AtomicBoolean → 其他线程看到 initialized=true 时 config 必然已就绪
+        check(initGuard.compareAndSet(false, true)) { "MorphKit 已初始化，禁止重复调用 init()" }
+        // ── 在 initGuard 保护下执行全部初始化，initialized 在最后才设为 true ──
+        // 其他线程通过 initialized（Volatile）判断就绪状态，
+        // 看到 initialized=true 时 config 和 _finalThemeResId 必定已赋值完毕
         val newConfig = MorphConfig().apply(block)
         config = newConfig
 
@@ -289,6 +302,9 @@ object MorphKit {
 
         // 自动安装全局 Factory2 注入，在每个 Activity 启动前拦截 LayoutInflater
         MorphInstaller.install(application)
+
+        // 全部初始化完成后，才标记为已初始化（Volatile 写保证 happens-before）
+        initialized = true
     }
 
     /**
@@ -326,7 +342,7 @@ object MorphKit {
      * @return 替换后的 View，若未命中规则则返回 `null`
      */
     fun createView(originalName: String, context: Context, attrs: AttributeSet): View? {
-        if (!initialized.get()) return null
+        if (!initialized) return null
         val creator = config.replaceMap[originalName] ?: return null
         val view = creator(context, attrs)
         stampAndValidateView(view, originalName)
@@ -349,7 +365,7 @@ object MorphKit {
      * @return 修改后的 View（同一实例）
      */
     fun modifyView(originalName: String, view: View): View {
-        if (!initialized.get()) return view // 未初始化时直接返回原 View
+        if (!initialized) return view // 未初始化时直接返回原 View
         val modifier = config.modifyMap[originalName] ?: return view
         modifier(view)
         return view
@@ -377,7 +393,7 @@ object MorphKit {
      * @param originalName 被替换的原始控件名称
      */
     internal fun stampAndValidateView(view: View, originalName: String) {
-        if (!initialized.get()) return
+        if (!initialized) return
         // 打标：写入调试信息
         val tagValue = "${config.unifiedPrefix} (replaced: $originalName)"
         view.setTag(MORPH_TAG_KEY, tagValue)

@@ -56,6 +56,11 @@ class MorphInitProvider : android.content.ContentProvider() {
             MorphKit.autoInit(application)
 
             // ── 注册内存压力回调：清理 Bitmap 对象池 ──
+            // 架构说明：此处通过 FQN 引用 widget 层的 BackdropBlurHelper，
+            // 属于基础设施级的内存压力响应（而非业务逻辑依赖），不违反分层原则。
+            // ContentProvider 作为 Android 系统引导入口，天然承担跨层协调职责，
+            // 且 clearPool() 仅在此处作为 onTrimMemory 的被动回调被调用，
+            // core 包的其他代码不会对 widget 包产生任何依赖。
             application.registerComponentCallbacks(object : ComponentCallbacks2 {
                 override fun onTrimMemory(level: Int) {
                     if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {

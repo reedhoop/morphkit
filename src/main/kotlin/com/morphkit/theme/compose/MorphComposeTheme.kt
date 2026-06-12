@@ -195,21 +195,21 @@ private fun resolveAutoStyle(context: Context): StylePolicy {
 private fun morphTypography(): Typography {
     val ff = FontFamily.SansSerif
     return Typography(
-        displayLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.fontSizeLargeTitle.sp),
-        displayMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.fontSizeTitle1.sp),
-        displaySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle2.sp),
-        headlineLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle3.sp),
-        headlineMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
-        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
-        titleLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.fontSizeTitle3.sp),
-        titleMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.fontSizeHeadline.sp),
-        titleSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeSubheadline.sp),
-        bodyLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeBody.sp),
-        bodyMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCallout.sp),
-        bodySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeSubheadline.sp),
-        labelLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeButton.sp),
-        labelMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCaption1.sp),
-        labelSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.fontSizeCaption2.sp)
+        displayLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.Typography.fontSizeLargeTitle.sp),
+        displayMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.ExtraBold, fontSize = MorphTokens.Typography.fontSizeTitle1.sp),
+        displaySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle2.sp),
+        headlineLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle3.sp),
+        headlineMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
+        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
+        titleLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle3.sp),
+        titleMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
+        titleSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeSubheadline.sp),
+        bodyLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeBody.sp),
+        bodyMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeCallout.sp),
+        bodySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeSubheadline.sp),
+        labelLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeButton.sp),
+        labelMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeCaption1.sp),
+        labelSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeCaption2.sp)
     )
 }
 

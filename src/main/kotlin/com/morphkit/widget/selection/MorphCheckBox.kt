@@ -41,7 +41,7 @@ class MorphCheckBox @JvmOverloads constructor(
         interactionModeIndex = R.styleable.MorphCheckBox_morphInteractionMode,
         onRefreshColors = ::refreshColorCache,
         indicatorWidthProvider = {
-            val gap = (MorphTokens.spacingSm.toFloat() * context.resources.displayMetrics.density).toInt()
+            val gap = (MorphTokens.Spacing.spacingSm.toFloat() * context.resources.displayMetrics.density).toInt()
             boxSize.toInt() + gap
         }
     )
@@ -105,8 +105,8 @@ class MorphCheckBox @JvmOverloads constructor(
         val right = left + boxSize
         val bottom = top + boxSize
 
-        // ── disabled 态：应用 MorphTokens.disabledAlpha 透明度 ──
-        val alpha = if (isEnabled) 1f else MorphTokens.disabledAlpha
+        // ── disabled 态：应用 MorphTokens.Interaction.disabledAlpha 透明度 ──
+        val alpha = if (isEnabled) 1f else MorphTokens.Interaction.disabledAlpha
 
         if (isChecked) {
             // 选中态：主色填充圆角方形

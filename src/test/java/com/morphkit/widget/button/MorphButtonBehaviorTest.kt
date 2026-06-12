@@ -153,7 +153,7 @@ class MorphButtonBehaviorTest {
         val button = MorphButton(iosContext)
         val onPrimary = MorphTheme.morphColorOnPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphColors.adjustAlpha(onPrimary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(onPrimary, MorphTokens.Interaction.disabledAlpha)
         assertThat(button.currentTextColor).isEqualTo(expected)
     }
 
@@ -162,7 +162,7 @@ class MorphButtonBehaviorTest {
         val button = MorphButton(iosContext)
         val primary = MorphTheme.morphColorPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphColors.adjustAlpha(primary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(primary, MorphTokens.Interaction.disabledAlpha)
         assertThat(button.testShapeDrawable.color?.defaultColor).isEqualTo(expected)
     }
 
@@ -172,7 +172,7 @@ class MorphButtonBehaviorTest {
         button.style = MorphButton.Style.PLAIN
         val primary = MorphTheme.morphColorPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphColors.adjustAlpha(primary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(primary, MorphTokens.Interaction.disabledAlpha)
         assertThat(button.currentTextColor).isEqualTo(expected)
     }
 

@@ -15,6 +15,7 @@ import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.MorphTypography
 
 /**
@@ -192,7 +193,7 @@ class MorphEditText @JvmOverloads constructor(
         searchBackgroundFocusedColor = MorphColors.blendColor(
             searchBackgroundColor,
             if (MorphColors.isDarkMode(context)) Color.WHITE else Color.BLACK,
-            FOCUS_OVERLAY_ALPHA
+            MorphTokens.Interaction.focusOverlayAlpha
         )
 
         // 刷新提示文字颜色（暗黑模式切换后）
@@ -226,7 +227,7 @@ class MorphEditText @JvmOverloads constructor(
         val startColor = if (currentBgColor != 0) currentBgColor else searchBackgroundColor
 
         focusAnimator = ValueAnimator.ofArgb(startColor, targetColor).apply {
-            duration = FOCUS_ANIMATION_DURATION
+            duration = MorphTokens.Interaction.focusAnimationDuration
             interpolator = DecelerateInterpolator()
             addUpdateListener { animator ->
                 val color = animator.animatedValue as Int
@@ -283,6 +284,12 @@ class MorphEditText @JvmOverloads constructor(
         }
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        focusAnimator?.cancel()
+        focusAnimator = null
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     // 测试专用访问方法 — 避免 reflect 调用 protected 方法
     // ═══════════════════════════════════════════════════════════════════════
@@ -305,16 +312,4 @@ class MorphEditText @JvmOverloads constructor(
         onConfigurationChanged(newConfig)
     }
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // 常量
-    // ═══════════════════════════════════════════════════════════════════════
-
-    companion object {
-
-        /** 焦点态遮罩透明度 — 极轻微的 8% 变化，iOS 风格的微妙反馈 */
-        private const val FOCUS_OVERLAY_ALPHA = 0.08f
-
-        /** 焦点颜色过渡动画时长（ms），对齐 MorphTokens.motionDurationSm */
-        private const val FOCUS_ANIMATION_DURATION = 150L
-    }
 }

@@ -206,42 +206,4 @@ class MorphConfig internal constructor() {
         _modifyMap[name] = modifier
     }
 
-    /**
-     * 注册 MorphKit 内置控件的默认替换规则。
-     *
-     * 包含所有 MorphKit 提供的控件替换规则，确保 [MorphKit.autoInit] 和
-     * [com.morphkit.theme.initIOSStyle] 使用同一份规则清单，避免遗漏或不同步。
-     *
-     * 控件清单：
-     * - TextView / AppCompatTextView → MorphTextView
-     * - Button / AppCompatButton → MorphButton
-     * - EditText / AppCompatEditText → MorphEditText
-     * - CardView → MorphCardView
-     * - MaterialCardView → MorphCardView
-     * - RadioButton / AppCompatRadioButton → MorphRadioButton
-     * - CheckBox / AppCompatCheckBox → MorphCheckBox
-     */
-    fun registerDefaultWidgets() {
-        groupReplace(listOf("TextView", "androidx.appcompat.widget.AppCompatTextView")) { ctx, attrs ->
-            com.morphkit.widget.text.MorphTextView(ctx, attrs)
-        }
-        groupReplace(listOf("Button", "androidx.appcompat.widget.AppCompatButton")) { ctx, attrs ->
-            com.morphkit.widget.button.MorphButton(ctx, attrs)
-        }
-        groupReplace(listOf("EditText", "androidx.appcompat.widget.AppCompatEditText")) { ctx, attrs ->
-            com.morphkit.widget.text.MorphEditText(ctx, attrs)
-        }
-        replace("androidx.cardview.widget.CardView") { ctx, attrs ->
-            com.morphkit.widget.container.MorphCardView(ctx, attrs)
-        }
-        replace("com.google.android.material.card.MaterialCardView") { ctx, attrs ->
-            com.morphkit.widget.container.MorphCardView(ctx, attrs)
-        }
-        groupReplace(listOf("RadioButton", "androidx.appcompat.widget.AppCompatRadioButton")) { ctx, attrs ->
-            com.morphkit.widget.button.MorphRadioButton(ctx, attrs)
-        }
-        groupReplace(listOf("CheckBox", "androidx.appcompat.widget.AppCompatCheckBox")) { ctx, attrs ->
-            com.morphkit.widget.selection.MorphCheckBox(ctx, attrs)
-        }
-    }
 }

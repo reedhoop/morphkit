@@ -3,6 +3,7 @@ package com.morphkit.theme
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
+import com.morphkit.theme.MorphTokens
 
 /**
  * MorphKit color manipulation utilities.
@@ -82,8 +83,8 @@ object MorphColors {
      * @param isDarkMode Whether the current UI is in dark mode (affects pressed overlay color)
      */
     fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList {
-        val pressedColor = overlayColor(baseColor, if (isDarkMode) Color.WHITE else Color.BLACK, 0.2f)
-        val disabledColor = adjustAlpha(baseColor, 0.38f)
+        val pressedColor = overlayColor(baseColor, if (isDarkMode) Color.WHITE else Color.BLACK, MorphTokens.Interaction.pressOverlayMaxAlpha)
+        val disabledColor = adjustAlpha(baseColor, MorphTokens.Interaction.disabledAlpha)
 
         return android.content.res.ColorStateList(
             arrayOf(

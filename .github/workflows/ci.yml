@@ -32,9 +32,19 @@ jobs:
       - name: Build and test
         run: ./gradlew assemble test -x lint
 
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
       - name: Upload test reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-reports
           path: build/reports/tests/
+
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: build/reports/lint-results-*.html

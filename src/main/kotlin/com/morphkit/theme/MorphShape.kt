@@ -25,7 +25,7 @@ import androidx.annotation.Px
  * | cornerLarge | 16dp | 全宽卡片、Bottom Sheet、Dialog |
  * | cornerFull | Int.MAX_VALUE | 胶囊形状（哨兵值） |
  *
- * @see MorphTokens.cornerRadiusButtonIos Token 层圆角常量
+ * @see MorphTokens.Shapes.cornerRadiusButtonIos Token 层圆角常量
  */
 object MorphShape {
 

@@ -183,14 +183,14 @@ class MorphButton @JvmOverloads constructor(
         when (interactionMode) {
             InteractionMode.IOS -> {
                 if (!hasCustomBackground) {
-                    shapeDrawable.setColor(MorphColors.adjustAlpha(baseColor, MorphTokens.disabledAlpha))
+                    shapeDrawable.setColor(MorphColors.adjustAlpha(baseColor, MorphTokens.Interaction.disabledAlpha))
                 }
             }
             InteractionMode.MATERIAL -> {
                 // 不干预 M3 默认禁用态
             }
         }
-        setTextColor(MorphColors.adjustAlpha(baseTextColor, MorphTokens.disabledAlpha))
+        setTextColor(MorphColors.adjustAlpha(baseTextColor, MorphTokens.Interaction.disabledAlpha))
     }
 
     override fun setEnabled(enabled: Boolean) {
@@ -265,9 +265,9 @@ class MorphButton @JvmOverloads constructor(
     }
 
     companion object {
-        private val pressOverlayMaxAlpha = MorphTokens.pressOverlayMaxAlpha
-        private val pressInDuration = MorphTokens.motionDurationSm
-        private val pressOutDuration = MorphTokens.pressOutDuration
+        private val pressOverlayMaxAlpha = MorphTokens.Interaction.pressOverlayMaxAlpha
+        private val pressInDuration = MorphTokens.Motion.motionDurationSm
+        private val pressOutDuration = MorphTokens.Interaction.pressOutDuration
     }
 
     // ═══════════════════════════════════════════════════════════════════════

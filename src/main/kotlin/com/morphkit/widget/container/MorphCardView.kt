@@ -164,8 +164,8 @@ class MorphCardView @JvmOverloads constructor(
             // ── 关闭 Material 默认阴影动画 ──
             // MaterialCardView 默认带 elevation 阴影和按压态阴影动画，
             // 与 iOS 极简风格完全冲突，必须彻底清除
-            cardElevation = MorphTokens.elevationNone.toFloat()
-            maxCardElevation = MorphTokens.elevationNone.toFloat()
+            cardElevation = MorphTokens.Elevation.elevationNone.toFloat()
+            maxCardElevation = MorphTokens.Elevation.elevationNone.toFloat()
 
             // ── 关闭涟漪效果 ──
             // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
