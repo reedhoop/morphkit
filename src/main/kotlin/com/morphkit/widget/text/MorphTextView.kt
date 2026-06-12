@@ -7,6 +7,7 @@ import android.util.AttributeSet
 import androidx.appcompat.widget.AppCompatTextView
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.FontWeight
 import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
@@ -19,7 +20,7 @@ import com.morphkit.theme.MorphTokens
  * ## 排版规范
  * - 拦截 XML `textStyle` 属性，强制重新映射到 iOS 对齐的字重
  * - `bold` → [Typeface.BOLD]（确保粗体饱满，对齐 iOS Bold 视觉）
- * - `normal` → [MorphTheme.FontWeight.MEDIUM]（正文补偿，对齐 iOS Regular 视觉）
+ * - `normal` → [FontWeight.MEDIUM]（正文补偿，对齐 iOS Regular 视觉）
  * - `italic` → [Typeface.ITALIC] + MEDIUM（保持字重不降级）
  * - `bold|italic` → [Typeface.BOLD_ITALIC]
  *
@@ -141,7 +142,7 @@ class MorphTextView @JvmOverloads constructor(
      * Android 默认 `textStyle=normal` 使用 Roboto Regular (400)，
      * 在视觉上比 iOS SF Pro Regular 偏细约一个字重级别。
      * 为在 Android 上还原 iOS 的文字视觉节奏，
-     * 必须将 normal 提升至 Medium (500)，即 [MorphTheme.FontWeight.MEDIUM]。
+     * 必须将 normal 提升至 Medium (500)，即 [FontWeight.MEDIUM]。
      *
      * 而 `textStyle=bold` 使用 Roboto Bold (700) 已足够饱满，
      * 与 iOS SF Pro Bold 视觉上对齐，无需额外补偿。
@@ -152,7 +153,7 @@ class MorphTextView @JvmOverloads constructor(
         val remappedTypeface = when (currentStyle) {
             Typeface.NORMAL -> {
                 // normal → MEDIUM 500（iOS Regular 补偿）
-                MorphTheme.FontWeight.MEDIUM.toTypeface()
+                FontWeight.MEDIUM.toTypeface()
             }
 
             Typeface.BOLD -> {
@@ -163,7 +164,7 @@ class MorphTextView @JvmOverloads constructor(
 
             Typeface.ITALIC -> {
                 // italic → MEDIUM + ITALIC（保持字重补偿 + 斜体）
-                val mediumTf = MorphTheme.FontWeight.MEDIUM.toTypeface()
+                val mediumTf = FontWeight.MEDIUM.toTypeface()
                 Typeface.create(mediumTf, Typeface.ITALIC)
             }
 
@@ -174,7 +175,7 @@ class MorphTextView @JvmOverloads constructor(
 
             else -> {
                 // 其他未知 style，降级为 MEDIUM
-                MorphTheme.FontWeight.MEDIUM.toTypeface()
+                FontWeight.MEDIUM.toTypeface()
             }
         }
 

@@ -11,6 +11,7 @@ import com.google.android.material.card.MaterialCardView
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphColors
+import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
@@ -140,6 +141,9 @@ class MorphCardView @JvmOverloads constructor(
     /** 模糊背景图层 — 仅在毛玻璃模式下创建 */
     private var blurBackgroundView: ImageView? = null
 
+    /** 节流：挂起的模糊更新 Runnable，避免 onLayout 每帧触发截图+模糊 */
+    private var blurUpdateRunnable: Runnable? = null
+
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
     // ═══════════════════════════════════════════════════════════════════════
@@ -177,7 +181,7 @@ class MorphCardView @JvmOverloads constructor(
         // (elevation shadow, ripple on click, stateListAnimator)
 
         // ── 圆角 ──
-        radius = MorphTheme.cornerLarge(context).toFloat()
+        radius = MorphShape.cornerLarge(context).toFloat()
 
         // ── 裁剪子 View 到圆角范围内 ──
         // 毛玻璃模式下子 View 不能溢出圆角区域
@@ -335,13 +339,17 @@ class MorphCardView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     /**
-     * 请求在下一个 layout pass 后更新模糊背景。
+     * 请求在下一个 layout pass 后更新模糊背景（带节流）。
      *
-     * 使用 [post] 延迟执行，确保父容器的子 View 布局已完成，
-     * 此时 parent.draw() 能捕获到正确的像素。
+     * 使用 [postDelayed] 替代 [post]，并取消前一次挂起的更新，
+     * 确保滚动场景下两次模糊更新间隔至少 [BLUR_THROTTLE_MS]（一帧），
+     * 避免每帧都执行截图+模糊的高开销操作。
      */
     private fun requestBlurUpdate() {
-        post { updateBlurBackground() }
+        blurUpdateRunnable?.let { removeCallbacks(it) }
+        val runnable = Runnable { updateBlurBackground() }
+        blurUpdateRunnable = runnable
+        postDelayed(runnable, BLUR_THROTTLE_MS)
     }
 
     /**
@@ -435,6 +443,9 @@ class MorphCardView @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        // 取消挂起的模糊更新
+        blurUpdateRunnable?.let { removeCallbacks(it) }
+        blurUpdateRunnable = null
         // 将模糊 Bitmap 归还对象池释放内存，并置空引用防止 Context 泄漏
         blurBackgroundView?.let { iv ->
             (iv.drawable as? BitmapDrawable)?.bitmap?.let { bmp ->
@@ -462,6 +473,15 @@ class MorphCardView @JvmOverloads constructor(
          * 过小（<15px）模糊不可感知，过大（>40px）导致内容完全不可读。
          */
         private const val DEFAULT_BLUR_RADIUS = 25f
+
+        /**
+         * 毛玻璃模糊更新节流间隔（ms）。
+         *
+         * 滚动场景下 onLayout 可能每帧触发，截图+模糊是高开销操作。
+         * 通过 postDelayed + removeCallbacks 实现 16ms（一帧）的节流，
+         * 确保模糊更新频率不超过 60fps，避免卡顿。
+         */
+        private const val BLUR_THROTTLE_MS = 16L
 
         /** 毛玻璃模式浅色背景 — 80% 不透明度白色 */
         private val COLOR_GLASSMORPHISM_LIGHT_BG = 0xCCFFFFFFL.toInt()

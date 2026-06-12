@@ -13,6 +13,16 @@ import com.google.android.material.color.MaterialColors
  * 彻底废弃硬编码色彩，完美集成 Material Design 3 (M3) 语义色系统，
  * 同时保留 iOS 极简交互视觉风格。
  *
+ * ## 职责划分
+ *
+ * | 组件 | 职责 |
+ * |------|------|
+ * | [MorphTheme] | M3 语义色解析 |
+ * | [MorphColors] | 颜色运算（叠加、混合、暗色检测） |
+ * | [MorphTypography] | 排版令牌（字号、字重） |
+ * | [MorphShape] | 形状令牌（圆角） |
+ * | [MorphTokens] | 原始设计变量（唯一数据源） |
+ *
  * ## iOS ↔ M3 语义映射
  *
  * | iOS 语义                   | M3 语义属性              | 用途           |
@@ -90,116 +100,47 @@ object MorphTheme {
     fun morphColor(context: Context, @AttrRes attr: Int): Int =
         MaterialColors.getColor(context, attr, 0)
 
-    /**
-     * 创建带状态的颜色列表（ColorStateList）。
-     *
-     * - 正常态：原始颜色
-     * - 按下态：叠加 20% 遮罩
-     * - 禁用态：降低不透明度至 38%
-     */
+    // ═══════════════════════════════════════════════════════════════════════
+    // 向后兼容 — 委托到 MorphColors / MorphTypography / MorphShape
+    // ═══════════════════════════════════════════════════════════════════════
+
     @Deprecated("Use MorphColors.createColorStateList()", ReplaceWith("MorphColors.createColorStateList(baseColor, isDarkMode)"))
     fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList =
         MorphColors.createColorStateList(baseColor, isDarkMode)
 
-    /** 给颜色叠加遮罩 */
     @Deprecated("Use MorphColors.overlayColor()", ReplaceWith("MorphColors.overlayColor(baseColor, overlayColor, alpha)"))
     fun overlayColor(baseColor: Int, overlayColor: Int, alpha: Float): Int =
         MorphColors.overlayColor(baseColor, overlayColor, alpha)
 
-    /** 调整颜色的不透明度 */
     @Deprecated("Use MorphColors.adjustAlpha()", ReplaceWith("MorphColors.adjustAlpha(color, alpha)"))
     fun adjustAlpha(color: Int, alpha: Float): Int =
         MorphColors.adjustAlpha(color, alpha)
 
-    /**
-     * 线性混合两个颜色。
-     *
-     * @param from   基础色（ARGB）
-     * @param to     目标色（ARGB）
-     * @param ratio  混合比例 [0f, 1f]，0 返回 from，1 返回 to
-     * @return 混合后的颜色
-     */
     @Deprecated("Use MorphColors.blendColor()", ReplaceWith("MorphColors.blendColor(from, to, ratio)"))
     fun blendColor(from: Int, to: Int, ratio: Float): Int =
         MorphColors.blendColor(from, to, ratio)
 
-    /** 判断当前是否为暗黑模式 */
     @Deprecated("Use MorphColors.isDarkMode()", ReplaceWith("MorphColors.isDarkMode(context)"))
     fun isDarkMode(context: Context): Boolean =
         MorphColors.isDarkMode(context)
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // 形状体系 — iOS 连续性圆角近似
-    // ═══════════════════════════════════════════════════════════════════════
-
-    /**
-     * 小圆角 8dp — 标签、Badge、小按钮。
-     *
-     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
-     */
+    @Deprecated("Use MorphShape.cornerSmall(context)", ReplaceWith("MorphShape.cornerSmall(context)"))
     @Px
-    fun cornerSmall(context: Context): Int = 8.dp(context)
+    fun cornerSmall(context: Context): Int = MorphShape.cornerSmall(context)
 
-    /**
-     * 中圆角 12dp — 标准按钮、列表项、输入框。
-     *
-     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
-     */
+    @Deprecated("Use MorphShape.cornerMedium(context)", ReplaceWith("MorphShape.cornerMedium(context)"))
     @Px
-    fun cornerMedium(context: Context): Int = 12.dp(context)
+    fun cornerMedium(context: Context): Int = MorphShape.cornerMedium(context)
 
-    /**
-     * 大圆角 16dp — 全宽卡片、Bottom Sheet、Dialog。
-     *
-     * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
-     */
+    @Deprecated("Use MorphShape.cornerLarge(context)", ReplaceWith("MorphShape.cornerLarge(context)"))
     @Px
-    fun cornerLarge(context: Context): Int = 16.dp(context)
+    fun cornerLarge(context: Context): Int = MorphShape.cornerLarge(context)
 
-    /**
-     * 全圆角（胶囊形状）— 哨兵值 [Int.MAX_VALUE]。
-     *
-     * 用于 [android.graphics.drawable.GradientDrawable.setCornerRadius]，
-     * 表示半径足够大以形成完美胶囊形状。
-     * 注意：此值非真实像素值，不标注 [Px]，与 [cornerSmall] / [cornerMedium] / [cornerLarge] 语义不同。
-     */
-    val cornerFull: Int = Int.MAX_VALUE
+    @Deprecated("Use MorphShape.cornerFull", ReplaceWith("MorphShape.cornerFull"))
+    val cornerFull: Int = MorphShape.cornerFull
 
-    // ═══════════════════════════════════════════════════════════════════════
-    // 排版体系 — SF Pro 视觉权重对齐
-    // ═══════════════════════════════════════════════════════════════════════
-
-    val typography = MorphTypography()
-
-    class MorphTypography {
-        val largeTitle = TextStyle(fontSize = 34f, weight = FontWeight.EXTRA_BOLD)
-        val title1 = TextStyle(fontSize = 28f, weight = FontWeight.EXTRA_BOLD)
-        val title2 = TextStyle(fontSize = 22f, weight = FontWeight.BOLD)
-        val title3 = TextStyle(fontSize = 20f, weight = FontWeight.BOLD)
-        val headline = TextStyle(fontSize = 17f, weight = FontWeight.SEMI_BOLD)
-        val body = TextStyle(fontSize = 17f, weight = FontWeight.MEDIUM)
-        val callout = TextStyle(fontSize = 16f, weight = FontWeight.MEDIUM)
-        val subheadline = TextStyle(fontSize = 15f, weight = FontWeight.MEDIUM)
-        val footnote = TextStyle(fontSize = 13f, weight = FontWeight.MEDIUM)
-        val caption1 = TextStyle(fontSize = 12f, weight = FontWeight.MEDIUM)
-        val caption2 = TextStyle(fontSize = 11f, weight = FontWeight.MEDIUM)
-    }
-
-    data class TextStyle(val fontSize: Float, val weight: FontWeight)
-
-    enum class FontWeight(val weight: Int) {
-        MEDIUM(500),
-        SEMI_BOLD(600),
-        BOLD(700),
-        EXTRA_BOLD(800);
-
-        fun toTypeface(): android.graphics.Typeface = when (this) {
-            MEDIUM -> android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL)
-            SEMI_BOLD -> android.graphics.Typeface.create("sans-serif-semibold", android.graphics.Typeface.NORMAL)
-            BOLD -> android.graphics.Typeface.create("sans-serif", android.graphics.Typeface.BOLD)
-            EXTRA_BOLD -> android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.NORMAL)
-        }
-    }
+    @Deprecated("Use MorphTypography directly", ReplaceWith("MorphTypography"))
+    val typography = MorphTypography
 }
 
 /**

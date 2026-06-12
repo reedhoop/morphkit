@@ -13,7 +13,9 @@ import androidx.appcompat.widget.AppCompatEditText
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphColors
+import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTypography
 
 /**
  * MorphKit iOS 极简风格输入框。
@@ -102,7 +104,7 @@ class MorphEditText @JvmOverloads constructor(
 
     /** 搜索栏背景 Drawable（复用同一实例） */
     private val searchBackgroundDrawable = GradientDrawable().apply {
-        cornerRadius = MorphTheme.cornerMedium(context).toFloat()
+        cornerRadius = MorphShape.cornerMedium(context).toFloat()
     }
 
     /** 缓存：搜索栏原始背景色 */
@@ -145,7 +147,7 @@ class MorphEditText @JvmOverloads constructor(
             background = null
 
             // ── 应用排版 ──
-            val typo = MorphTheme.typography.body
+            val typo = MorphTypography.body
             textSize = typo.fontSize
             typeface = typo.weight.toTypeface()
 

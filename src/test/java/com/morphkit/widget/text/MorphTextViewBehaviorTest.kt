@@ -6,6 +6,7 @@ import android.view.ContextThemeWrapper
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.FontWeight
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import org.junit.Before
@@ -59,7 +60,7 @@ class MorphTextViewBehaviorTest {
     fun `默认textStyle被重映射为MEDIUM（NORMAL补偿）`() {
         val tv = MorphTextView(context)
         // 默认 textStyle=NORMAL，remapTextStyle 将其映射为 sans-serif-medium
-        val expectedTypeface = MorphTheme.FontWeight.MEDIUM.toTypeface()
+        val expectedTypeface = FontWeight.MEDIUM.toTypeface()
         assertThat(tv.typeface).isNotNull()
         // Robolectric 环境下 Typeface 比较使用 equals
         assertThat(tv.typeface).isEqualTo(expectedTypeface)
@@ -172,7 +173,7 @@ class MorphTextViewBehaviorTest {
     fun `NORMAL样式重映射为MEDIUM字重`() {
         val tv = MorphTextView(context)
         // 默认构造时 textStyle=NORMAL，init 中 remapTextStyle 映射为 MEDIUM
-        val expected = MorphTheme.FontWeight.MEDIUM.toTypeface()
+        val expected = FontWeight.MEDIUM.toTypeface()
         assertThat(tv.typeface).isEqualTo(expected)
     }
 
@@ -191,7 +192,7 @@ class MorphTextViewBehaviorTest {
         tv.setTypeface(null, Typeface.ITALIC)
 
         // ITALIC → MEDIUM + ITALIC
-        val mediumTf = MorphTheme.FontWeight.MEDIUM.toTypeface()
+        val mediumTf = FontWeight.MEDIUM.toTypeface()
         val expected = Typeface.create(mediumTf, Typeface.ITALIC)
         assertThat(tv.typeface).isEqualTo(expected)
     }
@@ -208,7 +209,7 @@ class MorphTextViewBehaviorTest {
     @Test
     fun `setTypeface传入非null Typeface时使用外部Typeface`() {
         val tv = MorphTextView(context)
-        val customTf = MorphTheme.FontWeight.SEMI_BOLD.toTypeface()
+        val customTf = FontWeight.SEMI_BOLD.toTypeface()
 
         tv.setTypeface(customTf, Typeface.NORMAL)
 
@@ -364,17 +365,17 @@ class MorphTextViewBehaviorTest {
 
     @Test
     fun `MorphTheme typography body使用MEDIUM字重`() {
-        assertThat(MorphTheme.typography.body.weight).isEqualTo(MorphTheme.FontWeight.MEDIUM)
+        assertThat(MorphTheme.typography.body.weight).isEqualTo(FontWeight.MEDIUM)
     }
 
     @Test
     fun `MorphTheme typography largeTitle使用EXTRA_BOLD字重`() {
-        assertThat(MorphTheme.typography.largeTitle.weight).isEqualTo(MorphTheme.FontWeight.EXTRA_BOLD)
+        assertThat(MorphTheme.typography.largeTitle.weight).isEqualTo(FontWeight.EXTRA_BOLD)
     }
 
     @Test
     fun `MorphTheme typography headline使用SEMI_BOLD字重`() {
-        assertThat(MorphTheme.typography.headline.weight).isEqualTo(MorphTheme.FontWeight.SEMI_BOLD)
+        assertThat(MorphTheme.typography.headline.weight).isEqualTo(FontWeight.SEMI_BOLD)
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -383,28 +384,28 @@ class MorphTextViewBehaviorTest {
 
     @Test
     fun `FontWeight MEDIUM映射为sans-serif-medium`() {
-        val tf = MorphTheme.FontWeight.MEDIUM.toTypeface()
+        val tf = FontWeight.MEDIUM.toTypeface()
         assertThat(tf).isNotNull()
         assertThat(tf.style).isEqualTo(Typeface.NORMAL)
     }
 
     @Test
     fun `FontWeight BOLD映射为sans-serif-bold`() {
-        val tf = MorphTheme.FontWeight.BOLD.toTypeface()
+        val tf = FontWeight.BOLD.toTypeface()
         assertThat(tf).isNotNull()
         assertThat(tf.style).isEqualTo(Typeface.BOLD)
     }
 
     @Test
     fun `FontWeight SEMI_BOLD映射为sans-serif-semibold`() {
-        val tf = MorphTheme.FontWeight.SEMI_BOLD.toTypeface()
+        val tf = FontWeight.SEMI_BOLD.toTypeface()
         assertThat(tf).isNotNull()
         assertThat(tf.style).isEqualTo(Typeface.NORMAL)
     }
 
     @Test
     fun `FontWeight EXTRA_BOLD映射为sans-serif-black`() {
-        val tf = MorphTheme.FontWeight.EXTRA_BOLD.toTypeface()
+        val tf = FontWeight.EXTRA_BOLD.toTypeface()
         assertThat(tf).isNotNull()
         assertThat(tf.style).isEqualTo(Typeface.NORMAL)
     }

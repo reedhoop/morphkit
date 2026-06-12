@@ -15,7 +15,9 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphColors
+import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTypography
 import com.morphkit.theme.MorphTokens
 
 /**
@@ -59,7 +61,7 @@ class MorphButton @JvmOverloads constructor(
             interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
             cornerRadius = a.getDimension(
                 R.styleable.MorphButton_morphCornerRadius,
-                MorphTheme.cornerMedium(context).toFloat()
+                MorphShape.cornerMedium(context).toFloat()
             )
             // 从 XML 读取样式变体
             val variantValue = a.getInt(R.styleable.MorphButton_morphButtonVariant, 0)
@@ -81,7 +83,7 @@ class MorphButton @JvmOverloads constructor(
         cachedPrimaryColor = MorphTheme.morphColorPrimary(context)
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)
 
-        val typo = MorphTheme.typography.body
+        val typo = MorphTypography.body
         textSize = typo.fontSize
         typeface = typo.weight.toTypeface()
 

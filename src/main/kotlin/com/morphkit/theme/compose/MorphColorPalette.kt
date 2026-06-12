@@ -249,107 +249,19 @@ data class MorphColorPalette(
          * Pixel 亮色降级色板 — 直接复用 iOS 亮色 Token。
          *
          * 值来源于 [MorphTokens]，与 iOS 亮色共享 Token 基色，确保一致性。
-         * 通过 [MorphColorPalette.toFallback] 转换，新增 Token 只需在 iosLight() 中添加一次。
+         * 直接使用 [MorphColorPalette] 实例，新增 Token 只需在 iosLight() 中添加一次，
+         * pixelFromContext 的降级值自动同步，无需维护额外的 FallbackColors 数据结构。
          */
-        private val pixelLightFallback: FallbackColors by lazy { iosLight().toFallback() }
+        private val pixelLightFallback: MorphColorPalette by lazy { iosLight() }
 
         /**
          * Pixel 暗色降级色板 — 直接复用 iOS 暗色 Token。
          *
          * 值来源于 [MorphTokens] 的 Dark 系列常量。此前 Pixel 模式仅有亮色降级，
          * 暗色模式下会错误地回退到亮色 Token，导致暗色模式下出现刺眼的亮色背景。
-         * 通过 [MorphColorPalette.toFallback] 转换，新增 Token 只需在 iosDark() 中添加一次。
+         * 直接使用 [MorphColorPalette] 实例，新增 Token 只需在 iosDark() 中添加一次，
+         * pixelFromContext 的降级值自动同步。
          */
-        private val pixelDarkFallback: FallbackColors by lazy { iosDark().toFallback() }
+        private val pixelDarkFallback: MorphColorPalette by lazy { iosDark() }
     }
-
-    /**
-     * 将 [MorphColorPalette] 转换为 [FallbackColors]。
-     *
-     * 用于 Pixel 模式降级色板的自动生成，确保新增 Token 字段只需在
-     * [iosLight] / [iosDark] 中添加一次，pixelFallback 自动同步。
-     */
-    private fun toFallback() = FallbackColors(
-        primary = primary,
-        onPrimary = onPrimary,
-        primaryContainer = primaryContainer,
-        onPrimaryContainer = onPrimaryContainer,
-        secondary = secondary,
-        onSecondary = onSecondary,
-        secondaryContainer = secondaryContainer,
-        onSecondaryContainer = onSecondaryContainer,
-        tertiary = tertiary,
-        onTertiary = onTertiary,
-        tertiaryContainer = tertiaryContainer,
-        onTertiaryContainer = onTertiaryContainer,
-        error = error,
-        onError = onError,
-        errorContainer = errorContainer,
-        onErrorContainer = onErrorContainer,
-        surface = surface,
-        onSurface = onSurface,
-        surfaceVariant = surfaceVariant,
-        onSurfaceVariant = onSurfaceVariant,
-        surfaceDim = surfaceDim,
-        surfaceBright = surfaceBright,
-        surfaceContainerLowest = surfaceContainerLowest,
-        surfaceContainerLow = surfaceContainerLow,
-        surfaceContainer = surfaceContainer,
-        surfaceContainerHigh = surfaceContainerHigh,
-        surfaceContainerHighest = surfaceContainerHighest,
-        outline = outline,
-        outlineVariant = outlineVariant,
-        background = background,
-        onBackground = onBackground,
-        inverseSurface = inverseSurface,
-        inverseOnSurface = inverseOnSurface,
-        inversePrimary = inversePrimary,
-        success = success,
-        warning = warning
-    )
-
-    /**
-     * 降级色板内部数据结构。
-     *
-     * 将 Pixel 模式的亮色/暗色降级数据集中管理，避免 [pixelFromContext] 方法参数膨胀。
-     * 字段命名与 [MorphColorPalette] 一一对应，便于审查一致性。
-     */
-    private data class FallbackColors(
-        val primary: Color,
-        val onPrimary: Color,
-        val primaryContainer: Color,
-        val onPrimaryContainer: Color,
-        val secondary: Color,
-        val onSecondary: Color,
-        val secondaryContainer: Color,
-        val onSecondaryContainer: Color,
-        val tertiary: Color,
-        val onTertiary: Color,
-        val tertiaryContainer: Color,
-        val onTertiaryContainer: Color,
-        val error: Color,
-        val onError: Color,
-        val errorContainer: Color,
-        val onErrorContainer: Color,
-        val surface: Color,
-        val onSurface: Color,
-        val surfaceVariant: Color,
-        val onSurfaceVariant: Color,
-        val surfaceDim: Color,
-        val surfaceBright: Color,
-        val surfaceContainerLowest: Color,
-        val surfaceContainerLow: Color,
-        val surfaceContainer: Color,
-        val surfaceContainerHigh: Color,
-        val surfaceContainerHighest: Color,
-        val outline: Color,
-        val outlineVariant: Color,
-        val background: Color,
-        val onBackground: Color,
-        val inverseSurface: Color,
-        val inverseOnSurface: Color,
-        val inversePrimary: Color,
-        val success: Color,
-        val warning: Color
-    )
 }

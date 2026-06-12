@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.view.ContextThemeWrapper
 import com.morphkit.R
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * MorphKit 的 LayoutInflater.Factory2 责任链代理拦截器。
@@ -60,7 +61,8 @@ class MorphFactory2(
         private const val PERF_THRESHOLD_MS = 5L
     }
 
-    @Volatile private var hostThemeChecked = false
+    /** 宿主 Theme 是否已检测（原子性保证只检测一次，消除 check-then-act 竞态） */
+    private val hostThemeChecked = AtomicBoolean(false)
     @Volatile private var hostHasMorphAttr = false
 
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
@@ -150,9 +152,9 @@ class MorphFactory2(
     private fun wrapContextIfNeeded(context: Context): Context {
         if (finalThemeResId == 0) return context
 
-        if (!hostThemeChecked) {
+        // CAS 保证 hostThemeHasMorphAttributes 只执行一次，消除并发重复检测
+        if (hostThemeChecked.compareAndSet(false, true)) {
             hostHasMorphAttr = hostThemeHasMorphAttributes(context)
-            hostThemeChecked = true
         }
 
         if (hostHasMorphAttr) return context
