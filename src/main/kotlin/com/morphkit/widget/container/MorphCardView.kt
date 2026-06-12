@@ -171,6 +171,8 @@ class MorphCardView @JvmOverloads constructor(
             // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
             // iOS 卡片无涟漪反馈，需将涟漪色设为透明
             // 注意：不设置 isClickable=false，保留业务方对卡片点击的需求
+            // 使用 rippleColor=TRANSPARENT 而非 isClickable=false，
+            // 因为 isClickable=false 会阻止业务方通过 OnClickListener 设置点击
             rippleColor = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
 
             // ── 关闭状态动画 ──

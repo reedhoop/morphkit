@@ -240,17 +240,24 @@ internal object BackdropBlurHelper {
      *
      * 软件 Stack Blur 每次需要 `IntArray(w * h)` 临时数组，
      * 大图场景下频繁分配/回收造成 GC 抖动。
-     * 通过缓存同尺寸数组消除此问题。
+     * 通过缓存最近使用的数组消除此问题，支持多尺寸场景。
      */
     private object pixelBuffer {
+        private const val MAX_CACHE_SIZE = 2
+
         @Volatile
         private var cached: IntArray? = null
         private var cachedSize: Int = 0
 
+        // 二级缓存：保存上一次被替换的数组，支持两种尺寸交替使用
+        @Volatile
+        private var secondary: IntArray? = null
+        private var secondarySize: Int = 0
+
         /**
          * 获取指定容量的 IntArray。
-         * 若缓存的数组容量 >= [size] 则复用（仅使用前 [size] 个元素），
-         * 否则创建新数组并替换缓存。
+         * 若主缓存或二级缓存的数组容量 >= [size] 则复用，
+         * 否则创建新数组并将旧数组降级到二级缓存。
          */
         @Synchronized
         fun getOrSet(size: Int): IntArray {
@@ -258,7 +265,21 @@ internal object BackdropBlurHelper {
             if (existing != null && existing.size >= size) {
                 return existing
             }
+            // 主缓存不够大，检查二级缓存
+            val sec = secondary
+            if (sec != null && sec.size >= size) {
+                // 二级缓存满足需求，交换主/次
+                secondary = cached
+                secondarySize = cachedSize
+                cached = sec
+                cachedSize = secondarySize
+                return sec
+            }
+            // 都不满足，创建新数组
             val newBuffer = IntArray(size)
+            // 旧主缓存降级到二级
+            secondary = cached
+            secondarySize = cachedSize
             cached = newBuffer
             cachedSize = size
             return newBuffer

@@ -163,13 +163,20 @@ object MorphStyleResolver {
     /**
      * 缓存的 DynamicColors.isDynamicColorAvailable 方法引用。
      *
-     * 反射查找仅在首次调用时执行，后续调用直接复用。
-     * 首次查找失败后缓存为空方法（不再重试）。
+     * 使用 lazy + @Synchronized 保证反射查找的原子性：
+     * 首次调用时执行 Class.forName + getMethod，后续调用直接复用。
+     * 首次查找失败后缓存为 null（不再重试）。
+     * 相比之前的 @Volatile + boolean 标记，lazy 天然保证单次初始化且线程安全。
      */
-    @Volatile
-    private var cachedDynamicColorMethod: java.lang.reflect.Method? = null
-    @Volatile
-    private var dynamicColorMethodResolved = false
+    private val dynamicColorMethod: java.lang.reflect.Method? by lazy {
+        try {
+            val clazz = Class.forName("com.google.android.material.color.DynamicColors")
+            clazz.getMethod("isDynamicColorAvailable", Context::class.java)
+        } catch (e: Exception) {
+            Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 不可用，降级到 API 级别检测", e)
+            null
+        }
+    }
 
     /**
      * 检测设备是否支持 Material You Dynamic Color。
@@ -182,18 +189,7 @@ object MorphStyleResolver {
      * @return true 表示设备支持 Dynamic Color
      */
     private fun checkDynamicColorAvailable(context: Context): Boolean {
-        // ── 缓存反射方法引用，避免每次调用都执行 Class.forName + getMethod ──
-        if (!dynamicColorMethodResolved) {
-            try {
-                val clazz = Class.forName("com.google.android.material.color.DynamicColors")
-                cachedDynamicColorMethod = clazz.getMethod("isDynamicColorAvailable", Context::class.java)
-            } catch (e: Exception) {
-                Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 不可用，降级到 API 级别检测", e)
-            }
-            dynamicColorMethodResolved = true
-        }
-
-        cachedDynamicColorMethod?.let { method ->
+        dynamicColorMethod?.let { method ->
             try {
                 val result = method.invoke(null, context)
                 if (result is Boolean) return result
