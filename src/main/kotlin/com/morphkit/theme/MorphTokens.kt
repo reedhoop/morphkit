@@ -327,138 +327,138 @@ object MorphTokens {
     }
 
     // ── 颜色扁平化委托：MorphTokens.colorXxx 等价于 MorphTokens.Colors.colorXxx ──
-    // 注意：委托属性无 backing field，@ColorInt 不适用，类型本身已保证返回 Int
+    // 使用 @get:ColorInt 在 getter 上标注注解，委托属性无 backing field 但仍可标注
 
     /** iOS 蓝 #007AFF / M3 Primary 基色 */
-    val colorBlue500: Int get() = Colors.colorBlue500
+    @get:ColorInt val colorBlue500: Int get() = Colors.colorBlue500
     /** iOS 蓝色变体（浅色），暗色模式下 primary 使用 */
-    val colorBlue100: Int get() = Colors.colorBlue100
+    @get:ColorInt val colorBlue100: Int get() = Colors.colorBlue100
     /** iOS 蓝色变体（深色），暗色模式下 primaryContainer 使用 */
-    val colorBlue700: Int get() = Colors.colorBlue700
+    @get:ColorInt val colorBlue700: Int get() = Colors.colorBlue700
     /** iOS 系统红色（destructive 操作 / error） */
-    val colorRed500: Int get() = Colors.colorRed500
+    @get:ColorInt val colorRed500: Int get() = Colors.colorRed500
     /** iOS 系统绿色（成功状态） */
-    val colorGreen500: Int get() = Colors.colorGreen500
+    @get:ColorInt val colorGreen500: Int get() = Colors.colorGreen500
     /** iOS 系统橙色（警告） */
-    val colorOrange500: Int get() = Colors.colorOrange500
+    @get:ColorInt val colorOrange500: Int get() = Colors.colorOrange500
     /** 主色容器色 */
-    val colorPrimaryContainer: Int get() = Colors.colorPrimaryContainer
+    @get:ColorInt val colorPrimaryContainer: Int get() = Colors.colorPrimaryContainer
     /** 暗色模式主色容器色 */
-    val colorPrimaryContainerDark: Int get() = Colors.colorPrimaryContainerDark
+    @get:ColorInt val colorPrimaryContainerDark: Int get() = Colors.colorPrimaryContainerDark
     /** 主色上的文字/图标色 */
-    val colorOnPrimary: Int get() = Colors.colorOnPrimary
+    @get:ColorInt val colorOnPrimary: Int get() = Colors.colorOnPrimary
     /** 主色容器上的文字/图标色 */
-    val colorOnPrimaryContainer: Int get() = Colors.colorOnPrimaryContainer
+    @get:ColorInt val colorOnPrimaryContainer: Int get() = Colors.colorOnPrimaryContainer
     /** 暗色模式主色容器上的文字/图标色 */
-    val colorOnPrimaryContainerDark: Int get() = Colors.colorOnPrimaryContainerDark
+    @get:ColorInt val colorOnPrimaryContainerDark: Int get() = Colors.colorOnPrimaryContainerDark
     /** 表面色（页面背景） */
-    val colorSurface: Int get() = Colors.colorSurface
+    @get:ColorInt val colorSurface: Int get() = Colors.colorSurface
     /** 暗色模式表面色 */
-    val colorSurfaceDark: Int get() = Colors.colorSurfaceDark
+    @get:ColorInt val colorSurfaceDark: Int get() = Colors.colorSurfaceDark
     /** 表面变体色（分组背景、卡片） */
-    val colorSurfaceVariant: Int get() = Colors.colorSurfaceVariant
+    @get:ColorInt val colorSurfaceVariant: Int get() = Colors.colorSurfaceVariant
     /** 暗色模式表面变体色 */
-    val colorSurfaceVariantDark: Int get() = Colors.colorSurfaceVariantDark
+    @get:ColorInt val colorSurfaceVariantDark: Int get() = Colors.colorSurfaceVariantDark
     /** 表面上的文字/图标色 */
-    val colorOnSurface: Int get() = Colors.colorOnSurface
+    @get:ColorInt val colorOnSurface: Int get() = Colors.colorOnSurface
     /** 暗色模式表面上的文字/图标色 */
-    val colorOnSurfaceDark: Int get() = Colors.colorOnSurfaceDark
+    @get:ColorInt val colorOnSurfaceDark: Int get() = Colors.colorOnSurfaceDark
     /** 表面变体上的文字/图标色 */
-    val colorOnSurfaceVariant: Int get() = Colors.colorOnSurfaceVariant
+    @get:ColorInt val colorOnSurfaceVariant: Int get() = Colors.colorOnSurfaceVariant
     /** 暗色模式表面变体上的文字/图标色 */
-    val colorOnSurfaceVariantDark: Int get() = Colors.colorOnSurfaceVariantDark
+    @get:ColorInt val colorOnSurfaceVariantDark: Int get() = Colors.colorOnSurfaceVariantDark
     /** 轮廓变体色（分割线、边框） */
-    val colorOutlineVariant: Int get() = Colors.colorOutlineVariant
+    @get:ColorInt val colorOutlineVariant: Int get() = Colors.colorOutlineVariant
     /** 暗色模式轮廓变体色 */
-    val colorOutlineVariantDark: Int get() = Colors.colorOutlineVariantDark
+    @get:ColorInt val colorOutlineVariantDark: Int get() = Colors.colorOutlineVariantDark
     /** 背景色 */
-    val colorBackground: Int get() = Colors.colorBackground
+    @get:ColorInt val colorBackground: Int get() = Colors.colorBackground
     /** 暗色模式背景色 */
-    val colorBackgroundDark: Int get() = Colors.colorBackgroundDark
+    @get:ColorInt val colorBackgroundDark: Int get() = Colors.colorBackgroundDark
     /** 次要色 */
-    val colorSecondary: Int get() = Colors.colorSecondary
+    @get:ColorInt val colorSecondary: Int get() = Colors.colorSecondary
     /** 暗色模式次要色 */
-    val colorSecondaryDark: Int get() = Colors.colorSecondaryDark
+    @get:ColorInt val colorSecondaryDark: Int get() = Colors.colorSecondaryDark
     /** 次要色上的文字/图标色 */
-    val colorOnSecondary: Int get() = Colors.colorOnSecondary
+    @get:ColorInt val colorOnSecondary: Int get() = Colors.colorOnSecondary
     /** 暗色模式次要色上的文字/图标色 */
-    val colorOnSecondaryDark: Int get() = Colors.colorOnSecondaryDark
+    @get:ColorInt val colorOnSecondaryDark: Int get() = Colors.colorOnSecondaryDark
     /** 次要色容器色 */
-    val colorSecondaryContainer: Int get() = Colors.colorSecondaryContainer
+    @get:ColorInt val colorSecondaryContainer: Int get() = Colors.colorSecondaryContainer
     /** 暗色模式次要色容器色 */
-    val colorSecondaryContainerDark: Int get() = Colors.colorSecondaryContainerDark
+    @get:ColorInt val colorSecondaryContainerDark: Int get() = Colors.colorSecondaryContainerDark
     /** 次要色容器上的文字/图标色 */
-    val colorOnSecondaryContainer: Int get() = Colors.colorOnSecondaryContainer
+    @get:ColorInt val colorOnSecondaryContainer: Int get() = Colors.colorOnSecondaryContainer
     /** 暗色模式次要色容器上的文字/图标色 */
-    val colorOnSecondaryContainerDark: Int get() = Colors.colorOnSecondaryContainerDark
+    @get:ColorInt val colorOnSecondaryContainerDark: Int get() = Colors.colorOnSecondaryContainerDark
     /** 第三色 */
-    val colorTertiary: Int get() = Colors.colorTertiary
+    @get:ColorInt val colorTertiary: Int get() = Colors.colorTertiary
     /** 暗色模式第三色 */
-    val colorTertiaryDark: Int get() = Colors.colorTertiaryDark
+    @get:ColorInt val colorTertiaryDark: Int get() = Colors.colorTertiaryDark
     /** 第三色上的文字/图标色 */
-    val colorOnTertiary: Int get() = Colors.colorOnTertiary
+    @get:ColorInt val colorOnTertiary: Int get() = Colors.colorOnTertiary
     /** 暗色模式第三色上的文字/图标色 */
-    val colorOnTertiaryDark: Int get() = Colors.colorOnTertiaryDark
+    @get:ColorInt val colorOnTertiaryDark: Int get() = Colors.colorOnTertiaryDark
     /** 第三色容器色 */
-    val colorTertiaryContainer: Int get() = Colors.colorTertiaryContainer
+    @get:ColorInt val colorTertiaryContainer: Int get() = Colors.colorTertiaryContainer
     /** 暗色模式第三色容器色 */
-    val colorTertiaryContainerDark: Int get() = Colors.colorTertiaryContainerDark
+    @get:ColorInt val colorTertiaryContainerDark: Int get() = Colors.colorTertiaryContainerDark
     /** 第三色容器上的文字/图标色 */
-    val colorOnTertiaryContainer: Int get() = Colors.colorOnTertiaryContainer
+    @get:ColorInt val colorOnTertiaryContainer: Int get() = Colors.colorOnTertiaryContainer
     /** 暗色模式第三色容器上的文字/图标色 */
-    val colorOnTertiaryContainerDark: Int get() = Colors.colorOnTertiaryContainerDark
+    @get:ColorInt val colorOnTertiaryContainerDark: Int get() = Colors.colorOnTertiaryContainerDark
     /** 错误色上的文字/图标色 */
-    val colorOnError: Int get() = Colors.colorOnError
+    @get:ColorInt val colorOnError: Int get() = Colors.colorOnError
     /** 暗色模式错误色上的文字/图标色 */
-    val colorOnErrorDark: Int get() = Colors.colorOnErrorDark
+    @get:ColorInt val colorOnErrorDark: Int get() = Colors.colorOnErrorDark
     /** 错误色容器色 */
-    val colorErrorContainer: Int get() = Colors.colorErrorContainer
+    @get:ColorInt val colorErrorContainer: Int get() = Colors.colorErrorContainer
     /** 暗色模式错误色容器色 */
-    val colorErrorContainerDark: Int get() = Colors.colorErrorContainerDark
+    @get:ColorInt val colorErrorContainerDark: Int get() = Colors.colorErrorContainerDark
     /** 错误色容器上的文字/图标色 */
-    val colorOnErrorContainer: Int get() = Colors.colorOnErrorContainer
+    @get:ColorInt val colorOnErrorContainer: Int get() = Colors.colorOnErrorContainer
     /** 暗色模式错误色容器上的文字/图标色 */
-    val colorOnErrorContainerDark: Int get() = Colors.colorOnErrorContainerDark
+    @get:ColorInt val colorOnErrorContainerDark: Int get() = Colors.colorOnErrorContainerDark
     /** 暗色模式错误色 */
-    val colorErrorDark: Int get() = Colors.colorErrorDark
+    @get:ColorInt val colorErrorDark: Int get() = Colors.colorErrorDark
     /** 暗色模式成功色 */
-    val colorSuccessDark: Int get() = Colors.colorSuccessDark
+    @get:ColorInt val colorSuccessDark: Int get() = Colors.colorSuccessDark
     /** 暗色模式警告色 */
-    val colorWarningDark: Int get() = Colors.colorWarningDark
+    @get:ColorInt val colorWarningDark: Int get() = Colors.colorWarningDark
     /** 暗色模式主色上的文字/图标色 */
-    val colorOnPrimaryDark: Int get() = Colors.colorOnPrimaryDark
+    @get:ColorInt val colorOnPrimaryDark: Int get() = Colors.colorOnPrimaryDark
     /** 轮廓色（输入框边框、焦点环） */
-    val colorOutline: Int get() = Colors.colorOutline
+    @get:ColorInt val colorOutline: Int get() = Colors.colorOutline
     /** 暗色模式轮廓色 */
-    val colorOutlineDark: Int get() = Colors.colorOutlineDark
+    @get:ColorInt val colorOutlineDark: Int get() = Colors.colorOutlineDark
     /** 表面暗调（最暗的表面容器） */
-    val colorSurfaceDim: Int get() = Colors.colorSurfaceDim
+    @get:ColorInt val colorSurfaceDim: Int get() = Colors.colorSurfaceDim
     /** 暗色模式表面暗调 */
-    val colorSurfaceDimDark: Int get() = Colors.colorSurfaceDimDark
+    @get:ColorInt val colorSurfaceDimDark: Int get() = Colors.colorSurfaceDimDark
     /** 表面亮调（最亮的表面容器） */
-    val colorSurfaceBright: Int get() = Colors.colorSurfaceBright
+    @get:ColorInt val colorSurfaceBright: Int get() = Colors.colorSurfaceBright
     /** 暗色模式表面亮调 */
-    val colorSurfaceBrightDark: Int get() = Colors.colorSurfaceBrightDark
+    @get:ColorInt val colorSurfaceBrightDark: Int get() = Colors.colorSurfaceBrightDark
     /** 表面容器 — 最低层级 */
-    val colorSurfaceContainerLowest: Int get() = Colors.colorSurfaceContainerLowest
+    @get:ColorInt val colorSurfaceContainerLowest: Int get() = Colors.colorSurfaceContainerLowest
     /** 暗色模式表面容器 — 最低层级 */
-    val colorSurfaceContainerLowestDark: Int get() = Colors.colorSurfaceContainerLowestDark
+    @get:ColorInt val colorSurfaceContainerLowestDark: Int get() = Colors.colorSurfaceContainerLowestDark
     /** 表面容器 — 低层级 */
-    val colorSurfaceContainerLow: Int get() = Colors.colorSurfaceContainerLow
+    @get:ColorInt val colorSurfaceContainerLow: Int get() = Colors.colorSurfaceContainerLow
     /** 暗色模式表面容器 — 低层级 */
-    val colorSurfaceContainerLowDark: Int get() = Colors.colorSurfaceContainerLowDark
+    @get:ColorInt val colorSurfaceContainerLowDark: Int get() = Colors.colorSurfaceContainerLowDark
     /** 表面容器 — 中层级 */
-    val colorSurfaceContainer: Int get() = Colors.colorSurfaceContainer
+    @get:ColorInt val colorSurfaceContainer: Int get() = Colors.colorSurfaceContainer
     /** 暗色模式表面容器 — 中层级 */
-    val colorSurfaceContainerDark: Int get() = Colors.colorSurfaceContainerDark
+    @get:ColorInt val colorSurfaceContainerDark: Int get() = Colors.colorSurfaceContainerDark
     /** 表面容器 — 高层级 */
-    val colorSurfaceContainerHigh: Int get() = Colors.colorSurfaceContainerHigh
+    @get:ColorInt val colorSurfaceContainerHigh: Int get() = Colors.colorSurfaceContainerHigh
     /** 暗色模式表面容器 — 高层级 */
-    val colorSurfaceContainerHighDark: Int get() = Colors.colorSurfaceContainerHighDark
+    @get:ColorInt val colorSurfaceContainerHighDark: Int get() = Colors.colorSurfaceContainerHighDark
     /** 表面容器 — 最高层级 */
-    val colorSurfaceContainerHighest: Int get() = Colors.colorSurfaceContainerHighest
+    @get:ColorInt val colorSurfaceContainerHighest: Int get() = Colors.colorSurfaceContainerHighest
     /** 暗色模式表面容器 — 最高层级 */
-    val colorSurfaceContainerHighestDark: Int get() = Colors.colorSurfaceContainerHighestDark
+    @get:ColorInt val colorSurfaceContainerHighestDark: Int get() = Colors.colorSurfaceContainerHighestDark
 
     // ═══════════════════════════════════════════════════════════════════════
     // 形状 Token — 圆角半径（dp 值，由各体系自行转换为 px / Dp）

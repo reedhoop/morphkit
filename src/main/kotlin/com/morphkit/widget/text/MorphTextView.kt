@@ -218,16 +218,9 @@ class MorphTextView @JvmOverloads constructor(
      * @param style  外部设置的 style 常量
      */
     override fun setTypeface(tf: Typeface?, style: Int) {
-        // 优先使用外部传入的 tf，但 style 仍走重映射逻辑
         if (tf != null) {
-            val remappedStyle = when (style) {
-                Typeface.NORMAL -> Typeface.NORMAL  // 外部 tf 已自带字重，不再二次补偿
-                Typeface.BOLD -> Typeface.BOLD
-                Typeface.ITALIC -> Typeface.ITALIC
-                Typeface.BOLD_ITALIC -> Typeface.BOLD_ITALIC
-                else -> style
-            }
-            super.setTypeface(tf, remappedStyle)
+            // 外部传入 tf 已自带字重，直接应用；style 保持原值传入
+            super.setTypeface(tf, style)
         } else {
             // tf 为 null，使用 style 重映射
             super.setTypeface(null, style)

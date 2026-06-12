@@ -160,8 +160,8 @@ class MorphFactory2(
         if (hostHasMorphAttr) return context
 
         // 缓存：同一 Activity 内 context 实例相同，无需重复创建
-        if (cachedBaseContext === context && cachedThemedContext != null) {
-            return cachedThemedContext!!
+        if (cachedBaseContext === context) {
+            cachedThemedContext?.let { return it }
         }
 
         val wrapped = ContextThemeWrapper(context, finalThemeResId)

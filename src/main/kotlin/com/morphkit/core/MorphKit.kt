@@ -326,14 +326,10 @@ object MorphKit {
      * @return 替换后的 View，若未命中规则则返回 `null`
      */
     fun createView(originalName: String, context: Context, attrs: AttributeSet): View? {
-        if (!initialized.get()) return null // 未初始化时安全返回 null，避免 UninitializedPropertyAccessException
+        if (!initialized.get()) return null
         val creator = config.replaceMap[originalName] ?: return null
         val view = creator(context, attrs)
-        try {
-            stampAndValidateView(view, originalName)
-        } catch (e: Exception) {
-            Log.w("MorphKit", "打标异常，不影响控件使用: $originalName", e)
-        }
+        stampAndValidateView(view, originalName)
         return view
     }
 
