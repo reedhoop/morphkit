@@ -221,7 +221,8 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  */
 object MorphKit {
 
-    /** 当前配置，初始化后可用 */
+    /** 当前配置，初始化后可用。@Volatile 保证跨线程可见性 */
+    @Volatile
     private lateinit var config: MorphConfig
 
     /** 是否已初始化（使用 AtomicBoolean 保证 init() 的原子性 check-then-act） */

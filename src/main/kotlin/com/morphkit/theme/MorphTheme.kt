@@ -102,44 +102,45 @@ object MorphTheme {
 
     // ═══════════════════════════════════════════════════════════════════════
     // 向后兼容 — 委托到 MorphColors / MorphTypography / MorphShape
+    // 注意：以下方法标记为 ERROR 级别废弃，编译期即提示迁移
     // ═══════════════════════════════════════════════════════════════════════
 
-    @Deprecated("Use MorphColors.createColorStateList()", ReplaceWith("MorphColors.createColorStateList(baseColor, isDarkMode)"))
+    @Deprecated("Use MorphColors.createColorStateList()", ReplaceWith("MorphColors.createColorStateList(baseColor, isDarkMode)"), level = DeprecationLevel.ERROR)
     fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList =
         MorphColors.createColorStateList(baseColor, isDarkMode)
 
-    @Deprecated("Use MorphColors.overlayColor()", ReplaceWith("MorphColors.overlayColor(baseColor, overlayColor, alpha)"))
+    @Deprecated("Use MorphColors.overlayColor()", ReplaceWith("MorphColors.overlayColor(baseColor, overlayColor, alpha)"), level = DeprecationLevel.ERROR)
     fun overlayColor(baseColor: Int, overlayColor: Int, alpha: Float): Int =
         MorphColors.overlayColor(baseColor, overlayColor, alpha)
 
-    @Deprecated("Use MorphColors.adjustAlpha()", ReplaceWith("MorphColors.adjustAlpha(color, alpha)"))
+    @Deprecated("Use MorphColors.adjustAlpha()", ReplaceWith("MorphColors.adjustAlpha(color, alpha)"), level = DeprecationLevel.ERROR)
     fun adjustAlpha(color: Int, alpha: Float): Int =
         MorphColors.adjustAlpha(color, alpha)
 
-    @Deprecated("Use MorphColors.blendColor()", ReplaceWith("MorphColors.blendColor(from, to, ratio)"))
+    @Deprecated("Use MorphColors.blendColor()", ReplaceWith("MorphColors.blendColor(from, to, ratio)"), level = DeprecationLevel.ERROR)
     fun blendColor(from: Int, to: Int, ratio: Float): Int =
         MorphColors.blendColor(from, to, ratio)
 
-    @Deprecated("Use MorphColors.isDarkMode()", ReplaceWith("MorphColors.isDarkMode(context)"))
+    @Deprecated("Use MorphColors.isDarkMode()", ReplaceWith("MorphColors.isDarkMode(context)"), level = DeprecationLevel.ERROR)
     fun isDarkMode(context: Context): Boolean =
         MorphColors.isDarkMode(context)
 
-    @Deprecated("Use MorphShape.cornerSmall(context)", ReplaceWith("MorphShape.cornerSmall(context)"))
+    @Deprecated("Use MorphShape.cornerSmall(context)", ReplaceWith("MorphShape.cornerSmall(context)"), level = DeprecationLevel.ERROR)
     @Px
     fun cornerSmall(context: Context): Int = MorphShape.cornerSmall(context)
 
-    @Deprecated("Use MorphShape.cornerMedium(context)", ReplaceWith("MorphShape.cornerMedium(context)"))
+    @Deprecated("Use MorphShape.cornerMedium(context)", ReplaceWith("MorphShape.cornerMedium(context)"), level = DeprecationLevel.ERROR)
     @Px
     fun cornerMedium(context: Context): Int = MorphShape.cornerMedium(context)
 
-    @Deprecated("Use MorphShape.cornerLarge(context)", ReplaceWith("MorphShape.cornerLarge(context)"))
+    @Deprecated("Use MorphShape.cornerLarge(context)", ReplaceWith("MorphShape.cornerLarge(context)"), level = DeprecationLevel.ERROR)
     @Px
     fun cornerLarge(context: Context): Int = MorphShape.cornerLarge(context)
 
-    @Deprecated("Use MorphShape.cornerFull", ReplaceWith("MorphShape.cornerFull"))
+    @Deprecated("Use MorphShape.cornerFull", ReplaceWith("MorphShape.cornerFull"), level = DeprecationLevel.ERROR)
     val cornerFull: Int = MorphShape.cornerFull
 
-    @Deprecated("Use MorphTypography directly", ReplaceWith("MorphTypography"))
+    @Deprecated("Use MorphTypography directly", ReplaceWith("MorphTypography"), level = DeprecationLevel.ERROR)
     val typography = MorphTypography
 }
 

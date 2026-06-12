@@ -223,7 +223,7 @@ internal object BackdropBlurHelper {
 
         if (radius < 1) return result
 
-        val pixels = IntArray(w * h)
+        val pixels = pixelBuffer.getOrSet(w * h)
         result.getPixels(pixels, 0, w, 0, 0, w, h)
 
         // 水平方向均值滤波
@@ -233,6 +233,36 @@ internal object BackdropBlurHelper {
 
         result.setPixels(pixels, 0, w, 0, 0, w, h)
         return result
+    }
+
+    /**
+     * 像素缓冲区 — 复用 IntArray 减少 GC 压力。
+     *
+     * 软件 Stack Blur 每次需要 `IntArray(w * h)` 临时数组，
+     * 大图场景下频繁分配/回收造成 GC 抖动。
+     * 通过缓存同尺寸数组消除此问题。
+     */
+    private object pixelBuffer {
+        @Volatile
+        private var cached: IntArray? = null
+        private var cachedSize: Int = 0
+
+        /**
+         * 获取指定容量的 IntArray。
+         * 若缓存的数组容量 >= [size] 则复用（仅使用前 [size] 个元素），
+         * 否则创建新数组并替换缓存。
+         */
+        @Synchronized
+        fun getOrSet(size: Int): IntArray {
+            val existing = cached
+            if (existing != null && existing.size >= size) {
+                return existing
+            }
+            val newBuffer = IntArray(size)
+            cached = newBuffer
+            cachedSize = size
+            return newBuffer
+        }
     }
 
     /**

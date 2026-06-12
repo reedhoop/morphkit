@@ -169,8 +169,8 @@ class MorphCardView @JvmOverloads constructor(
 
             // ── 关闭涟漪效果 ──
             // MaterialCardView 默认在可点击时显示 Ripple 涟漪，
-            // iOS 卡片无涟漪反馈，需禁用
-            isClickable = false
+            // iOS 卡片无涟漪反馈，需将涟漪色设为透明
+            // 注意：不设置 isClickable=false，保留业务方对卡片点击的需求
             rippleColor = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
 
             // ── 关闭状态动画 ──
@@ -379,10 +379,18 @@ class MorphCardView @JvmOverloads constructor(
 
         if (blurred == null) return
 
-        // 4. 先解除旧 BitmapDrawable 引用，设置新 Bitmap，再将旧 Bitmap 归还对象池
+        // 4. 复用 BitmapDrawable，避免每次创建新对象
         val oldBitmapDrawable = iv.drawable as? BitmapDrawable
-        iv.setImageDrawable(BitmapDrawable(resources, blurred))
-        oldBitmapDrawable?.bitmap?.let { bmp -> BackdropBlurHelper.recycleToPool(bmp) }
+        val oldBitmap = oldBitmapDrawable?.bitmap
+        if (oldBitmapDrawable != null && blurred.width == oldBitmap?.width && blurred.height == oldBitmap.height) {
+            // 同尺寸 Bitmap：直接替换像素，复用 BitmapDrawable 对象
+            oldBitmap.recycle()
+            oldBitmapDrawable.bitmap = blurred
+        } else {
+            // 尺寸变化或首次设置：创建新 BitmapDrawable
+            iv.setImageDrawable(BitmapDrawable(resources, blurred))
+            oldBitmap?.let { bmp -> BackdropBlurHelper.recycleToPool(bmp) }
+        }
     }
 
     /**

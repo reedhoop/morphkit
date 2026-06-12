@@ -235,12 +235,21 @@ data class MorphColorPalette(
 
         /**
          * 从 Context 的 Theme 读取 M3 语义色，失败时降级到提供的 fallback 值。
+         *
+         * 区分两种失败场景：
+         * - [Resources.NotFoundException]：Theme 中缺少该属性（宿主未使用 M3 主题），静默降级
+         * - 其他异常：Theme 可能损坏，记录警告后降级
          */
         private fun resolveM3Color(context: Context, attr: Int, fallback: Color): Color {
             return try {
                 val resolved = MaterialColors.getColor(context, attr, fallback.toArgb())
                 Color(resolved)
+            } catch (e: android.content.res.Resources.NotFoundException) {
+                // Theme 中缺少 M3 属性 — 静默降级到 MorphTokens 默认值
+                fallback
             } catch (e: Exception) {
+                // Theme 可能损坏 — 记录警告后降级
+                android.util.Log.w("MorphKit", "resolveM3Color: Theme 解析异常 attr=0x${attr.toString(16)}, 降级到默认值", e)
                 fallback
             }
         }

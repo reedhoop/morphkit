@@ -7,7 +7,9 @@ import com.google.common.truth.Truth.assertThat
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.FontWeight
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTypography
 import com.morphkit.theme.MorphTokens
 import org.junit.Before
 import org.junit.Test
@@ -114,7 +116,7 @@ class MorphTextViewBehaviorTest {
         tv.isTertiaryText = true
 
         val baseColor = MorphTheme.morphColorOnSurfaceVariant(context)
-        val expectedColor = MorphTheme.adjustAlpha(baseColor, 0.55f)
+        val expectedColor = MorphColors.adjustAlpha(baseColor, 0.55f)
         assertThat(tv.currentTextColor).isEqualTo(expectedColor)
     }
 
@@ -136,7 +138,7 @@ class MorphTextViewBehaviorTest {
         tv.isTertiaryText = true
 
         // 当两者都为 true 时，isTertiaryText 优先（applyTextColor 的 when 分支顺序）
-        val tertiaryColor = MorphTheme.adjustAlpha(
+        val tertiaryColor = MorphColors.adjustAlpha(
             MorphTheme.morphColorOnSurfaceVariant(context), 0.55f
         )
         assertThat(tv.currentTextColor).isEqualTo(tertiaryColor)
@@ -147,7 +149,7 @@ class MorphTextViewBehaviorTest {
         val tv = MorphTextView(context)
         tv.isTertiaryText = true
 
-        val tertiaryColor = MorphTheme.adjustAlpha(
+        val tertiaryColor = MorphColors.adjustAlpha(
             MorphTheme.morphColorOnSurfaceVariant(context), 0.55f
         )
         assertThat(tv.currentTextColor).isEqualTo(tertiaryColor)
@@ -338,7 +340,7 @@ class MorphTextViewBehaviorTest {
         val config = android.content.res.Configuration(context.resources.configuration)
         invokeOnConfigurationChanged(tv, config)
 
-        val expectedColor = MorphTheme.adjustAlpha(
+        val expectedColor = MorphColors.adjustAlpha(
             MorphTheme.morphColorOnSurfaceVariant(context), 0.55f
         )
         assertThat(tv.currentTextColor).isEqualTo(expectedColor)
@@ -365,17 +367,17 @@ class MorphTextViewBehaviorTest {
 
     @Test
     fun `MorphTheme typography body使用MEDIUM字重`() {
-        assertThat(MorphTheme.typography.body.weight).isEqualTo(FontWeight.MEDIUM)
+        assertThat(MorphTypography.body.weight).isEqualTo(FontWeight.MEDIUM)
     }
 
     @Test
     fun `MorphTheme typography largeTitle使用EXTRA_BOLD字重`() {
-        assertThat(MorphTheme.typography.largeTitle.weight).isEqualTo(FontWeight.EXTRA_BOLD)
+        assertThat(MorphTypography.largeTitle.weight).isEqualTo(FontWeight.EXTRA_BOLD)
     }
 
     @Test
     fun `MorphTheme typography headline使用SEMI_BOLD字重`() {
-        assertThat(MorphTheme.typography.headline.weight).isEqualTo(FontWeight.SEMI_BOLD)
+        assertThat(MorphTypography.headline.weight).isEqualTo(FontWeight.SEMI_BOLD)
     }
 
     // ═══════════════════════════════════════════════════════════════════════

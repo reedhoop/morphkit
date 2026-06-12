@@ -91,3 +91,6 @@ mise.toml
 Thumbs.db
 desktop.ini
 ehthumbs.db
+
+# Build manifests
+META-INF/

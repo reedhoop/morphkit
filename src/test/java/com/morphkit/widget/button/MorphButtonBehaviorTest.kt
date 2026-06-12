@@ -7,6 +7,8 @@ import android.view.ContextThemeWrapper
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.core.InteractionMode
 import com.morphkit.R
+import com.morphkit.theme.MorphColors
+import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
@@ -54,7 +56,7 @@ class MorphButtonBehaviorTest {
     @Test
     fun defaultCornerRadius_matchesCornerMedium() {
         val button = MorphButton(iosContext)
-        val expected = MorphTheme.cornerMedium(iosContext).toFloat()
+        val expected = MorphShape.cornerMedium(iosContext).toFloat()
         assertThat(button.testCornerRadius).isEqualTo(expected)
     }
 
@@ -151,7 +153,7 @@ class MorphButtonBehaviorTest {
         val button = MorphButton(iosContext)
         val onPrimary = MorphTheme.morphColorOnPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphTheme.adjustAlpha(onPrimary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(onPrimary, MorphTokens.disabledAlpha)
         assertThat(button.currentTextColor).isEqualTo(expected)
     }
 
@@ -160,7 +162,7 @@ class MorphButtonBehaviorTest {
         val button = MorphButton(iosContext)
         val primary = MorphTheme.morphColorPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphTheme.adjustAlpha(primary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(primary, MorphTokens.disabledAlpha)
         assertThat(button.testShapeDrawable.color?.defaultColor).isEqualTo(expected)
     }
 
@@ -170,7 +172,7 @@ class MorphButtonBehaviorTest {
         button.style = MorphButton.Style.PLAIN
         val primary = MorphTheme.morphColorPrimary(iosContext)
         button.isEnabled = false
-        val expected = MorphTheme.adjustAlpha(primary, MorphTokens.disabledAlpha)
+        val expected = MorphColors.adjustAlpha(primary, MorphTokens.disabledAlpha)
         assertThat(button.currentTextColor).isEqualTo(expected)
     }
 

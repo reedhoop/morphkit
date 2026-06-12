@@ -1,5 +1,6 @@
 package com.morphkit.theme
 
+import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import android.content.Context
 import android.content.res.Configuration
@@ -81,7 +82,7 @@ class MorphThemeTest {
     fun `overlayColor_黑色遮罩叠加到白色_alpha0_2`() {
         val base = 0xFFFFFFFF.toInt()  // 白色
         val overlay = 0xFF000000.toInt()  // 黑色
-        val result = MorphTheme.overlayColor(base, overlay, 0.2f)
+        val result = MorphColors.overlayColor(base, overlay, 0.2f)
 
         // 黑色 20% 叠加到白色 → RGB 各通道约 204
         assertEquals(255, Color.alpha(result))
@@ -98,7 +99,7 @@ class MorphThemeTest {
     fun `overlayColor_白色遮罩叠加到黑色_alpha0_2`() {
         val base = 0xFF000000.toInt()  // 黑色
         val overlay = 0xFFFFFFFF.toInt()  // 白色
-        val result = MorphTheme.overlayColor(base, overlay, 0.2f)
+        val result = MorphColors.overlayColor(base, overlay, 0.2f)
 
         // 白色 20% 叠加到黑色 → RGB 各通道约 51
         assertEquals(255, Color.alpha(result))
@@ -114,7 +115,7 @@ class MorphThemeTest {
     @Test
     fun `overlayColor_alpha为0时返回原色`() {
         val base = 0xFF007AFF.toInt() // iOS 蓝
-        val result = MorphTheme.overlayColor(base, 0xFF000000.toInt(), 0f)
+        val result = MorphColors.overlayColor(base, 0xFF000000.toInt(), 0f)
 
         assertEquals(base, result)
     }
@@ -126,7 +127,7 @@ class MorphThemeTest {
     @Test
     fun `adjustAlpha_0_38不透明度`() {
         val color = 0xFF007AFF.toInt()
-        val result = MorphTheme.adjustAlpha(color, 0.38f)
+        val result = MorphColors.adjustAlpha(color, 0.38f)
 
         // 255 * 0.38 = 96.9 → toInt() 截断为 96
         assertEquals(96, Color.alpha(result))
@@ -142,7 +143,7 @@ class MorphThemeTest {
     @Test
     fun `adjustAlpha_alpha1_0时保持不变`() {
         val color = 0xFF007AFF.toInt()
-        val result = MorphTheme.adjustAlpha(color, 1.0f)
+        val result = MorphColors.adjustAlpha(color, 1.0f)
 
         assertEquals(Color.alpha(color), Color.alpha(result))
         assertEquals(Color.red(color), Color.red(result))
@@ -157,7 +158,7 @@ class MorphThemeTest {
     @Test
     fun `adjustAlpha_alpha0时完全透明`() {
         val color = 0xFF007AFF.toInt()
-        val result = MorphTheme.adjustAlpha(color, 0f)
+        val result = MorphColors.adjustAlpha(color, 0f)
 
         assertEquals(0, Color.alpha(result))
         assertEquals(Color.red(color), Color.red(result))
@@ -172,7 +173,7 @@ class MorphThemeTest {
     @Test
     fun `createColorStateList_返回非空ColorStateList`() {
         val baseColor = 0xFF007AFF.toInt()
-        val csl = MorphTheme.createColorStateList(baseColor, isDarkMode = false)
+        val csl = MorphColors.createColorStateList(baseColor, isDarkMode = false)
 
         // 验证返回非空 ColorStateList
         assertNotNull("createColorStateList 应返回非空 ColorStateList", csl)
@@ -185,8 +186,8 @@ class MorphThemeTest {
     @Test
     fun `createColorStateList_暗黑模式与亮色模式按压态不同`() {
         val baseColor = 0xFF007AFF.toInt()
-        val cslLight = MorphTheme.createColorStateList(baseColor, isDarkMode = false)
-        val cslDark = MorphTheme.createColorStateList(baseColor, isDarkMode = true)
+        val cslLight = MorphColors.createColorStateList(baseColor, isDarkMode = false)
+        val cslDark = MorphColors.createColorStateList(baseColor, isDarkMode = true)
 
         // 两种模式的按压态颜色应不同（亮色叠加黑色遮罩，暗色叠加白色遮罩）
         val pressedLight = cslLight.getColorForState(intArrayOf(android.R.attr.state_pressed), baseColor)
@@ -211,7 +212,7 @@ class MorphThemeTest {
         }
         every { context.resources.configuration } returns config
 
-        assertFalse(MorphTheme.isDarkMode(context))
+        assertFalse(MorphColors.isDarkMode(context))
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -226,7 +227,7 @@ class MorphThemeTest {
         }
         every { context.resources.configuration } returns config
 
-        assertTrue(MorphTheme.isDarkMode(context))
+        assertTrue(MorphColors.isDarkMode(context))
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -235,7 +236,7 @@ class MorphThemeTest {
 
     @Test
     fun `overlayColor_结果值被clamp到合法范围`() {
-        val result = MorphTheme.overlayColor(0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 1.0f)
+        val result = MorphColors.overlayColor(0xFFFFFFFF.toInt(), 0xFFFFFFFF.toInt(), 1.0f)
         assertEquals(255, Color.red(result))
         assertEquals(255, Color.green(result))
         assertEquals(255, Color.blue(result))
@@ -248,7 +249,7 @@ class MorphThemeTest {
     @Test
     fun `adjustAlpha_0_5不透明度`() {
         val color = 0xFF007AFF.toInt()
-        val result = MorphTheme.adjustAlpha(color, 0.5f)
+        val result = MorphColors.adjustAlpha(color, 0.5f)
 
         assertEquals(127, Color.alpha(result))  // 255 * 0.5 = 127.5 → 127
         assertEquals(Color.red(color), Color.red(result))

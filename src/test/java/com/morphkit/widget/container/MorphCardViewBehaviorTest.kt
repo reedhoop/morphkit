@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.view.ContextThemeWrapper
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
@@ -242,7 +243,7 @@ class MorphCardViewBehaviorTest {
     @Test
     fun `cornerRadius equals MorphTheme cornerLarge in pixels`() {
         val card = MorphCardView(context)
-        val expectedPx = MorphTheme.cornerLarge(context).toFloat()
+        val expectedPx = MorphShape.cornerLarge(context).toFloat()
         assertThat(card.radius).isEqualTo(expectedPx)
     }
 

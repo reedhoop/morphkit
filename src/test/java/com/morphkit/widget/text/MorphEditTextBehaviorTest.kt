@@ -3,6 +3,7 @@ package com.morphkit.widget.text
 import android.graphics.drawable.GradientDrawable
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.theme.MorphTheme
+import com.morphkit.theme.MorphTypography
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -206,13 +207,13 @@ class MorphEditTextBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 6. 排版 — 使用 MorphTheme.typography.body
+    // 6. 排版 — 使用 MorphTypography.body
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
     fun `文字大小使用MorphTheme typography body的fontSize`() {
         val editText = MorphEditText(context)
-        val expectedSize = MorphTheme.typography.body.fontSize
+        val expectedSize = MorphTypography.body.fontSize
         assertThat(editText.textSize).isEqualTo(expectedSize)
     }
 

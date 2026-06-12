@@ -6,6 +6,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.util.DisplayMetrics
 import android.util.TypedValue
+import com.morphkit.theme.MorphShape
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkStatic
@@ -24,8 +25,8 @@ import org.junit.jupiter.api.Test
  * 覆盖：
  * 1. [Int.dp] 在不同屏幕密度下的像素转换正确性
  * 2. [Float.dp] 在不同屏幕密度下的像素转换正确性
- * 3. [MorphTheme.cornerSmall] / [MorphTheme.cornerMedium] / [MorphTheme.cornerLarge] 圆角值正确性
- * 4. [MorphTheme.cornerFull] 常量值
+ * 3. [MorphShape.cornerSmall] / [MorphShape.cornerMedium] / [MorphShape.cornerLarge] 圆角值正确性
+ * 4. [MorphShape.cornerFull] 常量值
  *
  * ## 测试策略
  *
@@ -187,56 +188,56 @@ class MorphThemeDpTest {
         @Test
         @DisplayName("cornerSmall = 8dp，在各密度下像素值正确")
         fun `cornerSmall is 8dp`() {
-            assertEquals(8.dp(mdpiContext), MorphTheme.cornerSmall(mdpiContext))
-            assertEquals(8.dp(xhdpiContext), MorphTheme.cornerSmall(xhdpiContext))
-            assertEquals(8.dp(xxhdpiContext), MorphTheme.cornerSmall(xxhdpiContext))
+            assertEquals(8.dp(mdpiContext), MorphShape.cornerSmall(mdpiContext))
+            assertEquals(8.dp(xhdpiContext), MorphShape.cornerSmall(xhdpiContext))
+            assertEquals(8.dp(xxhdpiContext), MorphShape.cornerSmall(xxhdpiContext))
         }
 
         @Test
         @DisplayName("cornerMedium = 12dp，在各密度下像素值正确")
         fun `cornerMedium is 12dp`() {
-            assertEquals(12.dp(mdpiContext), MorphTheme.cornerMedium(mdpiContext))
-            assertEquals(12.dp(xhdpiContext), MorphTheme.cornerMedium(xhdpiContext))
-            assertEquals(12.dp(xxhdpiContext), MorphTheme.cornerMedium(xxhdpiContext))
+            assertEquals(12.dp(mdpiContext), MorphShape.cornerMedium(mdpiContext))
+            assertEquals(12.dp(xhdpiContext), MorphShape.cornerMedium(xhdpiContext))
+            assertEquals(12.dp(xxhdpiContext), MorphShape.cornerMedium(xxhdpiContext))
         }
 
         @Test
         @DisplayName("cornerLarge = 16dp，在各密度下像素值正确")
         fun `cornerLarge is 16dp`() {
-            assertEquals(16.dp(mdpiContext), MorphTheme.cornerLarge(mdpiContext))
-            assertEquals(16.dp(xhdpiContext), MorphTheme.cornerLarge(xhdpiContext))
-            assertEquals(16.dp(xxhdpiContext), MorphTheme.cornerLarge(xxhdpiContext))
+            assertEquals(16.dp(mdpiContext), MorphShape.cornerLarge(mdpiContext))
+            assertEquals(16.dp(xhdpiContext), MorphShape.cornerLarge(xhdpiContext))
+            assertEquals(16.dp(xxhdpiContext), MorphShape.cornerLarge(xxhdpiContext))
         }
 
         @Test
         @DisplayName("cornerFull = Int.MAX_VALUE（与密度无关）")
         fun `cornerFull is MAX_VALUE`() {
-            assertEquals(Int.MAX_VALUE, MorphTheme.cornerFull)
+            assertEquals(Int.MAX_VALUE, MorphShape.cornerFull)
         }
 
         @Test
         @DisplayName("xhdpi 下三个圆角的具体像素值")
         fun `concrete pixel values at xhdpi`() {
-            assertEquals(16, MorphTheme.cornerSmall(xhdpiContext), "cornerSmall@xhdpi = 8×2 = 16px")
-            assertEquals(24, MorphTheme.cornerMedium(xhdpiContext), "cornerMedium@xhdpi = 12×2 = 24px")
-            assertEquals(32, MorphTheme.cornerLarge(xhdpiContext), "cornerLarge@xhdpi = 16×2 = 32px")
+            assertEquals(16, MorphShape.cornerSmall(xhdpiContext), "cornerSmall@xhdpi = 8×2 = 16px")
+            assertEquals(24, MorphShape.cornerMedium(xhdpiContext), "cornerMedium@xhdpi = 12×2 = 24px")
+            assertEquals(32, MorphShape.cornerLarge(xhdpiContext), "cornerLarge@xhdpi = 16×2 = 32px")
         }
 
         @Test
         @DisplayName("xxhdpi 下三个圆角的具体像素值")
         fun `concrete pixel values at xxhdpi`() {
-            assertEquals(24, MorphTheme.cornerSmall(xxhdpiContext), "cornerSmall@xxhdpi = 8×3 = 24px")
-            assertEquals(36, MorphTheme.cornerMedium(xxhdpiContext), "cornerMedium@xxhdpi = 12×3 = 36px")
-            assertEquals(48, MorphTheme.cornerLarge(xxhdpiContext), "cornerLarge@xxhdpi = 16×3 = 48px")
+            assertEquals(24, MorphShape.cornerSmall(xxhdpiContext), "cornerSmall@xxhdpi = 8×3 = 24px")
+            assertEquals(36, MorphShape.cornerMedium(xxhdpiContext), "cornerMedium@xxhdpi = 12×3 = 36px")
+            assertEquals(48, MorphShape.cornerLarge(xxhdpiContext), "cornerLarge@xxhdpi = 16×3 = 48px")
         }
 
         @Test
         @DisplayName("圆角大小顺序: small < medium < large")
         fun `corner ordering is preserved at all densities`() {
             listOf(mdpiContext, xhdpiContext, xxhdpiContext, xxxhdpiContext).forEach { ctx ->
-                val small = MorphTheme.cornerSmall(ctx)
-                val medium = MorphTheme.cornerMedium(ctx)
-                val large = MorphTheme.cornerLarge(ctx)
+                val small = MorphShape.cornerSmall(ctx)
+                val medium = MorphShape.cornerMedium(ctx)
+                val large = MorphShape.cornerLarge(ctx)
                 assert(small < medium) { "cornerSmall($small) should < cornerMedium($medium)" }
                 assert(medium < large) { "cornerMedium($medium) should < cornerLarge($large)" }
             }
@@ -267,8 +268,8 @@ class MorphThemeDpTest {
         @Test
         @DisplayName("cornerMedium 在不同密度 Context 下返回不同像素值")
         fun `cornerMedium returns different pixels on different contexts`() {
-            val mdpiResult = MorphTheme.cornerMedium(mdpiContext)
-            val xxhdpiResult = MorphTheme.cornerMedium(xxhdpiContext)
+            val mdpiResult = MorphShape.cornerMedium(mdpiContext)
+            val xxhdpiResult = MorphShape.cornerMedium(xxhdpiContext)
 
             assertNotEquals(mdpiResult, xxhdpiResult,
                 "cornerMedium 在 mdpi 和 xxhdpi 下应产生不同像素值")
