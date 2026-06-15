@@ -228,4 +228,47 @@ class MorphButtonBehaviorTest {
         val expected = 8f.dp(pixelContext)
         assertThat(button.testCornerRadius).isEqualTo(expected)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 6. 暗黑模式刷新 — onConfigurationChanged / onAttachedToWindow
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onConfigurationChanged后背景颜色刷新`() {
+        val button = MorphButton(iosContext)
+        val config = android.content.res.Configuration(iosContext.resources.configuration)
+        invokeOnConfigurationChanged(button, config)
+        // applyStyle() 刷新后，背景色应与当前主题 primary 一致
+        assertThat(button.testShapeDrawable.color?.defaultColor)
+            .isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+    }
+
+    @Test
+    fun `onAttachedToWindow后颜色正确`() {
+        val button = MorphButton(iosContext)
+        invokeOnAttachedToWindow(button)
+        // applyStyle() 刷新后，文字颜色应与 onPrimary 一致
+        assertThat(button.currentTextColor)
+            .isEqualTo(MorphTheme.morphColorOnPrimary(iosContext))
+        assertThat(button.testShapeDrawable.color?.defaultColor)
+            .isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 辅助方法 — 通过反射调用 protected 生命周期方法
+    // ═══════════════════════════════════════════════════════════════════════
+
+    private fun invokeOnAttachedToWindow(button: MorphButton) {
+        val method = android.view.View::class.java.getDeclaredMethod("onAttachedToWindow")
+        method.isAccessible = true
+        method.invoke(button)
+    }
+
+    private fun invokeOnConfigurationChanged(button: MorphButton, config: android.content.res.Configuration) {
+        val method = android.view.View::class.java.getDeclaredMethod(
+            "onConfigurationChanged", android.content.res.Configuration::class.java
+        )
+        method.isAccessible = true
+        method.invoke(button, config)
+    }
 }

@@ -325,4 +325,45 @@ class MorphCardViewBehaviorTest {
         card.glassmorphismBlurRadius = 35f
         assertThat(card.glassmorphismBlurRadius).isEqualTo(35f)
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 7. 暗黑模式刷新 — onConfigurationChanged / onAttachedToWindow
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onConfigurationChanged后颜色缓存刷新`() {
+        val card = MorphCardView(context)
+        val config = android.content.res.Configuration(context.resources.configuration)
+        val method = android.view.View::class.java.getDeclaredMethod(
+            "onConfigurationChanged", android.content.res.Configuration::class.java
+        )
+        method.isAccessible = true
+        method.invoke(card, config)
+        // 验证颜色与当前主题一致
+        assertThat(card.cardBackgroundColor.defaultColor).isEqualTo(MorphTheme.morphColorSurface(context))
+    }
+
+    @Test
+    fun `onAttachedToWindow后颜色正确`() {
+        val card = MorphCardView(context)
+        val method = android.view.View::class.java.getDeclaredMethod("onAttachedToWindow")
+        method.isAccessible = true
+        method.invoke(card)
+        assertThat(card.cardBackgroundColor.defaultColor).isEqualTo(MorphTheme.morphColorSurface(context))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 8. Bitmap 安全回收 — Red Line 6 合规
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onDetachedFromWindow不会抛异常`() {
+        val card = MorphCardView(context)
+        card.isGlassmorphism = true
+        // Simulate detach
+        val method = android.view.View::class.java.getDeclaredMethod("onDetachedFromWindow")
+        method.isAccessible = true
+        method.invoke(card)
+        // Should not throw - verifies the safe detach order
+    }
 }

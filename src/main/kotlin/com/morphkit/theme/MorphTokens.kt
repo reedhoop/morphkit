@@ -324,6 +324,20 @@ object MorphTokens {
         /** 暗色模式表面容器 — 最高层级 */
         @ColorInt
         val colorSurfaceContainerHighestDark: Int = 0xFF3A3A3C.toInt()
+
+        // ── Scrim + 毛玻璃色（功能色） ──
+
+        /** Scrim 遮罩色 — 模态遮罩背景（M3 规范：黑色基底） */
+        @ColorInt
+        val colorScrim: Int = 0xFF000000.toInt()
+
+        /** 毛玻璃浅色背景 — 80% 不透明度白色（#CCFFFFFF） */
+        @ColorInt
+        val colorGlassmorphismLightBg: Int = 0xCCFFFFFF.toInt()
+
+        /** 毛玻璃深色背景 — 60% 不透明度黑色（#99000000） */
+        @ColorInt
+        val colorGlassmorphismDarkBg: Int = 0x99000000.toInt()
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -406,6 +420,10 @@ object MorphTokens {
         const val focusOverlayAlpha = 0.08f
         /** 焦点动画时长（ms） — 输入框焦点过渡动画 */
         const val focusAnimationDuration = 150L
+        /** 按钮焦点抬升/回落动画时长（ms） — Compose MorphButton 焦点过渡 */
+        const val buttonFocusDuration = 200L
+        /** PLAIN 按钮按压叠加透明度 — 透明底上的 primary 微弱底色 */
+        const val plainPressOverlayAlpha = 0.12f
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -428,6 +446,10 @@ object MorphTokens {
         const val spacingXl = 24
         /** 极大间距（32dp）— 页面标题与内容区间距 */
         const val spacingXxl = 32
+        /** 按钮最小宽度（88dp）— M3 无障碍触控目标 */
+        const val buttonMinWidth = 88
+        /** 按钮最小高度（48dp）— M3 无障碍触控目标 */
+        const val buttonMinHeight = 48
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -446,6 +468,8 @@ object MorphTokens {
         const val elevationLevel3 = 6
         /** 四级阴影（8dp）— 对话框、底部抽屉 */
         const val elevationLevel4 = 8
+        /** 焦点抬升阴影（4dp）— 键盘焦点无障碍反馈 */
+        const val elevationFocus = 4
         /** 五级阴影（12dp）— 模态底部抽屉 */
         const val elevationLevel5 = 12
     }

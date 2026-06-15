@@ -6,6 +6,7 @@ import android.view.ContextThemeWrapper
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphTheme
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -243,5 +244,48 @@ class MorphRadioButtonBehaviorTest {
         radio.isChecked = true
         // 编程式设置 isChecked 即使在禁用态也应生效
         assertThat(radio.isChecked).isTrue()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 6. 暗黑模式刷新 — onConfigurationChanged / onAttachedToWindow
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onConfigurationChanged后颜色刷新`() {
+        val radio = MorphRadioButton(iosContext)
+        val config = android.content.res.Configuration(iosContext.resources.configuration)
+        invokeOnConfigurationChanged(radio, config)
+        // refreshColorCache() 应刷新 primaryColor
+        val primaryColor: Int = radio.readField("primaryColor")
+        assertThat(primaryColor).isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+    }
+
+    @Test
+    fun `onAttachedToWindow后状态正确`() {
+        val radio = MorphRadioButton(iosContext)
+        invokeOnAttachedToWindow(radio)
+        // refreshColorCache() 应刷新缓存颜色
+        val primaryColor: Int = radio.readField("primaryColor")
+        assertThat(primaryColor).isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+        val surfaceVariantColor: Int = radio.readField("surfaceVariantColor")
+        assertThat(surfaceVariantColor).isEqualTo(MorphTheme.morphColorSurfaceVariant(iosContext))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 辅助方法 — 通过反射调用 protected 生命周期方法
+    // ═══════════════════════════════════════════════════════════════════════
+
+    private fun invokeOnAttachedToWindow(radio: MorphRadioButton) {
+        val method = android.view.View::class.java.getDeclaredMethod("onAttachedToWindow")
+        method.isAccessible = true
+        method.invoke(radio)
+    }
+
+    private fun invokeOnConfigurationChanged(radio: MorphRadioButton, config: android.content.res.Configuration) {
+        val method = android.view.View::class.java.getDeclaredMethod(
+            "onConfigurationChanged", android.content.res.Configuration::class.java
+        )
+        method.isAccessible = true
+        method.invoke(radio, config)
     }
 }

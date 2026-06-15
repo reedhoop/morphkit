@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.view.ContextThemeWrapper
 import com.morphkit.R
-import com.morphkit.theme.MorphTokens
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -59,6 +58,8 @@ class MorphFactory2(
 
     companion object {
         private const val TAG = "MorphKit"
+        /** 性能警告阈值（ms）— 内联 MorphTokens.Interaction.perfThresholdMs，避免 core→theme 依赖 */
+        private const val PERF_THRESHOLD_MS = 5L
     }
 
     /** 宿主 Theme 是否已检测（原子性保证只检测一次，消除 check-then-act 竞态） */
@@ -144,7 +145,7 @@ class MorphFactory2(
 
     private fun checkPerformance(name: String, view: View, startTime: Long) {
         val elapsedMs = (System.nanoTime() - startTime) / 1_000_000L
-        if (elapsedMs > MorphTokens.Interaction.perfThresholdMs) {
+        if (elapsedMs > PERF_THRESHOLD_MS) {
             Log.w(TAG, "性能警告：View 替换耗时过长 ${view.javaClass.simpleName} (${elapsedMs}ms)")
         }
     }
@@ -171,14 +172,14 @@ class MorphFactory2(
     }
 
     private fun hostThemeHasMorphAttributes(context: Context): Boolean {
+        val a = context.theme.obtainStyledAttributes(intArrayOf(R.attr.morphButtonStyle))
         return try {
-            val a = context.theme.obtainStyledAttributes(intArrayOf(R.attr.morphButtonStyle))
-            val hasMorphAttr = a.hasValue(0)
-            a.recycle()
-            hasMorphAttr
+            a.hasValue(0)
         } catch (e: Exception) {
             Log.d(TAG, "检测宿主 Theme morphButtonStyle 属性异常，视为未设置", e)
             false
+        } finally {
+            a.recycle()
         }
     }
 }

@@ -103,3 +103,13 @@
 -keep class com.morphkit.theme.MorphStyleResolver { *; }
 -keep class com.morphkit.core.MorphInstaller { *; }
 -keep class com.morphkit.theme.MorphTheme { *; }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 10. Widget 注册入口 — MorphInitProvider 通过回调注入 registerDefaultWidgets
+# ═══════════════════════════════════════════════════════════════════════════════
+-keep class com.morphkit.widget.WidgetRegistryKt { *; }
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# 11. 内部反射工具 — MorphInstaller 通过反射操作 LayoutInflater 字段
+# ═══════════════════════════════════════════════════════════════════════════════
+-keep class com.morphkit.internal.ReflectionHelper { *; }

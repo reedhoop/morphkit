@@ -69,6 +69,9 @@ class MorphCardView @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.morphCardStyle
 ) : MaterialCardView(context, attrs, defStyleAttr) {
 
+    /** 缓存 defStyleAttr 供 readXmlAttributes 使用（构造函数参数在方法中不可访问） */
+    private val morphDefStyleAttr: Int = defStyleAttr
+
     // ═══════════════════════════════════════════════════════════════════════
     // 内部状态
     // ═══════════════════════════════════════════════════════════════════════
@@ -133,10 +136,10 @@ class MorphCardView @JvmOverloads constructor(
     private var cachedStrokeColor: Int = MorphTheme.morphColorOutlineVariant(context)
 
     /** 毛玻璃模式背景色（浅色） */
-    private val glassmorphismLightBg: Int = COLOR_GLASSMORPHISM_LIGHT_BG
+    private val glassmorphismLightBg: Int = MorphTokens.Colors.colorGlassmorphismLightBg
 
     /** 毛玻璃模式背景色（深色） */
-    private val glassmorphismDarkBg: Int = COLOR_GLASSMORPHISM_DARK_BG
+    private val glassmorphismDarkBg: Int = MorphTokens.Colors.colorGlassmorphismDarkBg
 
     /** 模糊背景图层 — 仅在毛玻璃模式下创建 */
     private var blurBackgroundView: ImageView? = null
@@ -151,7 +154,7 @@ class MorphCardView @JvmOverloads constructor(
     init {
         // ── 读取交互模式（在其他属性之前，以决定是否应用 iOS 特定覆盖） ──
         attrs?.let {
-            val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView)
+            val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView, defStyleAttr, 0)
             try {
                 val modeValue = a.getInt(R.styleable.MorphCardView_morphInteractionMode, 0)
                 interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
@@ -201,7 +204,7 @@ class MorphCardView @JvmOverloads constructor(
      * 从 XML AttributeSet 读取 MorphCardView 自定义属性。
      */
     private fun readXmlAttributes(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.MorphCardView)
+        val ta = context.obtainStyledAttributes(attrs, R.styleable.MorphCardView, morphDefStyleAttr, 0)
         try {
             isGlassmorphism = ta.getBoolean(
                 R.styleable.MorphCardView_isGlassmorphism, false
@@ -457,11 +460,13 @@ class MorphCardView @JvmOverloads constructor(
         blurUpdateRunnable?.let { removeCallbacks(it) }
         blurUpdateRunnable = null
         // 将模糊 Bitmap 归还对象池释放内存，并置空引用防止 Context 泄漏
+        // 严格遵守 Red Line 6：先解除 Drawable 引用，再回收 Bitmap
         blurBackgroundView?.let { iv ->
-            (iv.drawable as? BitmapDrawable)?.bitmap?.let { bmp ->
-                BackdropBlurHelper.recycleToPool(bmp)
+            val bitmapDrawable = iv.drawable as? BitmapDrawable
+            iv.setImageDrawable(null)  // 先解除引用
+            bitmapDrawable?.bitmap?.let { bmp ->
+                BackdropBlurHelper.recycleToPool(bmp)  // 再安全回收
             }
-            iv.setImageDrawable(null)
         }
         blurBackgroundView = null
     }
@@ -492,11 +497,5 @@ class MorphCardView @JvmOverloads constructor(
          * 确保模糊更新频率不超过 60fps，避免卡顿。
          */
         private const val BLUR_THROTTLE_MS = 16L
-
-        /** 毛玻璃模式浅色背景 — 80% 不透明度白色 */
-        private val COLOR_GLASSMORPHISM_LIGHT_BG = 0xCCFFFFFFL.toInt()
-
-        /** 毛玻璃模式深色背景 — 60% 不透明度黑色 */
-        private val COLOR_GLASSMORPHISM_DARK_BG = 0x99000000L.toInt()
     }
 }

@@ -5,6 +5,7 @@ import android.view.ContextThemeWrapper
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.theme.MorphTheme
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -250,5 +251,48 @@ class MorphCheckBoxBehaviorTest {
         checkBox.isEnabled = false
         checkBox.isEnabled = true
         assertThat(checkBox.isEnabled).isTrue()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 6. 暗黑模式刷新 — onConfigurationChanged / onAttachedToWindow
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `onConfigurationChanged后颜色刷新`() {
+        val checkBox = MorphCheckBox(iosContext)
+        val config = android.content.res.Configuration(iosContext.resources.configuration)
+        invokeOnConfigurationChanged(checkBox, config)
+        // refreshColorCache() 应刷新 primaryColor
+        val primaryColor: Int = checkBox.readField("primaryColor")
+        assertThat(primaryColor).isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+    }
+
+    @Test
+    fun `onAttachedToWindow后状态正确`() {
+        val checkBox = MorphCheckBox(iosContext)
+        invokeOnAttachedToWindow(checkBox)
+        // refreshColorCache() 应刷新缓存颜色
+        val primaryColor: Int = checkBox.readField("primaryColor")
+        assertThat(primaryColor).isEqualTo(MorphTheme.morphColorPrimary(iosContext))
+        val onPrimaryColor: Int = checkBox.readField("onPrimaryColor")
+        assertThat(onPrimaryColor).isEqualTo(MorphTheme.morphColorOnPrimary(iosContext))
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 辅助方法 — 通过反射调用 protected 生命周期方法
+    // ═══════════════════════════════════════════════════════════════════════
+
+    private fun invokeOnAttachedToWindow(checkBox: MorphCheckBox) {
+        val method = android.view.View::class.java.getDeclaredMethod("onAttachedToWindow")
+        method.isAccessible = true
+        method.invoke(checkBox)
+    }
+
+    private fun invokeOnConfigurationChanged(checkBox: MorphCheckBox, config: android.content.res.Configuration) {
+        val method = android.view.View::class.java.getDeclaredMethod(
+            "onConfigurationChanged", android.content.res.Configuration::class.java
+        )
+        method.isAccessible = true
+        method.invoke(checkBox, config)
     }
 }

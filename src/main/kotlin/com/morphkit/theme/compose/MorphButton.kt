@@ -164,9 +164,9 @@ private fun IosButton(
                 }
                 is FocusInteraction.Focus -> {
                     focusElevation.animateTo(
-                        targetValue = 4f,
+                        targetValue = MorphTokens.Elevation.elevationFocus.toFloat(),
                         animationSpec = tween(
-                            durationMillis = 200,
+                            durationMillis = MorphTokens.Interaction.buttonFocusDuration.toInt(),
                             easing = FastOutSlowInEasing
                         )
                     )
@@ -175,7 +175,7 @@ private fun IosButton(
                     focusElevation.animateTo(
                         targetValue = 0f,
                         animationSpec = tween(
-                            durationMillis = 200,
+                            durationMillis = MorphTokens.Interaction.buttonFocusDuration.toInt(),
                             easing = FastOutSlowInEasing
                         )
                     )
@@ -204,7 +204,7 @@ private fun IosButton(
         val overlayAlpha = pressAlpha.value * MorphTokens.Interaction.pressOverlayMaxAlpha
         if (isPlain) {
             // PLAIN 按压：透明底 + primary 色微弱叠加
-            colors.primary.copy(alpha = overlayAlpha * 0.12f)
+            colors.primary.copy(alpha = overlayAlpha * MorphTokens.Interaction.plainPressOverlayAlpha)
         } else {
             val overlayColor = if (isDarkMode()) Color.White else Color.Black
             lerp(backgroundColor, overlayColor, overlayAlpha)
@@ -217,7 +217,7 @@ private fun IosButton(
 
     Surface(
         modifier = modifier
-            .defaultMinSize(minWidth = 88.dp, minHeight = 48.dp)
+            .defaultMinSize(minWidth = MorphTokens.Spacing.buttonMinWidth.dp, minHeight = MorphTokens.Spacing.buttonMinHeight.dp)
             .shadow(elevation = focusElevation.value.dp, shape = buttonShape, clip = false)
             .clip(buttonShape)
             .then(

@@ -1,11 +1,10 @@
 package com.morphkit.core
 
-import android.app.ActivityManager
 import android.app.Application
 import android.content.ComponentCallbacks2
 import android.content.Context
-import android.os.Build
 import android.util.Log
+import com.morphkit.widget.registerDefaultWidgets
 
 /**
  * MorphKit 零侵入自动初始化 ContentProvider。
@@ -53,7 +52,10 @@ class MorphInitProvider : android.content.ContentProvider() {
                 return true
             }
 
-            MorphKit.autoInit(application)
+            MorphKit.autoInit(application) {
+                // widget 层注册逻辑通过回调注入，保持 core 层零 import
+                registerDefaultWidgets()
+            }
 
             // ── 注册内存压力回调：清理 Bitmap 对象池 ──
             // 架构说明：此处通过 FQN 引用 widget 层的 BackdropBlurHelper，
@@ -84,23 +86,11 @@ class MorphInitProvider : android.content.ContentProvider() {
     /**
      * 获取当前进程名。
      *
-     * Android 9+ 使用 Application.getProcessName()（无需反射），
-     * 低版本降级为 ActivityManager 方案。
+     * minSdk=35 保证 Application.getProcessName()（API 28+）始终可用，
+     * 无需版本守卫或 ActivityManager 降级方案。
      */
     private fun getCurrentProcessName(context: Context): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            Application.getProcessName()
-        } else {
-            @Suppress("DEPRECATION")
-            try {
-                val pid = android.os.Process.myPid()
-                val am = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-                am?.runningAppProcesses?.find { it.pid == pid }?.processName
-                    ?: context.packageName
-            } catch (e: Exception) {
-                context.packageName
-            }
-        }
+        return Application.getProcessName()
     }
 
     // ── ContentProvider 抽象方法空实现 ──

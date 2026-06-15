@@ -114,7 +114,7 @@ data class MorphColorPalette(
             inverseOnSurface = Color(MorphTokens.Colors.colorSurface),
             inversePrimary = Color(MorphTokens.Colors.colorBlue100),
             // Misc
-            scrim = Color.Black,
+            scrim = Color(MorphTokens.Colors.colorScrim),
             success = Color(MorphTokens.Colors.colorGreen500),
             warning = Color(MorphTokens.Colors.colorOrange500)
         )
@@ -164,7 +164,7 @@ data class MorphColorPalette(
             inverseOnSurface = Color(MorphTokens.Colors.colorSurfaceDark),
             inversePrimary = Color(MorphTokens.Colors.colorBlue500),
             // Misc
-            scrim = Color.Black,
+            scrim = Color(MorphTokens.Colors.colorScrim),
             success = Color(MorphTokens.Colors.colorSuccessDark),
             warning = Color(MorphTokens.Colors.colorWarningDark)
         )
@@ -227,7 +227,7 @@ data class MorphColorPalette(
                 inverseOnSurface = fallback.inverseOnSurface,
                 inversePrimary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryInverse, fallback.inversePrimary),
                 // Misc
-                scrim = Color.Black,
+                scrim = Color(MorphTokens.Colors.colorScrim),
                 success = fallback.success,
                 warning = fallback.warning
             )

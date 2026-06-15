@@ -35,7 +35,7 @@ object MorphShape {
      * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
      */
     @Px
-    fun cornerSmall(context: Context): Int = 8.dp(context)
+    fun cornerSmall(context: Context): Int = MorphTokens.Shapes.cornerRadiusSmall.dp(context)
 
     /**
      * 中圆角 12dp — 标准按钮、列表项、输入框。
@@ -43,7 +43,7 @@ object MorphShape {
      * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
      */
     @Px
-    fun cornerMedium(context: Context): Int = 12.dp(context)
+    fun cornerMedium(context: Context): Int = MorphTokens.Shapes.cornerRadiusMedium.dp(context)
 
     /**
      * 大圆角 16dp — 全宽卡片、Bottom Sheet、Dialog。
@@ -51,7 +51,7 @@ object MorphShape {
      * @param context 用于获取正确的 displayMetrics，支持多窗口/折叠屏场景
      */
     @Px
-    fun cornerLarge(context: Context): Int = 16.dp(context)
+    fun cornerLarge(context: Context): Int = MorphTokens.Shapes.cornerRadiusLarge.dp(context)
 
     /**
      * 全圆角（胶囊形状）— 哨兵值 [Int.MAX_VALUE]。

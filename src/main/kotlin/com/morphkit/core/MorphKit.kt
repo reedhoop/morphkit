@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.View
 import com.morphkit.R
 import com.morphkit.theme.MorphStyleResolver
-import com.morphkit.widget.registerDefaultWidgets
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -314,15 +313,18 @@ object MorphKit {
      * 仅完成引擎的基础初始化（主题解析、注入器安装等），
      * 适用于仅需使用 MorphKit 主题能力而不需要控件替换的场景。
      *
+     * [registerDefaults] 参数允许调用方注入控件注册逻辑（通常由 widget 层提供），
+     * 保持 core 层对 widget 层的零依赖。
+     *
      * 重复调用将抛出 [IllegalStateException]。
      *
      * @param application 应用实例，用于注册 ActivityLifecycleCallbacks
+     * @param registerDefaults 可选的默认控件注册块，在 [MorphConfig] DSL 上执行
      * @throws IllegalStateException 若重复初始化
      */
-    fun autoInit(application: Application) {
+    fun autoInit(application: Application, registerDefaults: (MorphConfig.() -> Unit)? = null) {
         init(application) {
-            // 零代码接入时注册默认控件替换规则
-            registerDefaultWidgets()
+            registerDefaults?.invoke(this)
         }
     }
 

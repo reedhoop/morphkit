@@ -1,6 +1,5 @@
 package com.morphkit.internal
 
-import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import java.lang.reflect.Field
@@ -31,14 +30,12 @@ internal object ReflectionHelper {
     /**
      * 判断当前运行环境是否受到 Android 14+ 反射限制。
      *
-     * 从 Android 14（API 34）开始，Google 限制了对框架类私有字段的反射访问。
-     * minSdk=35 意味着此方法始终返回 true。
+     * minSdk=35 意味着始终受限制（API >= 34），此方法始终返回 true。
+     * 保留方法签名以保持调用方代码的可读性和未来兼容性。
      *
-     * @return 当前 API level >= 34 时返回 true
+     * @return 始终返回 true（minSdk=35 >= 34）
      */
-    fun isReflectionRestricted(): Boolean {
-        return Build.VERSION.SDK_INT >= 34
-    }
+    fun isReflectionRestricted(): Boolean = true
 
     /**
      * 安全获取类的声明字段。

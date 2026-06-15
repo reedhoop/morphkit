@@ -6,6 +6,7 @@ import com.morphkit.core.MorphConfig
 import com.morphkit.core.MorphFactory2
 import com.morphkit.core.MorphInstaller
 import com.morphkit.core.StylePolicy
+import com.morphkit.widget.registerDefaultWidgets
 import android.app.Application
 import android.content.Context
 import android.util.AttributeSet
@@ -476,10 +477,10 @@ class MorphKitTest {
 
         @Test
         fun `autoInit重复调用_抛出IllegalStateException`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val exception = assertThrows<IllegalStateException> {
-                MorphKit.autoInit(mockApp)
+                MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
             }
             assertTrue(exception.message?.contains("已初始化") == true)
         }
@@ -501,7 +502,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit注册TextView别名映射`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertTrue(replaceMap.containsKey("TextView"), "autoInit 应注册 TextView")
@@ -510,7 +511,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit注册Button别名映射`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertTrue(replaceMap.containsKey("Button"), "autoInit 应注册 Button")
@@ -519,7 +520,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit注册RadioButton别名映射`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertTrue(replaceMap.containsKey("RadioButton"), "autoInit 应注册 RadioButton")
@@ -528,7 +529,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit注册CheckBox别名映射`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertTrue(replaceMap.containsKey("CheckBox"), "autoInit 应注册 CheckBox")
@@ -537,7 +538,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit注册EditText和CardView映射`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertTrue(replaceMap.containsKey("androidx.appcompat.widget.AppCompatEditText"), "autoInit 应注册 AppCompatEditText")
@@ -546,7 +547,7 @@ class MorphKitTest {
 
         @Test
         fun `autoInit未注册的控件不在replaceMap中`() {
-            MorphKit.autoInit(mockApp)
+            MorphKit.autoInit(mockApp) { registerDefaultWidgets() }
 
             val replaceMap = getConfigReplaceMap()
             assertFalse(replaceMap.containsKey("ImageView"), "ImageView 不应在 replaceMap 中")

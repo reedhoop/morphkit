@@ -34,17 +34,17 @@ package com.morphkit.theme
  * @see TextStyle 字号 + 字重组合
  */
 object MorphTypography {
-    val largeTitle = TextStyle(fontSize = 34f, weight = FontWeight.EXTRA_BOLD)
-    val title1 = TextStyle(fontSize = 28f, weight = FontWeight.EXTRA_BOLD)
-    val title2 = TextStyle(fontSize = 22f, weight = FontWeight.BOLD)
-    val title3 = TextStyle(fontSize = 20f, weight = FontWeight.BOLD)
-    val headline = TextStyle(fontSize = 17f, weight = FontWeight.SEMI_BOLD)
-    val body = TextStyle(fontSize = 17f, weight = FontWeight.MEDIUM)
-    val callout = TextStyle(fontSize = 16f, weight = FontWeight.MEDIUM)
-    val subheadline = TextStyle(fontSize = 15f, weight = FontWeight.MEDIUM)
-    val footnote = TextStyle(fontSize = 13f, weight = FontWeight.MEDIUM)
-    val caption1 = TextStyle(fontSize = 12f, weight = FontWeight.MEDIUM)
-    val caption2 = TextStyle(fontSize = 11f, weight = FontWeight.MEDIUM)
+    val largeTitle = TextStyle(fontSize = MorphTokens.Typography.fontSizeLargeTitle, weight = FontWeight.EXTRA_BOLD)
+    val title1 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle1, weight = FontWeight.EXTRA_BOLD)
+    val title2 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle2, weight = FontWeight.BOLD)
+    val title3 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle3, weight = FontWeight.BOLD)
+    val headline = TextStyle(fontSize = MorphTokens.Typography.fontSizeHeadline, weight = FontWeight.SEMI_BOLD)
+    val body = TextStyle(fontSize = MorphTokens.Typography.fontSizeBody, weight = FontWeight.MEDIUM)
+    val callout = TextStyle(fontSize = MorphTokens.Typography.fontSizeCallout, weight = FontWeight.MEDIUM)
+    val subheadline = TextStyle(fontSize = MorphTokens.Typography.fontSizeSubheadline, weight = FontWeight.MEDIUM)
+    val footnote = TextStyle(fontSize = MorphTokens.Typography.fontSizeFootnote, weight = FontWeight.MEDIUM)
+    val caption1 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption1, weight = FontWeight.MEDIUM)
+    val caption2 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption2, weight = FontWeight.MEDIUM)
 }
 
 /**
