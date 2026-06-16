@@ -61,10 +61,6 @@ object MorphTokens {
         @ColorInt
         val colorBlue100: Int = 0xFFD1E8FF.toInt()
 
-        /** iOS 蓝色变体（深色），暗色模式下 primaryContainer 使用 */
-        @ColorInt
-        val colorBlue700: Int = 0xFF0055CC.toInt()
-
         /** iOS 系统红色（destructive 操作 / error） */
         @ColorInt
         val colorRed500: Int = 0xFFFF3B30.toInt()
@@ -252,6 +248,20 @@ object MorphTokens {
         /** 暗色模式警告色 */
         @ColorInt
         val colorWarningDark: Int = 0xFFFFB340.toInt()
+
+        // ── 语义色别名（Light 模式 — 与 Dark 模式命名对齐） ──
+
+        /** 错误色 — 别名 [colorRed500]，与 Dark 模式 [colorErrorDark] 对称 */
+        @ColorInt
+        val colorError: Int = colorRed500
+
+        /** 成功色 — 别名 [colorGreen500]，与 Dark 模式 [colorSuccessDark] 对称 */
+        @ColorInt
+        val colorSuccess: Int = colorGreen500
+
+        /** 警告色 — 别名 [colorOrange500]，与 Dark 模式 [colorWarningDark] 对称 */
+        @ColorInt
+        val colorWarning: Int = colorOrange500
 
         /** 暗色模式主色上的文字/图标色 */
         @ColorInt

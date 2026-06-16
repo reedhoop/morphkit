@@ -142,10 +142,18 @@ class MorphEditText @JvmOverloads constructor(
         interactionMode = resolvedMode
 
         if (interactionMode == InteractionMode.IOS) {
+            // ── 检测业务方是否在 XML 中显式设置了自定义背景（Step 6 — 极度克制） ──
+            val hasCustomBackground = attrs?.getAttributeValue(
+                "http://schemas.android.com/apk/res/android", "background"
+            ) != null
+
             // ── 去除 Android 原生底线 ──
             // AppCompatEditText 默认带一条底部横线（EditText 底线），
-            // iOS 输入框无此线条，必须彻底清除
-            background = null
+            // iOS 输入框无此线条，必须彻底清除。
+            // 但若业务方显式设置了 android:background，则尊重其自定义
+            if (!hasCustomBackground) {
+                background = null
+            }
 
             // ── 应用排版 ──
             val typo = MorphTypography.body

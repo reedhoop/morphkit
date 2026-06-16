@@ -124,6 +124,7 @@ internal object BackdropBlurHelper {
      * @param view 要截取背景的 View（必须已 attach 且 parent 为 [ViewGroup]）
      * @return 父容器在 View 区域的像素快照，失败返回 null
      */
+    @androidx.annotation.MainThread
     fun captureParentArea(view: View): Bitmap? {
         val parent = view.parent as? ViewGroup ?: return null
         if (parent.width <= 0 || parent.height <= 0) return null
@@ -166,6 +167,7 @@ internal object BackdropBlurHelper {
      * @param radius 模糊半径（px），推荐 15–35
      * @return 模糊后的新 Bitmap，失败返回 null
      */
+    @androidx.annotation.MainThread
     fun blur(source: Bitmap, radius: Float): Bitmap? {
         if (source.width <= 0 || source.height <= 0) return null
 

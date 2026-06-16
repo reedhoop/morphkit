@@ -52,6 +52,19 @@ class MorphStyleResolverTest {
 
         // 默认 OEM 设置为 0（未设置）
         every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 0
+
+        // 重置 OEM 缓存，确保每个测试用例独立
+        resetOemCache()
+    }
+
+    /**
+     * 通过反射重置 cachedOemStyle 为 Int.MIN_VALUE（未缓存哨兵值），
+     * 确保每个测试用例的 OEM 设置读取独立。
+     */
+    private fun resetOemCache() {
+        val field = MorphStyleResolver::class.java.getDeclaredField("cachedOemStyle")
+        field.isAccessible = true
+        field.setInt(MorphStyleResolver, Int.MIN_VALUE)
     }
 
     @After
@@ -185,5 +198,29 @@ class MorphStyleResolverTest {
         assertEquals(0, MorphStyleResolver.OEM_STYLE_DEFAULT)
         assertEquals(1, MorphStyleResolver.OEM_STYLE_IOS)
         assertEquals(2, MorphStyleResolver.OEM_STYLE_PIXEL)
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 B9：OEM 设置缓存 — 避免每次 resolve 触发 Settings.System IPC
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OEM设置首次读取后缓存_后续调用不触发IPC`() {
+        every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 1
+
+        // 首次调用：应读取 Settings.System 并缓存
+        val firstResult = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
+        assertEquals(com.morphkit.R.style.Theme_MorphKit_iOS, firstResult)
+
+        // 修改 mock 返回值为 2（Pixel），但缓存应仍为 1（iOS）
+        every { Settings.System.getInt(any(), "oem_ui_style", any()) } returns 2
+
+        // 第二次调用：应使用缓存值（1=iOS），不受新 mock 值影响
+        val secondResult = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
+        assertEquals(
+            "OEM 设置应被缓存，第二次调用仍返回首次读取的值",
+            com.morphkit.R.style.Theme_MorphKit_iOS,
+            secondResult
+        )
     }
 }

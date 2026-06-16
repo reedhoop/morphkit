@@ -64,6 +64,17 @@ object MorphStyleResolver {
     const val OEM_STYLE_PIXEL = 2
 
     /**
+     * OEM 风格设置缓存。
+     *
+     * OEM 系统设置在进程生命周期内几乎不会变化（仅在系统设置 App 中手动修改），
+     * 缓存后避免每次 [resolve] 调用都执行 `Settings.System.getInt()` IPC 查询。
+     * 使用 `Int.MIN_VALUE` 作为"未读取"哨兵值，区分"默认值 0"和"未缓存"。
+     * `@Volatile` 保证多线程可见性。
+     */
+    @Volatile
+    private var cachedOemStyle: Int = Int.MIN_VALUE
+
+    /**
      * 根据策略和 OEM 系统设置解析最终使用的 Theme 资源 ID。
      *
      * 优先级：OEM 系统设置 > StylePolicy。
@@ -127,13 +138,20 @@ object MorphStyleResolver {
      * @return OEM 风格值（0=默认, 1=iOS, 2=Pixel）
      */
     private fun readOemStyle(context: Context): Int {
-        return try {
+        // 缓存命中：直接返回，避免 Settings.System IPC
+        val cached = cachedOemStyle
+        if (cached != Int.MIN_VALUE) return cached
+
+        // 首次读取：执行 IPC 并缓存结果
+        val value = try {
             Settings.System.getInt(context.contentResolver, OEM_UI_STYLE_KEY, OEM_STYLE_DEFAULT)
         } catch (e: Exception) {
             // 部分定制 ROM 可能限制 Settings.System 读取权限
             Log.d(TAG, "读取 OEM 系统设置异常，使用默认值", e)
             OEM_STYLE_DEFAULT
         }
+        cachedOemStyle = value
+        return value
     }
 
     /**

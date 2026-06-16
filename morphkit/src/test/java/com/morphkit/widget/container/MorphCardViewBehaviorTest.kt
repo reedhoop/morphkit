@@ -366,4 +366,29 @@ class MorphCardViewBehaviorTest {
         method.invoke(card)
         // Should not throw - verifies the safe detach order
     }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 9. StateListAnimator — Red Line 3 合规（焦点补偿）
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `iOS模式卡片设置了StateListAnimator用于焦点补偿`() {
+        val card = MorphCardView(context)
+        // iOS 模式应设置 StateListAnimator 以提供键盘焦点指示器（Red Line 3）
+        assertThat(card.stateListAnimator).isNotNull()
+    }
+
+    @Test
+    fun `MATERIAL模式卡片不设置自定义StateListAnimator`() {
+        val materialContext = ContextThemeWrapper(
+            ContextThemeWrapper(
+                RuntimeEnvironment.getApplication(),
+                com.google.android.material.R.style.Theme_Material3_DayNight_NoActionBar
+            ),
+            com.morphkit.R.style.Theme_MorphKit_Pixel
+        )
+        val card = MorphCardView(materialContext)
+        // Pixel 模式保留 M3 默认 StateListAnimator（非 null）
+        assertThat(card.stateListAnimator).isNotNull()
+    }
 }

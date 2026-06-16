@@ -14,6 +14,7 @@ import androidx.appcompat.widget.AppCompatButton
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.core.MorphClickListener
 import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
@@ -196,6 +197,27 @@ class MorphButton @JvmOverloads constructor(
     override fun setEnabled(enabled: Boolean) {
         super.setEnabled(enabled)
         applyStyle()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 点击防抖 — 自动包装 MorphClickListener
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * 重写 setOnClickListener，自动使用 [MorphClickListener] 包装业务监听器。
+     *
+     * [onTouchEvent] 提供连续按压变色反馈（视觉层），
+     * [MorphClickListener] 提供离散点击防抖（逻辑层），两者互不冲突。
+     * 防抖冷却时间默认 300ms，防止快速双击导致表单重复提交等问题。
+     *
+     * 传入 `null` 时直接透传给 super，不做包装。
+     */
+    override fun setOnClickListener(l: OnClickListener?) {
+        if (l == null) {
+            super.setOnClickListener(null)
+            return
+        }
+        super.setOnClickListener(MorphClickListener { v -> l.onClick(v) })
     }
 
     // ═══════════════════════════════════════════════════════════════════════

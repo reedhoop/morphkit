@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--
+        iOS 模式卡片状态动画（MorphCardView）。
+
+        仅提供键盘焦点补偿（translationZ 微提升），不含按压反馈。
+        iOS 卡片无按压态视觉变化，Ripple 已通过 rippleColor=TRANSPARENT 移除。
+
+        焦点补偿对齐 MorphTokens：
+        - elevationFocus = 4dp → 但卡片作为容器仅用 1dp 微提升，避免视觉突兀
+        - buttonFocusDuration = 200ms
+
+        默认态使用 <set> 恢复 translationZ，防止从 focused 退出后残留非零值。
+    -->
+
+    <!-- 键盘焦点态：translationZ 微提升（无障碍合规 — Red Line 3） -->
+    <item android:state_focused="true">
+        <objectAnimator
+            android:propertyName="translationZ"
+            android:valueFrom="0dp"
+            android:valueTo="1dp"
+            android:duration="200"
+            android:interpolator="@android:interpolator/fast_out_slow_in" />
+    </item>
+
+    <!-- 默认态：恢复 translationZ -->
+    <item>
+        <set>
+            <objectAnimator
+                android:propertyName="translationZ"
+                android:valueTo="0dp"
+                android:duration="200"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </set>
+    </item>
+</selector>

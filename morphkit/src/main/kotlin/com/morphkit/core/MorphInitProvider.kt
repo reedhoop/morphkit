@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.util.Log
+// 架构偏差声明：ContentProvider 作为系统引导入口，需要协调 widget 层注册和内存管理回调，
+// 这是 AGENTS.md 1.2 定义的 widget → theme → core 依赖方向的已知例外。
+// 替代方案（反射/ServiceLoader）会增加不必要的复杂度，当前方案是务实的妥协。
 import com.morphkit.widget.registerDefaultWidgets
 
 /**

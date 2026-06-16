@@ -255,6 +255,37 @@ class MorphButtonBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 8. 点击防抖 — setOnClickListener 自动包装 MorphClickListener
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `setOnClickListener自动包装MorphClickListener防抖`() {
+        val button = MorphButton(iosContext)
+        var clickCount = 0
+        button.setOnClickListener { clickCount++ }
+
+        // 模拟快速双击
+        button.performClick()
+        button.performClick()
+
+        // 300ms 防抖窗口内，第二次点击应被抑制
+        assertThat(clickCount).isEqualTo(1)
+    }
+
+    @Test
+    fun `setOnClickListener传入null不抛异常`() {
+        val button = MorphButton(iosContext)
+        button.setOnClickListener(null)
+        // 不抛异常即通过
+    }
+
+    @Test
+    fun `iOS模式按钮设置了StateListAnimator`() {
+        val button = MorphButton(iosContext)
+        assertThat(button.stateListAnimator).isNotNull()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法 — 通过反射调用 protected 生命周期方法
     // ═══════════════════════════════════════════════════════════════════════
 

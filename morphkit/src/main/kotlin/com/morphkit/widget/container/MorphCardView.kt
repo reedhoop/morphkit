@@ -72,6 +72,15 @@ class MorphCardView @JvmOverloads constructor(
     /** 缓存 defStyleAttr 供 readXmlAttributes 使用（构造函数参数在方法中不可访问） */
     private val morphDefStyleAttr: Int = defStyleAttr
 
+    /**
+     * 标记业务方是否在 XML 中显式设置了自定义背景属性。
+     *
+     * 若业务方设置了 `app:cardBackgroundColor`、`app:strokeColor` 等属性，
+     * MorphKit 不应覆盖这些值（Step 6 — 极度克制原则）。
+     */
+    private var hasCustomCardBackgroundColor: Boolean = false
+    private var hasCustomStrokeColor: Boolean = false
+
     // ═══════════════════════════════════════════════════════════════════════
     // 内部状态
     // ═══════════════════════════════════════════════════════════════════════
@@ -178,9 +187,13 @@ class MorphCardView @JvmOverloads constructor(
             // 因为 isClickable=false 会阻止业务方通过 OnClickListener 设置点击
             rippleColor = android.content.res.ColorStateList.valueOf(Color.TRANSPARENT)
 
-            // ── 关闭状态动画 ──
-            // 禁用按压态阴影变化动画
-            stateListAnimator = null
+            // ── 无障碍合规：使用 StateListAnimator 提供键盘焦点补偿 ──
+            // 移除 Ripple 后，键盘用户无法感知焦点位置（Red Line 3）。
+            // 通过 StateListAnimator 在 state_focused 时微提升 translationZ（1dp），
+            // 提供无障碍焦点指示器，按压态不设置视觉变化（iOS 卡片无按压反馈）
+            stateListAnimator = android.animation.AnimatorInflater.loadStateListAnimator(
+                context, R.animator.morph_widget_card_ios_state
+            )
         }
         // MATERIAL mode: keep standard Material Card appearance
         // (elevation shadow, ripple on click, stateListAnimator)
@@ -195,6 +208,14 @@ class MorphCardView @JvmOverloads constructor(
 
         // ── 读取 XML 属性 ──
         attrs?.let { readXmlAttributes(it) }
+
+        // ── 检测业务方是否显式设置了自定义背景属性（Step 6 — 极度克制） ──
+        hasCustomCardBackgroundColor = attrs?.getAttributeValue(
+            "http://schemas.android.com/apk/res-auto", "cardBackgroundColor"
+        ) != null
+        hasCustomStrokeColor = attrs?.getAttributeValue(
+            "http://schemas.android.com/apk/res-auto", "strokeColor"
+        ) != null
 
         // ── 应用视觉状态 ──
         applyVisualState()
@@ -260,12 +281,16 @@ class MorphCardView @JvmOverloads constructor(
      * - 模糊：无
      */
     private fun applyCleanCardState() {
-        // 背景色
-        setCardBackgroundColor(cachedCardBgColor)
+        // 背景色 — 仅在业务方未自定义时覆盖（Step 6 — 极度克制）
+        if (!hasCustomCardBackgroundColor) {
+            setCardBackgroundColor(cachedCardBgColor)
+        }
 
-        // 极细边框 — 0.5dp，颜色为 iOS 分组分割线灰
+        // 极细边框 — 0.5dp，颜色为 iOS 分组分割线灰（仅在业务方未自定义时覆盖）
         strokeWidth = strokeWidthPx.toInt()
-        strokeColor = cachedStrokeColor
+        if (!hasCustomStrokeColor) {
+            strokeColor = cachedStrokeColor
+        }
 
         // 移除模糊背景图层
         removeBlurBackgroundView()
@@ -388,9 +413,10 @@ class MorphCardView @JvmOverloads constructor(
         val oldBitmapDrawable = iv.drawable as? BitmapDrawable
         val oldBitmap = oldBitmapDrawable?.bitmap
         if (oldBitmapDrawable != null && blurred.width == oldBitmap?.width && blurred.height == oldBitmap.height) {
-            // 同尺寸 Bitmap：直接替换像素，复用 BitmapDrawable 对象
-            oldBitmap.recycle()
+            // 同尺寸 Bitmap：先解除旧引用再归还对象池，复用 BitmapDrawable 对象
+            // 严格遵守 Red Line 6：先解除 Drawable 引用，再回收 Bitmap
             oldBitmapDrawable.bitmap = blurred
+            oldBitmap?.let { BackdropBlurHelper.recycleToPool(it) }
         } else {
             // 尺寸变化或首次设置：创建新 BitmapDrawable
             iv.setImageDrawable(BitmapDrawable(resources, blurred))
@@ -444,7 +470,7 @@ class MorphCardView @JvmOverloads constructor(
      * 当暗黑模式切换时，系统会触发 [android.content.res.Configuration] 变更，
      * 此时需要刷新颜色缓存并重新应用视觉状态。
      */
-    override fun onConfigurationChanged(newConfig: android.content.res.Configuration?) {
+    override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {
         super.onConfigurationChanged(newConfig)
         applyVisualState()
     }

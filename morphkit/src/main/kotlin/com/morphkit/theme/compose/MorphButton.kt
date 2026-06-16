@@ -234,7 +234,7 @@ private fun IosButton(
             ),
         shape = buttonShape,
         color = displayColor,
-        shadowElevation = 0.dp
+        shadowElevation = MorphTokens.Elevation.elevationNone.dp
     ) {
         // 字体对齐 View 层：MorphTheme.typography.body = 17sp MEDIUM
         ProvideTextStyle(

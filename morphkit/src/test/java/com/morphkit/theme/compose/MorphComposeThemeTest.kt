@@ -338,7 +338,7 @@ class MorphComposeThemeTest {
         // there is a corresponding dark-mode token used in iosDark()
         // Primary
         assertThat(MorphTokens.Colors.colorBlue100).isNotEqualTo(0) // dark primary
-        assertThat(MorphTokens.Colors.colorBlue700).isNotEqualTo(0) // dark primaryContainer
+        assertThat(MorphTokens.Colors.colorPrimaryContainerDark).isNotEqualTo(0) // dark primaryContainer
         // Secondary
         assertThat(MorphTokens.Colors.colorSecondaryDark).isNotEqualTo(0)
         assertThat(MorphTokens.Colors.colorOnSecondaryDark).isNotEqualTo(0)
