@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/catalogPage">
+
+    <fragment
+        android:id="@+id/catalogPage"
+        android:name="com.morphkit.demo.view.pages.WidgetCatalogPage"
+        android:label="MorphKit Widgets">
+        <action android:id="@+id/action_catalog_to_button" app:destination="@id/buttonPage" />
+        <action android:id="@+id/action_catalog_to_text" app:destination="@id/textPage" />
+        <action android:id="@+id/action_catalog_to_editText" app:destination="@id/editTextPage" />
+        <action android:id="@+id/action_catalog_to_card" app:destination="@id/cardPage" />
+        <action android:id="@+id/action_catalog_to_selection" app:destination="@id/selectionPage" />
+        <action android:id="@+id/action_catalog_to_settings" app:destination="@id/settingsPage" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/buttonPage"
+        android:name="com.morphkit.demo.view.pages.ButtonPage"
+        android:label="MorphButton" />
+
+    <fragment
+        android:id="@+id/textPage"
+        android:name="com.morphkit.demo.view.pages.TextPage"
+        android:label="MorphTextView" />
+
+    <fragment
+        android:id="@+id/editTextPage"
+        android:name="com.morphkit.demo.view.pages.EditTextPage"
+        android:label="MorphEditText" />
+
+    <fragment
+        android:id="@+id/cardPage"
+        android:name="com.morphkit.demo.view.pages.CardPage"
+        android:label="MorphCardView" />
+
+    <fragment
+        android:id="@+id/selectionPage"
+        android:name="com.morphkit.demo.view.pages.SelectionPage"
+        android:label="Selection" />
+
+    <fragment
+        android:id="@+id/settingsPage"
+        android:name="com.morphkit.demo.view.pages.SettingsPage"
+        android:label="Settings" />
+
+</navigation>

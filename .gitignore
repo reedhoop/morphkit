@@ -92,5 +92,11 @@ Thumbs.db
 desktop.ini
 ehthumbs.db
 
+# IDE agent temp files
+.trae/
+
+# Review reports (generated, not source)
+quality-review-*.md
+
 # Build manifests
 META-INF/
