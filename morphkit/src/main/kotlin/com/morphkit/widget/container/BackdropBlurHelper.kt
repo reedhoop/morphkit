@@ -176,10 +176,11 @@ internal object BackdropBlurHelper {
     fun blur(source: Bitmap, radius: Float): Bitmap? {
         if (source.width <= 0 || source.height <= 0) return null
 
+        var output: Bitmap? = null
         return try {
             val w = source.width
             val h = source.height
-            val output = obtainBitmap(w, h)
+            output = obtainBitmap(w, h)
 
             val node = blurRenderNode
             node.setPosition(0, 0, w, h)
@@ -201,11 +202,13 @@ internal object BackdropBlurHelper {
             } else {
                 // 极少数场景：软件 Canvas 不支持 drawRenderNode，降级为 Stack Blur
                 recycleToPool(output)
+                output = null
                 node.discardDisplayList()
                 blurSoftware(source, radius.toInt().coerceAtLeast(1))
             }
         } catch (e: Exception) {
             // RenderEffect 可能因硬件加速关闭等原因抛异常，降级为软件模糊
+            output?.let { recycleToPool(it) }
             Log.d("MorphKit", "GPU 模糊失败，降级为软件 Stack Blur: ${e.javaClass.simpleName}")
             blurSoftware(source, radius.toInt().coerceAtLeast(1))
         }

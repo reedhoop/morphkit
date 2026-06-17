@@ -61,6 +61,14 @@ object MorphInstaller {
 
     private val installed = AtomicBoolean(false)
 
+    /** 持有已注册的生命周期回调引用，便于 reset() 时注销，避免双重注册 */
+    @Volatile
+    private var registeredCallback: Application.ActivityLifecycleCallbacks? = null
+
+    /** 持有 Application 引用，用于 reset() 时注销回调 */
+    @Volatile
+    private var hostApplication: Application? = null
+
     /**
      * 安装 MorphKit 全局注入器。
      *
@@ -70,16 +78,14 @@ object MorphInstaller {
      * 重复调用将被 CAS 守卫静默跳过。
      *
      * @param application 应用实例
-     * @throws IllegalStateException 若重复安装
      */
-    @Throws(IllegalStateException::class)
     fun install(application: Application) {
         if (!installed.compareAndSet(false, true)) {
             Log.d(TAG, "MorphInstaller.install 已执行过，跳过重复注册")
             return
         }
 
-        application.registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+        val callback = object : Application.ActivityLifecycleCallbacks {
             override fun onActivityPreCreated(activity: Activity, savedInstanceState: android.os.Bundle?) {
                 // ── 阶段 1：在 AppCompat 安装之前注入 MorphFactory2 ──
                 // minSdk=35，onActivityPreCreated 始终可用（API 29+）
@@ -99,7 +105,10 @@ object MorphInstaller {
             override fun onActivityStopped(activity: Activity) {}
             override fun onActivitySaveInstanceState(activity: Activity, outState: android.os.Bundle) {}
             override fun onActivityDestroyed(activity: Activity) {}
-        })
+        }
+        registeredCallback = callback
+        hostApplication = application
+        application.registerActivityLifecycleCallbacks(callback)
     }
 
     /**
@@ -163,9 +172,14 @@ object MorphInstaller {
         }
     }
 
-    /** 重置安装状态（仅用于测试） */
+    /** 重置安装状态（仅用于测试），注销已注册的生命周期回调 */
     @androidx.annotation.VisibleForTesting
     internal fun reset() {
+        registeredCallback?.let { cb ->
+            hostApplication?.unregisterActivityLifecycleCallbacks(cb)
+        }
+        registeredCallback = null
+        hostApplication = null
         installed.set(false)
     }
 }

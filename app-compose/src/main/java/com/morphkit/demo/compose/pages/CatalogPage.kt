@@ -25,6 +25,7 @@ import com.morphkit.demo.compose.Routes
 fun CatalogPage(onNavigate: (String) -> Unit) {
     val themeTitle = stringResource(R.string.theme_title)
     val settingsTitle = stringResource(R.string.settings_title)
+    val buttonTitle = stringResource(R.string.catalog_item_button)
 
     Column(
         modifier = Modifier
@@ -39,9 +40,9 @@ fun CatalogPage(onNavigate: (String) -> Unit) {
 
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
-        val items = remember(themeTitle, settingsTitle) {
+        val items = remember(themeTitle, settingsTitle, buttonTitle) {
             listOf(
-                "MorphButton" to Routes.BUTTON,
+                buttonTitle to Routes.BUTTON,
                 themeTitle to Routes.THEME,
                 settingsTitle to Routes.SETTINGS,
             )

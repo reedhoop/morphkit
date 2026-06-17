@@ -1,7 +1,6 @@
 package com.morphkit.widget.selection
 
 import android.animation.AnimatorInflater
-import android.content.res.Configuration
 import android.util.AttributeSet
 import android.widget.CompoundButton
 import com.morphkit.R
@@ -32,8 +31,13 @@ internal class MorphCompoundButtonHelper(
     private val onRefreshColors: () -> Unit,
     private val indicatorWidthProvider: () -> Int
 ) {
-    /** 预计算的指示器宽度，避免 onMeasure 中每次调用 indicatorWidthProvider() */
-    private val cachedIndicatorWidth: Int = indicatorWidthProvider()
+    /**
+     * 预计算的指示器宽度，避免 onMeasure 中每次调用 indicatorWidthProvider()。
+     *
+     * 使用 lazy 延迟求值：宿主控件构造时 boxSize/ringRadius 等尺寸字段尚未在 init 块中赋值，
+     * 若在 Helper 构造时立即求值会得到 0。lazy 保证首次 onMeasure（此时宿主 init 已完成）才计算。
+     */
+    private val cachedIndicatorWidth: Int by lazy { indicatorWidthProvider() }
 
     val interactionMode: InteractionMode
 

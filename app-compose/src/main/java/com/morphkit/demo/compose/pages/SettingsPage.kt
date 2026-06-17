@@ -78,7 +78,7 @@ fun SettingsPage(onBack: () -> Unit) {
         )
 
         Text(text = stringResource(R.string.settings_initialized, MorphKit.isInitialized()))
-        Text(text = stringResource(R.string.settings_theme_resid, MorphKit.getFinalThemeResId()))
+        Text(text = stringResource(R.string.settings_theme_resid, if (MorphKit.isInitialized()) MorphKit.getFinalThemeResId() else 0))
 
         IconButton(onClick = onBack) {
             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = backContentDescription)

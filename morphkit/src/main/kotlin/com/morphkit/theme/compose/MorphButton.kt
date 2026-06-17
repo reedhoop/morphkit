@@ -214,8 +214,8 @@ private fun IosButton(
     }
 
     val buttonShape = remember(cornerRadius) { RoundedCornerShape(cornerRadius.dp) }
-
-    val buttonTextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+    val typography = MaterialTheme.typography
+    val buttonTextStyle = remember(typography) { typography.bodyLarge.copy(fontWeight = FontWeight.Medium) }
     Surface(
         modifier = modifier
             .defaultMinSize(minWidth = MorphTokens.Spacing.buttonMinWidth.dp, minHeight = MorphTokens.Spacing.buttonMinHeight.dp)
@@ -281,7 +281,8 @@ private fun MaterialButton(
 ) {
     val isPlain = style == ButtonStyle.PLAIN
     val buttonShape = remember(cornerRadius) { RoundedCornerShape(cornerRadius.dp) }
-    val textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
+    val typography = MaterialTheme.typography
+    val textStyle = remember(typography) { typography.bodyLarge.copy(fontWeight = FontWeight.Medium) }
 
     if (isPlain) {
         // PLAIN 变体：使用 TextButton 风格（透明背景 + primary 色文字）

@@ -78,7 +78,7 @@ class SettingsPage : Fragment() {
             text = getString(R.string.settings_initialized, MorphKit.isInitialized())
         })
         layout.addView(TextView(context).apply {
-            text = getString(R.string.settings_theme_resid, MorphKit.getFinalThemeResId())
+            text = getString(R.string.settings_theme_resid, if (MorphKit.isInitialized()) MorphKit.getFinalThemeResId() else 0)
         })
 
         scrollView.addView(layout)

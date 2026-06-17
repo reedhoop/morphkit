@@ -149,16 +149,17 @@ fun MorphTheme(
 @Composable
 fun MorphTheme(
     colors: MorphColorPalette,
-    shape: MorphShape = if (LocalMorphInteractionMode.current == InteractionMode.MATERIAL) MorphShape.pixel() else MorphShape.ios(),
+    shape: MorphShape? = null,
     interactionMode: InteractionMode = InteractionMode.IOS,
     content: @Composable () -> Unit
 ) {
+    val effectiveShape = shape ?: if (interactionMode == InteractionMode.MATERIAL) MorphShape.pixel() else MorphShape.ios()
     val typography = remember { morphTypography() }
     val stylePolicy = if (interactionMode == InteractionMode.MATERIAL) StylePolicy.PIXEL else StylePolicy.IOS
 
     CompositionLocalProvider(
         LocalMorphColors provides colors,
-        LocalMorphShape provides shape,
+        LocalMorphShape provides effectiveShape,
         LocalMorphInteractionMode provides interactionMode,
         LocalMorphStylePolicy provides stylePolicy
     ) {

@@ -45,7 +45,7 @@ fun ButtonPage(onBack: () -> Unit) {
         MorphButton(
             text = stringResource(R.string.button_primary),
             onClick = {
-                Toast.makeText(context, "Primary", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.button_primary_toast), Toast.LENGTH_SHORT).show()
             },
         )
 
@@ -53,7 +53,7 @@ fun ButtonPage(onBack: () -> Unit) {
         MorphButton(
             text = stringResource(R.string.button_plain),
             onClick = {
-                Toast.makeText(context, "Plain", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.button_plain_toast), Toast.LENGTH_SHORT).show()
             },
             style = ButtonStyle.PLAIN,
         )
@@ -62,7 +62,7 @@ fun ButtonPage(onBack: () -> Unit) {
         MorphButton(
             text = stringResource(R.string.button_disabled),
             onClick = {
-                Toast.makeText(context, "Disabled", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.button_disabled_toast), Toast.LENGTH_SHORT).show()
             },
             enabled = false,
         )

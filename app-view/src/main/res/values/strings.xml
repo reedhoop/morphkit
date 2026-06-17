@@ -4,6 +4,12 @@
 
     <!-- WidgetCatalogPage -->
     <string name="catalog_title">MorphKit Widgets</string>
+    <string name="catalog_item_button">MorphButton</string>
+    <string name="catalog_item_text">MorphTextView</string>
+    <string name="catalog_item_edit">MorphEditText</string>
+    <string name="catalog_item_card">MorphCardView</string>
+    <string name="catalog_item_selection">RadioButton &amp; CheckBox</string>
+    <string name="catalog_item_settings">Settings</string>
     <!-- ButtonPage -->
     <string name="button_title">MorphButton</string>
     <string name="button_primary">Primary:</string>

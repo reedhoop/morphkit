@@ -4,11 +4,15 @@
 
     <!-- CatalogPage -->
     <string name="catalog_title">MorphKit Compose</string>
+    <string name="catalog_item_button">MorphButton</string>
     <!-- ButtonPage -->
     <string name="button_title">MorphButton (Compose)</string>
     <string name="button_primary">Primary Button</string>
     <string name="button_plain">Plain Button</string>
     <string name="button_disabled">Disabled Button</string>
+    <string name="button_primary_toast">Primary clicked</string>
+    <string name="button_plain_toast">Plain clicked</string>
+    <string name="button_disabled_toast">Disabled clicked</string>
     <!-- ThemePage -->
     <string name="theme_title">Theme &amp; Colors</string>
     <string name="theme_palette_title">MorphColorPalette</string>

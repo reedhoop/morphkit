@@ -34,12 +34,12 @@ class WidgetCatalogPage : Fragment() {
         layout.addView(title)
 
         val items = listOf(
-            "MorphButton" to R.id.action_catalog_to_button,
-            "MorphTextView" to R.id.action_catalog_to_text,
-            "MorphEditText" to R.id.action_catalog_to_editText,
-            "MorphCardView" to R.id.action_catalog_to_card,
-            "RadioButton & CheckBox" to R.id.action_catalog_to_selection,
-            "Settings" to R.id.action_catalog_to_settings,
+            getString(R.string.catalog_item_button) to R.id.action_catalog_to_button,
+            getString(R.string.catalog_item_text) to R.id.action_catalog_to_text,
+            getString(R.string.catalog_item_edit) to R.id.action_catalog_to_editText,
+            getString(R.string.catalog_item_card) to R.id.action_catalog_to_card,
+            getString(R.string.catalog_item_selection) to R.id.action_catalog_to_selection,
+            getString(R.string.catalog_item_settings) to R.id.action_catalog_to_settings,
         )
 
         items.forEach { (label, navId) ->

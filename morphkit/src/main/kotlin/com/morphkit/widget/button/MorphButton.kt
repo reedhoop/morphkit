@@ -141,6 +141,7 @@ class MorphButton @JvmOverloads constructor(
         cachedIsDarkMode = MorphColors.isDarkMode(context)
 
         if (!isEnabled) {
+            applyDisabledState()
             return
         }
 
