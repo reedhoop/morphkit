@@ -69,14 +69,12 @@ class MorphConfigTest {
     // 用例 D4：groupReplace 空列表不产生条目
     // ═══════════════════════════════════════════════════════════════════════
 
-    @Test
-    fun `groupReplace空列表_replaceMap无新增条目`() {
+    @Test(expected = IllegalArgumentException::class)
+    fun `groupReplace空列表_抛出IllegalArgumentException`() {
         val config = MorphConfig()
         val creator: (Context, AttributeSet) -> View = { _, _ -> mockkView() }
 
         config.groupReplace(emptyList(), creator)
-
-        assertTrue("空列表 groupReplace 不应产生条目", config.replaceMap.isEmpty())
     }
 
     // ═══════════════════════════════════════════════════════════════════════

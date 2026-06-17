@@ -213,8 +213,9 @@ private fun IosButton(
         backgroundColor
     }
 
-    val buttonShape = RoundedCornerShape(cornerRadius.dp)
+    val buttonShape = remember(cornerRadius) { RoundedCornerShape(cornerRadius.dp) }
 
+    val buttonTextStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
     Surface(
         modifier = modifier
             .defaultMinSize(minWidth = MorphTokens.Spacing.buttonMinWidth.dp, minHeight = MorphTokens.Spacing.buttonMinHeight.dp)
@@ -238,9 +239,7 @@ private fun IosButton(
     ) {
         // 字体对齐 View 层：MorphTheme.typography.body = 17sp MEDIUM
         ProvideTextStyle(
-            value = MaterialTheme.typography.bodyLarge.copy(
-                fontWeight = FontWeight.Medium
-            )
+            value = buttonTextStyle
         ) {
             Row(
                 modifier = Modifier
@@ -281,14 +280,14 @@ private fun MaterialButton(
     cornerRadius: Int
 ) {
     val isPlain = style == ButtonStyle.PLAIN
-    val buttonShape = RoundedCornerShape(cornerRadius.dp)
+    val buttonShape = remember(cornerRadius) { RoundedCornerShape(cornerRadius.dp) }
     val textStyle = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium)
 
     if (isPlain) {
         // PLAIN 变体：使用 TextButton 风格（透明背景 + primary 色文字）
         androidx.compose.material3.TextButton(
             onClick = onClick,
-            modifier = modifier,
+            modifier = modifier.defaultMinSize(minHeight = 48.dp),
             enabled = enabled,
             shape = buttonShape,
             colors = ButtonDefaults.textButtonColors(
@@ -303,7 +302,7 @@ private fun MaterialButton(
         // FILLED 变体：标准 Material3 Button
         androidx.compose.material3.Button(
             onClick = onClick,
-            modifier = modifier,
+            modifier = modifier.defaultMinSize(minHeight = 48.dp),
             enabled = enabled,
             shape = buttonShape,
             colors = ButtonDefaults.buttonColors(

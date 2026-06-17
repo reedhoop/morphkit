@@ -273,6 +273,18 @@ class MorphEditText @JvmOverloads constructor(
         }
     }
 
+    /**
+     * 覆写 setEnabled：禁用态刷新视觉，避免焦点态背景永久停留。
+     */
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        if (interactionMode == InteractionMode.IOS) {
+            applyStyle()
+            // 禁用时降低透明度，与 MorphButton 行为一致
+            alpha = if (enabled) 1f else MorphTokens.Interaction.disabledAlpha
+        }
+    }
+
     // ═══════════════════════════════════════════════════════════════════════
     // 生命周期
     // ═══════════════════════════════════════════════════════════════════════

@@ -221,6 +221,8 @@ val MORPH_TAG_KEY = R.id.morph_view_tag
  */
 object MorphKit {
 
+    private const val TAG = "MorphKit"
+
     /** 当前配置，初始化后可用。@Volatile 保证跨线程可见性 */
     @Volatile
     private lateinit var config: MorphConfig
@@ -237,6 +239,9 @@ object MorphKit {
     /** 是否已完成初始化（所有配置、主题解析、注入器安装均就绪后才为 true） */
     @Volatile
     private var initialized: Boolean = false
+
+    /** 已注册的内存压力响应者列表（线程安全） */
+    private val memoryTrimmables = java.util.concurrent.CopyOnWriteArrayList<MemoryTrimmable>()
 
     /**
      * MorphKit 解析出的最终 Theme 资源 ID。
@@ -257,8 +262,19 @@ object MorphKit {
      * 获取 MorphKit 解析出的最终 Theme 资源 ID。
      *
      * @return Theme 资源 ID，0 表示宿主已完全接管
+     * @throws IllegalStateException 若 MorphKit 未初始化
      */
-    fun getFinalThemeResId(): Int = _finalThemeResId
+    @Throws(IllegalStateException::class)
+    fun getFinalThemeResId(): Int {
+        check(initialized) { "MorphKit 尚未初始化，请先调用 init() 或 autoInit()" }
+        return _finalThemeResId
+    }
+
+    /**
+     * 内部访问：直接获取 Theme 资源 ID，不校验初始化状态。
+     * 供 [MorphInstaller] 在初始化流程中使用（此时 initialized 尚未设为 true）。
+     */
+    internal val finalThemeResId: Int get() = _finalThemeResId
 
     /**
      * 查询 MorphKit 是否已完成初始化。
@@ -269,6 +285,57 @@ object MorphKit {
      * @return 已初始化返回 true，否则返回 false
      */
     fun isInitialized(): Boolean = initialized
+
+    /**
+     * 重置 MorphKit 全部状态（仅用于测试）。
+     *
+     * 将 initGuard、initialized、config、_finalThemeResId 恢复到初始值，
+     * 允许单元测试在隔离环境中重复初始化 MorphKit。
+     *
+     * @throws IllegalStateException 若在非测试环境调用（internal 可见性限制为模块级）
+     */
+    @androidx.annotation.VisibleForTesting
+    internal fun reset() {
+        initialized = false
+        initGuard.set(false)
+        config = MorphConfig()
+        _finalThemeResId = 0
+        memoryTrimmables.clear()
+        MorphStyleResolver.invalidateCache()
+        MorphInstaller.reset()
+    }
+
+    /**
+     * 注册内存压力响应者。
+     *
+     * 注册后，当系统发出内存压力回调时，[onTrimMemory] 会通知所有注册者。
+     * widget 层通过此方法注册 Bitmap 对象池清理等逻辑，避免 core 层直接依赖 widget 层。
+     *
+     * @param trimmable 内存压力响应者
+     */
+    fun registerMemoryTrimmable(trimmable: MemoryTrimmable) {
+        memoryTrimmables.addIfAbsent(trimmable)
+    }
+
+    /**
+     * 注销内存压力响应者。
+     *
+     * @param trimmable 要注销的响应者
+     */
+    fun unregisterMemoryTrimmable(trimmable: MemoryTrimmable) {
+        memoryTrimmables.remove(trimmable)
+    }
+
+    /**
+     * 通知所有注册的内存压力响应者。
+     *
+     * 由 [MorphInitProvider] 在系统内存压力回调中调用。
+     *
+     * @param level trim level，参见 [android.content.ComponentCallbacks2] 常量
+     */
+    internal fun onTrimMemory(level: Int) {
+        memoryTrimmables.forEach { it.onTrimMemory(level) }
+    }
 
     /**
      * 初始化 MorphKit 引擎。
@@ -288,22 +355,29 @@ object MorphKit {
      * @param block       [MorphConfig] DSL 配置块，在其中声明 replace / groupReplace / modify 规则
      * @throws IllegalStateException 若重复初始化
      */
+    @Throws(IllegalStateException::class)
     fun init(application: Application, block: MorphConfig.() -> Unit) {
         check(initGuard.compareAndSet(false, true)) { "MorphKit 已初始化，禁止重复调用 init()" }
         // ── 在 initGuard 保护下执行全部初始化，initialized 在最后才设为 true ──
         // 其他线程通过 initialized（Volatile）判断就绪状态，
         // 看到 initialized=true 时 config 和 _finalThemeResId 必定已赋值完毕
-        val newConfig = MorphConfig().apply(block)
-        config = newConfig
+        try {
+            val newConfig = MorphConfig().apply(block)
+            config = newConfig
 
-        // ── 根据 StylePolicy 解析最终 Theme ──
-        _finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
+            // ── 根据 StylePolicy 解析最终 Theme ──
+            _finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
 
-        // 自动安装全局 Factory2 注入，在每个 Activity 启动前拦截 LayoutInflater
-        MorphInstaller.install(application)
+            // 自动安装全局 Factory2 注入，在每个 Activity 启动前拦截 LayoutInflater
+            MorphInstaller.install(application)
 
-        // 全部初始化完成后，才标记为已初始化（Volatile 写保证 happens-before）
-        initialized = true
+            // 全部初始化完成后，才标记为已初始化（Volatile 写保证 happens-before）
+            initialized = true
+        } catch (t: Throwable) {
+            // 初始化失败：回滚 initGuard，允许重试，避免陷入永久不可恢复状态
+            initGuard.set(false)
+            throw t
+        }
     }
 
     /**
@@ -322,6 +396,7 @@ object MorphKit {
      * @param registerDefaults 可选的默认控件注册块，在 [MorphConfig] DSL 上执行
      * @throws IllegalStateException 若重复初始化
      */
+    @Throws(IllegalStateException::class)
     fun autoInit(application: Application, registerDefaults: (MorphConfig.() -> Unit)? = null) {
         init(application) {
             registerDefaults?.invoke(this)
@@ -344,6 +419,7 @@ object MorphKit {
      * @return 替换后的 View，若未命中规则则返回 `null`
      */
     fun createView(originalName: String, context: Context, attrs: AttributeSet): View? {
+        require(originalName.isNotBlank()) { "originalName 不能为空" }
         if (!initialized) return null
         val creator = config.replaceMap[originalName] ?: return null
         val view = creator(context, attrs)
@@ -367,6 +443,7 @@ object MorphKit {
      * @return 修改后的 View（同一实例）
      */
     fun modifyView(originalName: String, view: View): View {
+        require(originalName.isNotBlank()) { "originalName 不能为空" }
         if (!initialized) return view // 未初始化时直接返回原 View
         val modifier = config.modifyMap[originalName] ?: return view
         modifier(view)
@@ -404,7 +481,7 @@ object MorphKit {
         val className = view.javaClass.simpleName
         if (!className.startsWith(config.unifiedPrefix)) {
             Log.w(
-                "MorphKit",
+                TAG,
                 "规范警告：替换控件 ${view.javaClass.name} 未遵循前缀规范！" +
                         "建议重命名为 ${config.unifiedPrefix}${originalName}"
             )

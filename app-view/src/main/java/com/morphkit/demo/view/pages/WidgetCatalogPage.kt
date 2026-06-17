@@ -11,7 +11,6 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.morphkit.demo.view.R
-import com.morphkit.theme.MorphTokens
 
 class WidgetCatalogPage : Fragment() {
 
@@ -29,7 +28,7 @@ class WidgetCatalogPage : Fragment() {
         val title = TextView(context).apply {
             text = "MorphKit Widgets"
             textSize = 24f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         }
         layout.addView(title)
 
@@ -46,7 +45,7 @@ class WidgetCatalogPage : Fragment() {
             val item = TextView(context).apply {
                 text = "\u25B8 $label"
                 textSize = 18f
-                setPadding(0, 16, 0, 16)
+                setPadding(0, dp16, 0, dp16)
                 setOnClickListener { findNavController().navigate(navId) }
             }
             layout.addView(item)

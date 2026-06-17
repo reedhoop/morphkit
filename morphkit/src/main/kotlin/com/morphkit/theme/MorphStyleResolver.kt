@@ -68,11 +68,26 @@ object MorphStyleResolver {
      *
      * OEM 系统设置在进程生命周期内几乎不会变化（仅在系统设置 App 中手动修改），
      * 缓存后避免每次 [resolve] 调用都执行 `Settings.System.getInt()` IPC 查询。
-     * 使用 `Int.MIN_VALUE` 作为"未读取"哨兵值，区分"默认值 0"和"未缓存"。
+     * 使用 `null` 表示"未缓存"，区分"默认值 0"和"未读取"。
      * `@Volatile` 保证多线程可见性。
+     *
+     * 可通过 [invalidateCache] 清空缓存，支持 OEM 运行时变装场景。
      */
     @Volatile
-    private var cachedOemStyle: Int = Int.MIN_VALUE
+    private var cachedOemStyle: Int? = null
+
+    /**
+     * 清空 OEM 风格缓存。
+     *
+     * 当 OEM 厂商在系统设置中修改 `oem_ui_style` 后，调用此方法使缓存失效，
+     * 下次 [resolve] 将重新读取系统设置，实现"瞬间整体变装"。
+     *
+     * 典型用法：在宿主 App 的 [android.app.Application.registerComponentCallbacks]
+     * 或自定义 Settings 观察者中调用。
+     */
+    fun invalidateCache() {
+        cachedOemStyle = null
+    }
 
     /**
      * 根据策略和 OEM 系统设置解析最终使用的 Theme 资源 ID。
@@ -140,7 +155,7 @@ object MorphStyleResolver {
     private fun readOemStyle(context: Context): Int {
         // 缓存命中：直接返回，避免 Settings.System IPC
         val cached = cachedOemStyle
-        if (cached != Int.MIN_VALUE) return cached
+        if (cached != null) return cached
 
         // 首次读取：执行 IPC 并缓存结果
         val value = try {

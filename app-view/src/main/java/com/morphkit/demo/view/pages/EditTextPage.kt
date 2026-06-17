@@ -10,7 +10,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.morphkit.widget.text.MorphEditText
-import com.morphkit.theme.MorphTokens
 
 class EditTextPage : Fragment() {
 
@@ -19,6 +18,7 @@ class EditTextPage : Fragment() {
     ): View {
         val context = requireContext()
         val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
+        val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -28,7 +28,7 @@ class EditTextPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphEditText"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         // Default style
@@ -39,7 +39,7 @@ class EditTextPage : Fragment() {
         layout.addView(defaultEdit, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 8; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         // Search style
         layout.addView(TextView(context).apply { text = "Search:" })
@@ -50,7 +50,7 @@ class EditTextPage : Fragment() {
         layout.addView(searchEdit, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 8; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         // Bare style
         layout.addView(TextView(context).apply { text = "Bare:" })
@@ -61,7 +61,7 @@ class EditTextPage : Fragment() {
         layout.addView(bareEdit, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 8; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         scrollView.addView(layout)
         return scrollView

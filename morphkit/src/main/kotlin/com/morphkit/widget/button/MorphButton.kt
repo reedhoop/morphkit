@@ -33,7 +33,12 @@ class MorphButton @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.morphButtonStyle
 ) : AppCompatButton(context, attrs, defStyleAttr) {
 
-    enum class Style { FILLED, PLAIN }
+    enum class Style {
+        /** 填充样式：实心背景 + 白色文字 */
+        FILLED,
+        /** 线框样式：透明背景 + 主色文字 */
+        PLAIN
+    }
 
     private val interactionMode: InteractionMode
     private val cornerRadius: Float
@@ -51,6 +56,8 @@ class MorphButton @JvmOverloads constructor(
     // ── 缓存颜色 ──
     private var cachedPrimaryColor: Int = 0
     private var cachedOnPrimaryColor: Int = 0
+    private var cachedSurfaceColor: Int = 0
+    private var cachedIsDarkMode: Boolean = false
 
     // ── 标记业务方是否设置了自定义背景 ──
     private var hasCustomBackground: Boolean = false
@@ -85,6 +92,7 @@ class MorphButton @JvmOverloads constructor(
 
         cachedPrimaryColor = MorphTheme.morphColorPrimary(context)
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)
+        cachedSurfaceColor = MorphTheme.morphColorSurface(context)
 
         val typo = MorphTypography.body
         textSize = typo.fontSize
@@ -129,9 +137,10 @@ class MorphButton @JvmOverloads constructor(
 
         cachedPrimaryColor = MorphTheme.morphColorPrimary(context)
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)
+        cachedSurfaceColor = MorphTheme.morphColorSurface(context)
+        cachedIsDarkMode = MorphColors.isDarkMode(context)
 
         if (!isEnabled) {
-            applyDisabledState()
             return
         }
 
@@ -259,10 +268,11 @@ class MorphButton @JvmOverloads constructor(
 
         val baseColor: Int = when (style) {
             Style.FILLED -> cachedPrimaryColor
-            Style.PLAIN -> Color.TRANSPARENT
+            // PLAIN 模式背景透明，用 surface 色作为基色以产生可见按压反馈
+            Style.PLAIN -> cachedSurfaceColor
         }
 
-        val isDark = MorphColors.isDarkMode(context)
+        val isDark = cachedIsDarkMode
         val overlayColor = if (isDark) Color.WHITE else Color.BLACK
 
         val blended: Int = MorphColors.overlayColor(baseColor, overlayColor, pressOverlayAlpha)

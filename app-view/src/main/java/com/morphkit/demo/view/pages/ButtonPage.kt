@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.widget.button.MorphButton
 import com.morphkit.widget.button.MorphRadioButton
-import com.morphkit.theme.MorphTokens
 
 class ButtonPage : Fragment() {
 
@@ -31,7 +30,7 @@ class ButtonPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphButton"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         // Primary button
@@ -43,7 +42,7 @@ class ButtonPage : Fragment() {
         layout.addView(primaryBtn, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 16; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp16; bottomMargin = dp16 })
 
         // Plain button
         layout.addView(TextView(context).apply { text = "Plain:" })
@@ -55,7 +54,7 @@ class ButtonPage : Fragment() {
         layout.addView(plainBtn, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 16; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp16; bottomMargin = dp16 })
 
         // Disabled button
         layout.addView(TextView(context).apply { text = "Disabled:" })
@@ -66,13 +65,13 @@ class ButtonPage : Fragment() {
         layout.addView(disabledBtn, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 16; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp16; bottomMargin = dp16 })
 
         // MorphRadioButton
         layout.addView(TextView(context).apply {
             text = "MorphRadioButton"
             textSize = 22f
-            setPadding(0, MorphTokens.Spacing.spacingBase, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, dp16, 0, dp16)
         })
         val radioGroup = RadioGroup(context).apply {
             orientation = RadioGroup.VERTICAL

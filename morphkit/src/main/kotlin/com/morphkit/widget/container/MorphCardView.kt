@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.BitmapDrawable
 import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -338,8 +339,7 @@ class MorphCardView @JvmOverloads constructor(
             scaleType = ImageView.ScaleType.FIT_XY
             isClickable = false
             isFocusable = false
-            // 不允许拦截触摸事件
-            isEnabled = true
+            importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_NO
         }
         blurBackgroundView = iv
         addView(iv, 0, FrameLayout.LayoutParams(
@@ -392,6 +392,7 @@ class MorphCardView @JvmOverloads constructor(
      * 也可通过 [refreshGlassmorphismBlur] 手动调用。
      */
     private fun updateBlurBackground() {
+        if (!isAttachedToWindow) return
         if (!isGlassmorphism || isInEditMode) return
         if (width <= 0 || height <= 0) return
 
@@ -412,16 +413,10 @@ class MorphCardView @JvmOverloads constructor(
         // 4. 复用 BitmapDrawable，避免每次创建新对象
         val oldBitmapDrawable = iv.drawable as? BitmapDrawable
         val oldBitmap = oldBitmapDrawable?.bitmap
-        if (oldBitmapDrawable != null && blurred.width == oldBitmap?.width && blurred.height == oldBitmap.height) {
-            // 同尺寸 Bitmap：先解除旧引用再归还对象池，复用 BitmapDrawable 对象
-            // 严格遵守 Red Line 6：先解除 Drawable 引用，再回收 Bitmap
-            oldBitmapDrawable.bitmap = blurred
-            oldBitmap?.let { BackdropBlurHelper.recycleToPool(it) }
-        } else {
-            // 尺寸变化或首次设置：创建新 BitmapDrawable
-            iv.setImageDrawable(BitmapDrawable(resources, blurred))
-            oldBitmap?.let { bmp -> BackdropBlurHelper.recycleToPool(bmp) }
-        }
+        // BitmapDrawable 无 setBitmap() 方法，始终创建新 Drawable 对象
+        // 但复用 Bitmap 对象池减少 Bitmap 分配
+        iv.setImageDrawable(BitmapDrawable(resources, blurred))
+        oldBitmap?.let { BackdropBlurHelper.recycleToPool(it) }
     }
 
     /**

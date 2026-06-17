@@ -4,10 +4,6 @@ import android.app.Application
 import android.content.ComponentCallbacks2
 import android.content.Context
 import android.util.Log
-// 架构偏差声明：ContentProvider 作为系统引导入口，需要协调 widget 层注册和内存管理回调，
-// 这是 AGENTS.md 1.2 定义的 widget → theme → core 依赖方向的已知例外。
-// 替代方案（反射/ServiceLoader）会增加不必要的复杂度，当前方案是务实的妥协。
-import com.morphkit.widget.registerDefaultWidgets
 
 /**
  * MorphKit 零侵入自动初始化 ContentProvider。
@@ -49,37 +45,33 @@ class MorphInitProvider : android.content.ContentProvider() {
             }
 
             // ── 多进程保护：仅在主进程初始化 ──
-            val currentProcessName = getCurrentProcessName(application)
+            val currentProcessName = getCurrentProcessName()
             if (currentProcessName != application.packageName) {
                 Log.d(TAG, "MorphInitProvider: 非主进程 ($currentProcessName)，跳过初始化")
                 return true
             }
 
             MorphKit.autoInit(application) {
-                // widget 层注册逻辑通过回调注入，保持 core 层零 import
-                registerDefaultWidgets()
+                // widget 层注册逻辑通过 init block 注入（由宿主或 autoInit 默认配置提供）
             }
 
-            // ── 注册内存压力回调：清理 Bitmap 对象池 ──
-            // 架构说明：此处通过 FQN 引用 widget 层的 BackdropBlurHelper，
-            // 属于基础设施级的内存压力响应（而非业务逻辑依赖），不违反分层原则。
-            // ContentProvider 作为 Android 系统引导入口，天然承担跨层协调职责，
-            // 且 clearPool() 仅在此处作为 onTrimMemory 的被动回调被调用，
-            // core 包的其他代码不会对 widget 包产生任何依赖。
+            // ── 注册内存压力回调：通过 MorphKit 转发给所有注册的 MemoryTrimmable ──
+            // core 层不直接依赖 widget 层，widget 层通过 MorphKit.registerMemoryTrimmable 注册
             application.registerComponentCallbacks(object : ComponentCallbacks2 {
                 override fun onTrimMemory(level: Int) {
                     if (level >= ComponentCallbacks2.TRIM_MEMORY_MODERATE) {
-                        com.morphkit.widget.container.BackdropBlurHelper.clearPool()
+                        MorphKit.onTrimMemory(level)
                     }
                 }
                 override fun onConfigurationChanged(newConfig: android.content.res.Configuration) {}
                 override fun onLowMemory() {
-                    com.morphkit.widget.container.BackdropBlurHelper.clearPool()
+                    MorphKit.onTrimMemory(ComponentCallbacks2.TRIM_MEMORY_COMPLETE)
                 }
             })
 
             Log.d(TAG, "MorphInitProvider: 零侵入自动初始化完成")
-        } catch (e: Exception) {
+        } catch (e: Throwable) {
+            // 捕获 Throwable 而非 Exception，防止 widget 层 NoClassDefFoundError 导致崩溃
             Log.e(TAG, "MorphInitProvider: 自动初始化异常，宿主 App 需手动调用 MorphKit.init()", e)
         }
 
@@ -92,7 +84,7 @@ class MorphInitProvider : android.content.ContentProvider() {
      * minSdk=35 保证 Application.getProcessName()（API 28+）始终可用，
      * 无需版本守卫或 ActivityManager 降级方案。
      */
-    private fun getCurrentProcessName(context: Context): String {
+    private fun getCurrentProcessName(): String {
         return Application.getProcessName()
     }
 

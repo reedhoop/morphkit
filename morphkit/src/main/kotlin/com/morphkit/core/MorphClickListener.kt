@@ -34,6 +34,10 @@ class MorphClickListener @JvmOverloads constructor(
     private val block: (View) -> Unit
 ) : View.OnClickListener {
 
+    init {
+        require(debounceInterval >= 0) { "debounceInterval 不能为负数" }
+    }
+
     /** 仅供测试使用：注入自定义时间源 */
     internal constructor(
         debounceInterval: Long,

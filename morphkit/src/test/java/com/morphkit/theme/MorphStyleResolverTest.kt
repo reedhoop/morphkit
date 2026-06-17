@@ -58,13 +58,13 @@ class MorphStyleResolverTest {
     }
 
     /**
-     * 通过反射重置 cachedOemStyle 为 Int.MIN_VALUE（未缓存哨兵值），
+     * 通过反射重置 cachedOemStyle 为 null（未缓存），
      * 确保每个测试用例的 OEM 设置读取独立。
      */
     private fun resetOemCache() {
         val field = MorphStyleResolver::class.java.getDeclaredField("cachedOemStyle")
         field.isAccessible = true
-        field.setInt(MorphStyleResolver, Int.MIN_VALUE)
+        field.set(MorphStyleResolver, null)
     }
 
     @After

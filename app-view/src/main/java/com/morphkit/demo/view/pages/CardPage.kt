@@ -10,7 +10,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.morphkit.widget.container.MorphCardView
-import com.morphkit.theme.MorphTokens
 
 class CardPage : Fragment() {
 
@@ -19,6 +18,7 @@ class CardPage : Fragment() {
     ): View {
         val context = requireContext()
         val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
+        val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -28,7 +28,7 @@ class CardPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphCardView"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         // Standard card
@@ -43,7 +43,7 @@ class CardPage : Fragment() {
         layout.addView(standardCard, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 8; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         // Glassmorphism card
         layout.addView(TextView(context).apply { text = "Glassmorphism Card:" })
@@ -58,7 +58,7 @@ class CardPage : Fragment() {
         layout.addView(glassCard, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = 8; bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         scrollView.addView(layout)
         return scrollView

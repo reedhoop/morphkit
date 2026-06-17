@@ -43,7 +43,6 @@ jobs:
 
       - name: Run Lint
         run: ./gradlew lintDebug --continue
-        continue-on-error: true
 
       - name: Upload test reports
         if: always()

@@ -38,6 +38,12 @@ import android.view.ViewGroup
  */
 internal object BackdropBlurHelper {
 
+    /** 复用 RenderNode，避免每次 blur() 调用都新建对象 */
+    private val blurRenderNode = RenderNode("morphBlur")
+
+    /** 临时数组缓存，供 stackBlurHorizontal / stackBlurVertical 复用 */
+    private var blurTempArray: IntArray? = null
+
     // ═══════════════════════════════════════════════════════════════════════
     // Bitmap 对象池 — 滚动场景下复用 Bitmap 减少 GC
     // ═══════════════════════════════════════════════════════════════════════
@@ -128,28 +134,27 @@ internal object BackdropBlurHelper {
     fun captureParentArea(view: View): Bitmap? {
         val parent = view.parent as? ViewGroup ?: return null
         if (parent.width <= 0 || parent.height <= 0) return null
+        if (view.width <= 0 || view.height <= 0) return null
 
         // 临时隐藏卡片，使 parent.draw() 不包含卡片自身
         val originalVisibility = view.visibility
         view.visibility = View.INVISIBLE
 
         val bitmap = obtainBitmap(view.width, view.height)
-        val canvas = Canvas(bitmap)
-
         try {
+            val canvas = Canvas(bitmap)
             // 将父容器绘制偏移到 View 在父容器中的位置
             canvas.translate(-view.left.toFloat(), -view.top.toFloat())
             parent.draw(canvas)
-        } catch (_: Exception) {
+            view.visibility = originalVisibility
+            return bitmap
+        } catch (e: Exception) {
             // parent.draw() 在某些场景下可能失败（如硬件加速限制）
-            Log.d("MorphKit", "captureParentArea: parent.draw() 失败，返回 null")
+            Log.d("MorphKit", "captureParentArea: parent.draw() 失败，返回 null", e)
             view.visibility = originalVisibility
             recycleToPool(bitmap)
             return null
         }
-
-        view.visibility = originalVisibility
-        return bitmap
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -176,7 +181,7 @@ internal object BackdropBlurHelper {
             val h = source.height
             val output = obtainBitmap(w, h)
 
-            val node = RenderNode("morphBlur")
+            val node = blurRenderNode
             node.setPosition(0, 0, w, h)
 
             val blurEffect = RenderEffect.createBlurEffect(
@@ -296,7 +301,7 @@ internal object BackdropBlurHelper {
     private fun stackBlurHorizontal(pixels: IntArray, w: Int, h: Int, radius: Int) {
         val div = radius + radius + 1
         val divSum = div.toLong()
-        val temp = IntArray(w)
+        val temp = blurTempArray?.takeIf { it.size >= w } ?: IntArray(w).also { blurTempArray = it }
 
         for (y in 0 until h) {
             var rSum = 0L; var gSum = 0L; var bSum = 0L; var aSum = 0L
@@ -341,7 +346,7 @@ internal object BackdropBlurHelper {
     private fun stackBlurVertical(pixels: IntArray, w: Int, h: Int, radius: Int) {
         val div = radius + radius + 1
         val divSum = div.toLong()
-        val temp = IntArray(h)
+        val temp = blurTempArray?.takeIf { it.size >= h } ?: IntArray(h).also { blurTempArray = it }
 
         for (x in 0 until w) {
             var rSum = 0L; var gSum = 0L; var bSum = 0L; var aSum = 0L

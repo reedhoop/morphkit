@@ -30,13 +30,34 @@ dependencies {
 
 ### 2. 一行代码接入（推荐）
 
-在 `Application.onCreate` 中调用即可：
+在 `Application.onCreate` 中调用即可。以下示例与仓库内 demo（`app-view` / `app-compose`）保持一致，使用 `MorphKit.autoInit` + `registerDefaultWidgets()` 注册全部内置控件替换规则，风格策略走默认的 `StylePolicy.AUTO`（根据设备 Dynamic Color 能力自动选择 iOS 或 Pixel）：
 
 ```kotlin
+import com.morphkit.core.MorphKit
+import com.morphkit.widget.registerDefaultWidgets
+
 class MyApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        initIOSStyle()   // 全局启用 iOS 极简风
+        MorphKit.autoInit(this) {
+            registerDefaultWidgets()
+        }
+    }
+}
+```
+
+- **`MorphKit.autoInit(application, registerDefaults)`**：引擎自动初始化入口。完成 `MorphConfig` 创建、主题解析、`MorphInstaller` 全局注入，并通过可选的 `registerDefaults` DSL 块注入控件注册逻辑（保持 core 层对 widget 层零依赖）。重复调用将抛出 `IllegalStateException`。
+- **`registerDefaultWidgets()`**：`MorphConfig` 的扩展函数，一次性注册所有内置控件替换规则（TextView/Button/EditText/CardView/MaterialCardView/RadioButton/CheckBox → 对应 Morph 控件）。`autoInit` 和 `initIOSStyle` 共享同一份规则清单，避免遗漏或不同步。
+
+如果只想强制启用 iOS 极简风（禁止 AUTO 降级到 Pixel），可改用 `initIOSStyle()`，它内部同样调用 `registerDefaultWidgets()`，并额外将 `stylePolicy` 设为 `IOS`、追加 RecyclerView 软修改兜底：
+
+```kotlin
+import com.morphkit.theme.initIOSStyle
+
+class MyApp : Application() {
+    override fun onCreate() {
+        super.onCreate()
+        initIOSStyle()   // 全局强制启用 iOS 极简风
     }
 }
 ```
@@ -81,6 +102,19 @@ class MyApp : Application() {
 <!-- Pixel 原生风 -->
 <application android:theme="@style/Theme.MorphKit.Pixel" ... >
 ```
+
+---
+
+## Demo 应用
+
+仓库内置两个 demo 模块，用于验证 MorphKit 在不同 UI 体系下的接入效果，均使用 `MorphKit.autoInit(this) { registerDefaultWidgets() }` 完成初始化：
+
+| 模块 | 路径 | UI 体系 | 说明 |
+|---|---|---|---|
+| `app-view` | `app-view/` | 传统 View 体系 | 演示 MorphKit 对 XML 布局中控件的静默替换，包含 Button / Card / EditText / Selection / Text 等控件目录页，通过 Navigation 组件组织页面跳转 |
+| `app-compose` | `app-compose/` | Jetpack Compose | 演示 `MorphTheme` 包裹器与 Compose 版 `MorphButton` 的集成，包含 Catalog / Button / Theme / Settings 等页面 |
+
+两个 demo 共享同一套初始化代码与控件替换规则，仅 UI 实现层不同，可用于对比 View 体系与 Compose 体系下的视觉一致性。运行方式：在 Android Studio 中选择对应 `app-view` 或 `app-compose` 的 run configuration 直接运行。
 
 ---
 

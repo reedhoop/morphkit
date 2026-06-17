@@ -43,62 +43,62 @@ object MorphTheme {
     /** M3 主色（对应 iOS tintColor） */
     @ColorInt
     fun morphColorPrimary(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimary, 0xFF212121.toInt())
 
     /** M3 主色容器色 */
     @ColorInt
     fun morphColorPrimaryContainer(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, 0xFFD0BCFF.toInt())
 
     /** M3 主色上的文字/图标色 */
     @ColorInt
     fun morphColorOnPrimary(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimary, 0xFFFFFFFF.toInt())
 
     /** M3 主色容器上的文字/图标色 */
     @ColorInt
     fun morphColorOnPrimaryContainer(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnPrimaryContainer, 0xFF381E72.toInt())
 
     /** M3 表面色（对应 iOS systemBackground） */
     @ColorInt
     fun morphColorSurface(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurface, 0xFFF5F5F5.toInt())
 
     /** M3 表面变体色（对应 iOS secondarySystemBackground） */
     @ColorInt
     fun morphColorSurfaceVariant(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorSurfaceVariant, 0xFFE7E0EC.toInt())
 
     /** M3 表面色上的文字/图标色（对应 iOS label） */
     @ColorInt
     fun morphColorOnSurface(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, 0xFF212121.toInt())
 
     /** M3 表面变体色上的文字/图标色（对应 iOS secondaryLabel） */
     @ColorInt
     fun morphColorOnSurfaceVariant(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurfaceVariant, 0xFF49454F.toInt())
 
     /** M3 轮廓变体色（对应 iOS separator） */
     @ColorInt
     fun morphColorOutlineVariant(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutlineVariant, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOutlineVariant, 0xFFCAC4D0.toInt())
 
     /** M3 背景色（使用 Android 框架属性） */
     @ColorInt
     fun morphColorBackground(context: Context): Int =
-        MaterialColors.getColor(context, android.R.attr.colorBackground, 0)
+        MaterialColors.getColor(context, android.R.attr.colorBackground, 0xFFF5F5F5.toInt())
 
     /** M3 背景色上的文字/图标色 */
     @ColorInt
     fun morphColorOnBackground(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, 0)
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorOnSurface, 0xFF212121.toInt())
 
     /** 通用主题属性颜色解析 */
     @ColorInt
     fun morphColor(context: Context, @AttrRes attr: Int): Int =
-        MaterialColors.getColor(context, attr, 0)
+        MaterialColors.getColor(context, attr, 0xFF212121.toInt())
 
     // ═══════════════════════════════════════════════════════════════════════
     // 向后兼容 — 委托到 MorphColors / MorphTypography / MorphShape

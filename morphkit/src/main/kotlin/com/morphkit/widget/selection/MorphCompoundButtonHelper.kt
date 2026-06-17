@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.widget.CompoundButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
-import com.morphkit.core.MorphClickListener
 
 /**
  * iOS 模式 CompoundButton 共享逻辑辅助类。
@@ -33,9 +32,12 @@ internal class MorphCompoundButtonHelper(
     private val onRefreshColors: () -> Unit,
     private val indicatorWidthProvider: () -> Int
 ) {
+    /** 预计算的指示器宽度，避免 onMeasure 中每次调用 indicatorWidthProvider() */
+    private val cachedIndicatorWidth: Int = indicatorWidthProvider()
+
     val interactionMode: InteractionMode
 
-    var originalPaddingLeft: Int = 0
+    var originalPaddingStart: Int = 0
         private set
 
     init {
@@ -47,7 +49,7 @@ internal class MorphCompoundButtonHelper(
             a.recycle()
         }
 
-        originalPaddingLeft = button.paddingLeft
+        originalPaddingStart = button.paddingStart
 
         if (interactionMode == InteractionMode.IOS) {
             initIosMode()
@@ -70,9 +72,12 @@ internal class MorphCompoundButtonHelper(
 
     fun onMeasure() {
         if (interactionMode == InteractionMode.IOS) {
-            val targetPaddingLeft = originalPaddingLeft + indicatorWidthProvider()
-            if (button.paddingLeft != targetPaddingLeft) {
-                button.setPadding(targetPaddingLeft, button.paddingTop, button.paddingRight, button.paddingBottom)
+            val targetPaddingStart = originalPaddingStart + cachedIndicatorWidth
+            if (button.paddingStart != targetPaddingStart) {
+                button.setPaddingRelative(
+                    targetPaddingStart, button.paddingTop,
+                    button.paddingEnd, button.paddingBottom
+                )
             }
         }
     }
@@ -84,7 +89,8 @@ internal class MorphCompoundButtonHelper(
             button.context,
             R.animator.morph_widget_selection_ios_state
         )
-
-        button.setOnClickListener(MorphClickListener { /* 点击由 OnCheckedChangeListener 处理 */ })
+        // 注意：CompoundButton 的 toggle() 在 performClick() 中独立于 OnClickListener 执行，
+        // MorphClickListener 防抖无法阻止 toggle。因此此处不设置空回调防抖，
+        // 由 MorphRadioButton/MorphCheckBox 覆写 setOnClickListener 为业务监听器提供防抖。
     }
 }

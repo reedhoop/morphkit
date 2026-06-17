@@ -109,47 +109,47 @@ class MorphRadioButtonBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 3. paddingLeft adjustment — iOS 模式下 paddingLeft 被调整
+    // 3. paddingStart adjustment — iOS 模式下 paddingStart 被调整
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    fun iosMode_paddingLeftIsAdjusted() {
+    fun iosMode_paddingStartIsAdjusted() {
         val radio = MorphRadioButton(iosContext)
         val helper = radio.readField<Any>("iosHelper")
-        val originalPaddingLeft: Int = helper.readField("originalPaddingLeft")
-        // onMeasure 后 paddingLeft 应大于 originalPaddingLeft
+        val originalPaddingStart: Int = helper.readField("originalPaddingStart")
+        // onMeasure 后 paddingStart 应大于 originalPaddingStart
         radio.measure(0, 0)
-        assertThat(radio.paddingLeft).isGreaterThan(originalPaddingLeft)
+        assertThat(radio.paddingStart).isGreaterThan(originalPaddingStart)
     }
 
     @Test
-    fun iosMode_paddingLeftEqualsOriginalPlusIndicatorWidth() {
+    fun iosMode_paddingStartEqualsOriginalPlusIndicatorWidth() {
         val radio = MorphRadioButton(iosContext)
         val helper = radio.readField<Any>("iosHelper")
-        val originalPaddingLeft: Int = helper.readField("originalPaddingLeft")
+        val originalPaddingStart: Int = helper.readField("originalPaddingStart")
         radio.measure(0, 0)
         val expectedExtraWidth = calculateExpectedIndicatorWidth(radio)
-        assertThat(radio.paddingLeft).isEqualTo(originalPaddingLeft + expectedExtraWidth)
+        assertThat(radio.paddingStart).isEqualTo(originalPaddingStart + expectedExtraWidth)
     }
 
     @Test
-    fun materialMode_paddingLeftNotAdjusted() {
+    fun materialMode_paddingStartNotAdjusted() {
         val radio = MorphRadioButton(pixelContext)
         val helper = radio.readField<Any>("iosHelper")
-        val originalPaddingLeft: Int = helper.readField("originalPaddingLeft")
+        val originalPaddingStart: Int = helper.readField("originalPaddingStart")
         radio.measure(0, 0)
-        assertThat(radio.paddingLeft).isEqualTo(originalPaddingLeft)
+        assertThat(radio.paddingStart).isEqualTo(originalPaddingStart)
     }
 
     @Test
-    fun iosMode_originalPaddingLeftPreserved() {
+    fun iosMode_originalPaddingStartPreserved() {
         val radio = MorphRadioButton(iosContext)
         val helper = radio.readField<Any>("iosHelper")
-        val originalPaddingLeft: Int = helper.readField("originalPaddingLeft")
+        val originalPaddingStart: Int = helper.readField("originalPaddingStart")
         radio.measure(0, 0)
-        // originalPaddingLeft 不应随 measure 改变
-        val afterMeasure: Int = helper.readField("originalPaddingLeft")
-        assertThat(afterMeasure).isEqualTo(originalPaddingLeft)
+        // originalPaddingStart 不应随 measure 改变
+        val afterMeasure: Int = helper.readField("originalPaddingStart")
+        assertThat(afterMeasure).isEqualTo(originalPaddingStart)
     }
 
     private fun calculateExpectedIndicatorWidth(radio: MorphRadioButton): Int {

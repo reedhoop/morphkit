@@ -196,7 +196,7 @@ class MorphTextView @JvmOverloads constructor(
      * | [isTertiaryText] | [MorphTheme.morphColorOnSurfaceVariant] + 55% 透明度 | UIColor.tertiaryLabel | 占位符、时间戳 |
      */
     private fun applyTextColor() {
-        val color: Int = when {
+        val color = when {
             isTertiaryText -> MorphColors.adjustAlpha(MorphTheme.morphColorOnSurfaceVariant(context), MorphTokens.Interaction.tertiaryTextAlpha)
             isSecondaryText -> MorphTheme.morphColorOnSurfaceVariant(context)
             else -> MorphTheme.morphColorOnSurface(context)

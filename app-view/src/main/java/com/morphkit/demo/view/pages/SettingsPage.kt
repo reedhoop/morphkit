@@ -12,7 +12,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.core.MorphKit
 import com.morphkit.core.StylePolicy
-import com.morphkit.theme.MorphTokens
 import com.morphkit.widget.button.MorphButton
 
 class SettingsPage : Fragment() {
@@ -22,6 +21,7 @@ class SettingsPage : Fragment() {
     ): View {
         val context = requireContext()
         val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
+        val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -31,14 +31,14 @@ class SettingsPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "Settings"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         // Style Policy
         layout.addView(TextView(context).apply {
             text = "Style Policy"
             textSize = 18f
-            setPadding(0, 0, 0, 8)
+            setPadding(0, 0, 0, dp8)
         })
 
         val policies = listOf(
@@ -59,14 +59,14 @@ class SettingsPage : Fragment() {
             layout.addView(btn, LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { bottomMargin = 8 })
+            ).apply { bottomMargin = dp8 })
         }
 
         // Status
         layout.addView(TextView(context).apply {
             text = "Status"
             textSize = 18f
-            setPadding(0, MorphTokens.Spacing.spacingBase, 0, 8)
+            setPadding(0, dp16, 0, dp8)
         })
 
         layout.addView(TextView(context).apply {

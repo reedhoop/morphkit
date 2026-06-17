@@ -53,22 +53,16 @@ import com.morphkit.theme.MorphTokens
 // CompositionLocal
 // ═════════════════════════════════════════════════════════════════════════════════
 
-val LocalMorphColors = staticCompositionLocalOf { MorphColorPalette.iosLight() }
-val LocalMorphShape = staticCompositionLocalOf { MorphShape.ios() }
+private val defaultIosLightPalette: MorphColorPalette = MorphColorPalette.iosLight()
+val LocalMorphColors = staticCompositionLocalOf { defaultIosLightPalette }
 
-/**
- * Compose 交互模式 CompositionLocal。
- *
- * 类型委托至 [InteractionMode]（`com.morphkit.core`），消除以往 Compose 侧
- * `MorphInteractionMode` 与 View 侧 `InteractionMode` 的双重定义。
- */
+private val defaultIosShape: MorphShape = MorphShape.ios()
+val LocalMorphShape = staticCompositionLocalOf { defaultIosShape }
+
+/** 当前交互模式（IOS / MATERIAL），由 MorphTheme 根据策略提供 */
 val LocalMorphInteractionMode = staticCompositionLocalOf { InteractionMode.IOS }
 
-/**
- * Compose 风格策略 CompositionLocal。
- *
- * 类型委托至 [StylePolicy]（`com.morphkit.core`），消除以往 `MorphStyle` 枚举。
- */
+/** 当前风格策略，由 MorphTheme 根据配置提供 */
 val LocalMorphStylePolicy = staticCompositionLocalOf { StylePolicy.AUTO }
 
 // ═════════════════════════════════════════════════════════════════════════════════
@@ -99,16 +93,21 @@ fun MorphTheme(
 
     // ── 颜色选择：iOS 从 Token，Pixel 从 Context Theme（支持暗色降级） ──
     // resolveStyle() 保证返回 IOS 或 PIXEL，不会返回 AUTO
-    val colors = when (resolvedStyle) {
-        StylePolicy.IOS -> if (isDark) MorphColorPalette.iosDark() else MorphColorPalette.iosLight()
-        StylePolicy.PIXEL -> MorphColorPalette.pixelFromContext(context, isDark)
-        StylePolicy.AUTO -> MorphColorPalette.iosLight() // unreachable, for exhaustiveness
+    // 使用 remember 避免每次重组分配新实例
+    val colors = remember(resolvedStyle, isDark) {
+        when (resolvedStyle) {
+            StylePolicy.IOS -> if (isDark) MorphColorPalette.iosDark() else MorphColorPalette.iosLight()
+            StylePolicy.PIXEL -> MorphColorPalette.pixelFromContext(context, isDark)
+            StylePolicy.AUTO -> MorphColorPalette.iosLight() // unreachable, for exhaustiveness
+        }
     }
 
-    val shape = when (resolvedStyle) {
-        StylePolicy.IOS -> MorphShape.ios()
-        StylePolicy.PIXEL -> MorphShape.pixel()
-        StylePolicy.AUTO -> MorphShape.ios() // unreachable
+    val shape = remember(resolvedStyle) {
+        when (resolvedStyle) {
+            StylePolicy.IOS -> MorphShape.ios()
+            StylePolicy.PIXEL -> MorphShape.pixel()
+            StylePolicy.AUTO -> MorphShape.ios() // unreachable
+        }
     }
 
     val interactionMode = when (resolvedStyle) {
@@ -200,7 +199,7 @@ private fun morphTypography(): Typography {
         displaySmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle2.sp),
         headlineLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle3.sp),
         headlineMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
-        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
+        headlineSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeSubheadline.sp),
         titleLarge = TextStyle(fontFamily = ff, fontWeight = FontWeight.Bold, fontSize = MorphTokens.Typography.fontSizeTitle3.sp),
         titleMedium = TextStyle(fontFamily = ff, fontWeight = FontWeight.SemiBold, fontSize = MorphTokens.Typography.fontSizeHeadline.sp),
         titleSmall = TextStyle(fontFamily = ff, fontWeight = FontWeight.Medium, fontSize = MorphTokens.Typography.fontSizeSubheadline.sp),

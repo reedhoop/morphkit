@@ -61,6 +61,18 @@ object MorphInstaller {
 
     private val installed = AtomicBoolean(false)
 
+    /**
+     * 安装 MorphKit 全局注入器。
+     *
+     * 注册 ActivityLifecycleCallbacks，在每个 Activity 的 onActivityPreCreated 阶段
+     * 自动注入 MorphFactory2，在 onActivityCreated 阶段补充 AppCompat delegate。
+     *
+     * 重复调用将被 CAS 守卫静默跳过。
+     *
+     * @param application 应用实例
+     * @throws IllegalStateException 若重复安装
+     */
+    @Throws(IllegalStateException::class)
     fun install(application: Application) {
         if (!installed.compareAndSet(false, true)) {
             Log.d(TAG, "MorphInstaller.install 已执行过，跳过重复注册")
@@ -106,7 +118,7 @@ object MorphInstaller {
             }
 
             // originalFactory 暂时为 null，将在 onActivityCreated 中补充
-            val morphFactory = MorphFactory2(currentFactory2, MorphKit.getFinalThemeResId())
+            val morphFactory = MorphFactory2(currentFactory2, MorphKit.finalThemeResId)
             setFactoryFields(inflater, morphFactory)
 
             Log.d(TAG, "Factory2 注入成功: ${activity.javaClass.simpleName}")
@@ -149,5 +161,11 @@ object MorphInstaller {
         if (!ReflectionHelper.safeSetFactory2(inflater, factory)) {
             Log.e(TAG, "所有 Factory2 注入策略均失败，MorphKit 无法生效")
         }
+    }
+
+    /** 重置安装状态（仅用于测试） */
+    @androidx.annotation.VisibleForTesting
+    internal fun reset() {
+        installed.set(false)
     }
 }

@@ -10,7 +10,6 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.morphkit.widget.text.MorphTextView
-import com.morphkit.theme.MorphTokens
 
 class TextPage : Fragment() {
 
@@ -28,7 +27,7 @@ class TextPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphTextView"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         val morphText = MorphTextView(context).apply {
@@ -37,7 +36,7 @@ class TextPage : Fragment() {
         layout.addView(morphText, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { bottomMargin = MorphTokens.Spacing.spacingBase })
+        ).apply { bottomMargin = dp16 })
 
         layout.addView(TextView(context).apply {
             text = "MorphTextView supports the full MorphKit theme system, including typography tokens and color schemes."

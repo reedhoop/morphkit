@@ -1,6 +1,8 @@
 package com.morphkit.widget
 
+import com.morphkit.core.MemoryTrimmable
 import com.morphkit.core.MorphConfig
+import com.morphkit.core.MorphKit
 
 /**
  * MorphKit 内置控件的默认替换规则注册。
@@ -51,5 +53,22 @@ fun MorphConfig.registerDefaultWidgets() {
     }
     groupReplace(listOf("CheckBox", "androidx.appcompat.widget.AppCompatCheckBox")) { ctx, attrs ->
         com.morphkit.widget.selection.MorphCheckBox(ctx, attrs)
+    }
+
+    // 注册 BackdropBlurHelper 为内存压力响应者，
+    // 使 core 层在 onTrimMemory 时通过 MemoryTrimmable 接口通知 widget 层清理 Bitmap 池，
+    // 避免 core 层直接依赖 widget 层。
+    MorphKit.registerMemoryTrimmable(BackdropBlurMemoryTrimmable)
+}
+
+/**
+ * BackdropBlurHelper 的内存压力响应适配器。
+ *
+ * 将 [com.morphkit.widget.container.BackdropBlurHelper.clearPool] 适配为 [MemoryTrimmable]，
+ * 供 [MorphKit] 在系统内存压力时统一调用。
+ */
+private object BackdropBlurMemoryTrimmable : MemoryTrimmable {
+    override fun onTrimMemory(level: Int) {
+        com.morphkit.widget.container.BackdropBlurHelper.clearPool()
     }
 }

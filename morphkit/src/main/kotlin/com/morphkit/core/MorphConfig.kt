@@ -159,6 +159,7 @@ class MorphConfig internal constructor() {
      * @param creator 替换控件的工厂方法，接收 [Context] 与 [AttributeSet]
      */
     fun replace(name: String, creator: (Context, AttributeSet) -> View) {
+        require(name.isNotBlank()) { "replace: name 不能为空" }
         _replaceMap[name] = creator
     }
 
@@ -183,6 +184,7 @@ class MorphConfig internal constructor() {
      * @param creator 共用的替换控件工厂方法
      */
     fun groupReplace(names: List<String>, creator: (Context, AttributeSet) -> View) {
+        require(names.isNotEmpty()) { "groupReplace: names 不能为空列表" }
         names.forEach { name ->
             _replaceMap[name] = creator
         }
@@ -203,6 +205,7 @@ class MorphConfig internal constructor() {
      * @param modifier 属性修改器，接收已创建的 [View]
      */
     fun modify(name: String, modifier: (View) -> Unit) {
+        require(name.isNotBlank()) { "modify: name 不能为空" }
         _modifyMap[name] = modifier
     }
 

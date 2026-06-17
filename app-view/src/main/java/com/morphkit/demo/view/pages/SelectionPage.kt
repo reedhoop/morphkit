@@ -13,7 +13,6 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.widget.selection.MorphCheckBox
 import com.morphkit.widget.button.MorphRadioButton
-import com.morphkit.theme.MorphTokens
 
 class SelectionPage : Fragment() {
 
@@ -32,7 +31,7 @@ class SelectionPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphCheckBox"
             textSize = 22f
-            setPadding(0, 0, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, 0, 0, dp16)
         })
 
         val check1 = MorphCheckBox(context).apply {
@@ -56,7 +55,7 @@ class SelectionPage : Fragment() {
         layout.addView(TextView(context).apply {
             text = "MorphRadioButton"
             textSize = 22f
-            setPadding(0, MorphTokens.Spacing.spacingBase, 0, MorphTokens.Spacing.spacingBase)
+            setPadding(0, dp16, 0, dp16)
         })
 
         val radioGroup = RadioGroup(context).apply {

@@ -67,11 +67,8 @@ class MorphFactory2(
     @Volatile private var hostHasMorphAttr = false
 
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
-    // @Volatile: MorphInstaller 在 onActivityCreated 中写入，onCreateView 在 UI 线程读取
-    @Volatile
-    private var cachedThemedContext: Context? = null
-    @Volatile
-    private var cachedBaseContext: Context? = null
+    // 使用 ConcurrentHashMap 消除 check-then-act 竞态，支持多 Context 并发缓存
+    private val themedContextCache = java.util.concurrent.ConcurrentHashMap<Context, Context>()
 
     /**
      * 补充 AppCompat delegate 作为 originalFactory。
@@ -160,15 +157,10 @@ class MorphFactory2(
 
         if (hostHasMorphAttr) return context
 
-        // 缓存：同一 Activity 内 context 实例相同，无需重复创建
-        if (cachedBaseContext === context) {
-            cachedThemedContext?.let { return it }
+        // 使用 ConcurrentHashMap 原子缓存，消除 check-then-act 竞态
+        return themedContextCache.computeIfAbsent(context) {
+            ContextThemeWrapper(it, finalThemeResId)
         }
-
-        val wrapped = ContextThemeWrapper(context, finalThemeResId)
-        cachedThemedContext = wrapped
-        cachedBaseContext = context
-        return wrapped
     }
 
     private fun hostThemeHasMorphAttributes(context: Context): Boolean {

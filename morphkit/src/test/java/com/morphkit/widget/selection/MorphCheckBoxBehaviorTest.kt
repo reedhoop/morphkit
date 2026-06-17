@@ -116,37 +116,37 @@ class MorphCheckBoxBehaviorTest {
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    fun iosMode_originalPaddingLeftIsRecorded() {
+    fun iosMode_originalPaddingStartIsRecorded() {
         val checkBox = MorphCheckBox(iosContext)
         val helper: MorphCompoundButtonHelper = checkBox.readField("iosHelper")
-        // originalPaddingLeft 应该被记录（值为构造时的 paddingLeft）
-        assertThat(helper.originalPaddingLeft).isAtLeast(0)
+        // originalPaddingStart 应该被记录（值为构造时的 paddingStart）
+        assertThat(helper.originalPaddingStart).isAtLeast(0)
     }
 
     @Test
-    fun iosMode_onMeasure_adjustsPaddingLeft() {
+    fun iosMode_onMeasure_adjustsPaddingStart() {
         val checkBox = MorphCheckBox(iosContext)
         val helper: MorphCompoundButtonHelper = checkBox.readField("iosHelper")
-        val originalPaddingLeft = helper.originalPaddingLeft
+        val originalPaddingStart = helper.originalPaddingStart
 
         // 触发 measure
         checkBox.measure(0, 0)
 
-        // iOS 模式下 paddingLeft 应大于原始 paddingLeft（加上了指示器宽度）
-        assertThat(checkBox.paddingLeft).isGreaterThan(originalPaddingLeft)
+        // iOS 模式下 paddingStart 应大于原始 paddingStart（加上了指示器宽度）
+        assertThat(checkBox.paddingStart).isGreaterThan(originalPaddingStart)
     }
 
     @Test
-    fun materialMode_onMeasure_doesNotAdjustPaddingLeft() {
+    fun materialMode_onMeasure_doesNotAdjustPaddingStart() {
         val checkBox = MorphCheckBox(pixelContext)
         val helper: MorphCompoundButtonHelper = checkBox.readField("iosHelper")
-        val originalPaddingLeft = helper.originalPaddingLeft
+        val originalPaddingStart = helper.originalPaddingStart
 
         // 触发 measure
         checkBox.measure(0, 0)
 
-        // Material 模式下 paddingLeft 不应被调整
-        assertThat(checkBox.paddingLeft).isEqualTo(originalPaddingLeft)
+        // Material 模式下 paddingStart 不应被调整
+        assertThat(checkBox.paddingStart).isEqualTo(originalPaddingStart)
     }
 
     // ═══════════════════════════════════════════════════════════════════════

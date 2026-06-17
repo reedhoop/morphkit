@@ -69,105 +69,111 @@ data class MorphColorPalette(
     val warning: Color
 ) {
     companion object {
-        /** iOS 亮色色板 — 从 MorphTokens 读取 */
-        fun iosLight() = MorphColorPalette(
-            // Primary
-            primary = Color(MorphTokens.Colors.colorBlue500),
-            onPrimary = Color(MorphTokens.Colors.colorOnPrimary),
-            primaryContainer = Color(MorphTokens.Colors.colorPrimaryContainer),
-            onPrimaryContainer = Color(MorphTokens.Colors.colorOnPrimaryContainer),
-            // Secondary
-            secondary = Color(MorphTokens.Colors.colorSecondary),
-            onSecondary = Color(MorphTokens.Colors.colorOnSecondary),
-            secondaryContainer = Color(MorphTokens.Colors.colorSecondaryContainer),
-            onSecondaryContainer = Color(MorphTokens.Colors.colorOnSecondaryContainer),
-            // Tertiary
-            tertiary = Color(MorphTokens.Colors.colorTertiary),
-            onTertiary = Color(MorphTokens.Colors.colorOnTertiary),
-            tertiaryContainer = Color(MorphTokens.Colors.colorTertiaryContainer),
-            onTertiaryContainer = Color(MorphTokens.Colors.colorOnTertiaryContainer),
-            // Error
-            error = Color(MorphTokens.Colors.colorRed500),
-            onError = Color(MorphTokens.Colors.colorOnError),
-            errorContainer = Color(MorphTokens.Colors.colorErrorContainer),
-            onErrorContainer = Color(MorphTokens.Colors.colorOnErrorContainer),
-            // Surface
-            surface = Color(MorphTokens.Colors.colorSurface),
-            onSurface = Color(MorphTokens.Colors.colorOnSurface),
-            surfaceVariant = Color(MorphTokens.Colors.colorSurfaceVariant),
-            onSurfaceVariant = Color(MorphTokens.Colors.colorOnSurfaceVariant),
-            surfaceDim = Color(MorphTokens.Colors.colorSurfaceDim),
-            surfaceBright = Color(MorphTokens.Colors.colorSurfaceBright),
-            surfaceContainerLowest = Color(MorphTokens.Colors.colorSurfaceContainerLowest),
-            surfaceContainerLow = Color(MorphTokens.Colors.colorSurfaceContainerLow),
-            surfaceContainer = Color(MorphTokens.Colors.colorSurfaceContainer),
-            surfaceContainerHigh = Color(MorphTokens.Colors.colorSurfaceContainerHigh),
-            surfaceContainerHighest = Color(MorphTokens.Colors.colorSurfaceContainerHighest),
-            // Outline
-            outline = Color(MorphTokens.Colors.colorOutline),
-            outlineVariant = Color(MorphTokens.Colors.colorOutlineVariant),
-            // Background
-            background = Color(MorphTokens.Colors.colorBackground),
-            onBackground = Color(MorphTokens.Colors.colorOnSurface),
-            // Inverse
-            inverseSurface = Color(MorphTokens.Colors.colorOnSurface),
-            inverseOnSurface = Color(MorphTokens.Colors.colorSurface),
-            inversePrimary = Color(MorphTokens.Colors.colorBlue100),
-            // Misc
-            scrim = Color(MorphTokens.Colors.colorScrim),
-            success = Color(MorphTokens.Colors.colorGreen500),
-            warning = Color(MorphTokens.Colors.colorOrange500)
-        )
+        /** iOS 亮色色板 — 从 MorphTokens 读取（缓存单例，避免重复构造） */
+        private val cachedIosLight: MorphColorPalette by lazy {
+            MorphColorPalette(
+                // Primary
+                primary = Color(MorphTokens.Colors.colorBlue500),
+                onPrimary = Color(MorphTokens.Colors.colorOnPrimary),
+                primaryContainer = Color(MorphTokens.Colors.colorPrimaryContainer),
+                onPrimaryContainer = Color(MorphTokens.Colors.colorOnPrimaryContainer),
+                // Secondary
+                secondary = Color(MorphTokens.Colors.colorSecondary),
+                onSecondary = Color(MorphTokens.Colors.colorOnSecondary),
+                secondaryContainer = Color(MorphTokens.Colors.colorSecondaryContainer),
+                onSecondaryContainer = Color(MorphTokens.Colors.colorOnSecondaryContainer),
+                // Tertiary
+                tertiary = Color(MorphTokens.Colors.colorTertiary),
+                onTertiary = Color(MorphTokens.Colors.colorOnTertiary),
+                tertiaryContainer = Color(MorphTokens.Colors.colorTertiaryContainer),
+                onTertiaryContainer = Color(MorphTokens.Colors.colorOnTertiaryContainer),
+                // Error
+                error = Color(MorphTokens.Colors.colorRed500),
+                onError = Color(MorphTokens.Colors.colorOnError),
+                errorContainer = Color(MorphTokens.Colors.colorErrorContainer),
+                onErrorContainer = Color(MorphTokens.Colors.colorOnErrorContainer),
+                // Surface
+                surface = Color(MorphTokens.Colors.colorSurface),
+                onSurface = Color(MorphTokens.Colors.colorOnSurface),
+                surfaceVariant = Color(MorphTokens.Colors.colorSurfaceVariant),
+                onSurfaceVariant = Color(MorphTokens.Colors.colorOnSurfaceVariant),
+                surfaceDim = Color(MorphTokens.Colors.colorSurfaceDim),
+                surfaceBright = Color(MorphTokens.Colors.colorSurfaceBright),
+                surfaceContainerLowest = Color(MorphTokens.Colors.colorSurfaceContainerLowest),
+                surfaceContainerLow = Color(MorphTokens.Colors.colorSurfaceContainerLow),
+                surfaceContainer = Color(MorphTokens.Colors.colorSurfaceContainer),
+                surfaceContainerHigh = Color(MorphTokens.Colors.colorSurfaceContainerHigh),
+                surfaceContainerHighest = Color(MorphTokens.Colors.colorSurfaceContainerHighest),
+                // Outline
+                outline = Color(MorphTokens.Colors.colorOutline),
+                outlineVariant = Color(MorphTokens.Colors.colorOutlineVariant),
+                // Background
+                background = Color(MorphTokens.Colors.colorBackground),
+                onBackground = Color(MorphTokens.Colors.colorOnSurface),
+                // Inverse
+                inverseSurface = Color(MorphTokens.Colors.colorOnSurface),
+                inverseOnSurface = Color(MorphTokens.Colors.colorSurface),
+                inversePrimary = Color(MorphTokens.Colors.colorBlue100),
+                // Misc
+                scrim = Color(MorphTokens.Colors.colorScrim),
+                success = Color(MorphTokens.Colors.colorGreen500),
+                warning = Color(MorphTokens.Colors.colorOrange500)
+            )
+        }
+        fun iosLight(): MorphColorPalette = cachedIosLight
 
-        /** iOS 暗色色板 — 从 MorphTokens 读取 */
-        fun iosDark() = MorphColorPalette(
-            // Primary
-            primary = Color(MorphTokens.Colors.colorBlue100),
-            onPrimary = Color(MorphTokens.Colors.colorOnPrimaryDark),
-            primaryContainer = Color(MorphTokens.Colors.colorPrimaryContainerDark),
-            onPrimaryContainer = Color(MorphTokens.Colors.colorOnPrimaryContainerDark),
-            // Secondary
-            secondary = Color(MorphTokens.Colors.colorSecondaryDark),
-            onSecondary = Color(MorphTokens.Colors.colorOnSecondaryDark),
-            secondaryContainer = Color(MorphTokens.Colors.colorSecondaryContainerDark),
-            onSecondaryContainer = Color(MorphTokens.Colors.colorOnSecondaryContainerDark),
-            // Tertiary
-            tertiary = Color(MorphTokens.Colors.colorTertiaryDark),
-            onTertiary = Color(MorphTokens.Colors.colorOnTertiaryDark),
-            tertiaryContainer = Color(MorphTokens.Colors.colorTertiaryContainerDark),
-            onTertiaryContainer = Color(MorphTokens.Colors.colorOnTertiaryContainerDark),
-            // Error
-            error = Color(MorphTokens.Colors.colorErrorDark),
-            onError = Color(MorphTokens.Colors.colorOnErrorDark),
-            errorContainer = Color(MorphTokens.Colors.colorErrorContainerDark),
-            onErrorContainer = Color(MorphTokens.Colors.colorOnErrorContainerDark),
-            // Surface
-            surface = Color(MorphTokens.Colors.colorSurfaceDark),
-            onSurface = Color(MorphTokens.Colors.colorOnSurfaceDark),
-            surfaceVariant = Color(MorphTokens.Colors.colorSurfaceVariantDark),
-            onSurfaceVariant = Color(MorphTokens.Colors.colorOnSurfaceVariantDark),
-            surfaceDim = Color(MorphTokens.Colors.colorSurfaceDimDark),
-            surfaceBright = Color(MorphTokens.Colors.colorSurfaceBrightDark),
-            surfaceContainerLowest = Color(MorphTokens.Colors.colorSurfaceContainerLowestDark),
-            surfaceContainerLow = Color(MorphTokens.Colors.colorSurfaceContainerLowDark),
-            surfaceContainer = Color(MorphTokens.Colors.colorSurfaceContainerDark),
-            surfaceContainerHigh = Color(MorphTokens.Colors.colorSurfaceContainerHighDark),
-            surfaceContainerHighest = Color(MorphTokens.Colors.colorSurfaceContainerHighestDark),
-            // Outline
-            outline = Color(MorphTokens.Colors.colorOutlineDark),
-            outlineVariant = Color(MorphTokens.Colors.colorOutlineVariantDark),
-            // Background
-            background = Color(MorphTokens.Colors.colorBackgroundDark),
-            onBackground = Color(MorphTokens.Colors.colorOnSurfaceDark),
-            // Inverse
-            inverseSurface = Color(MorphTokens.Colors.colorOnSurfaceDark),
-            inverseOnSurface = Color(MorphTokens.Colors.colorSurfaceDark),
-            inversePrimary = Color(MorphTokens.Colors.colorBlue500),
-            // Misc
-            scrim = Color(MorphTokens.Colors.colorScrim),
-            success = Color(MorphTokens.Colors.colorSuccessDark),
-            warning = Color(MorphTokens.Colors.colorWarningDark)
-        )
+        /** iOS 暗色色板 — 从 MorphTokens 读取（缓存单例，避免重复构造） */
+        private val cachedIosDark: MorphColorPalette by lazy {
+            MorphColorPalette(
+                // Primary
+                primary = Color(MorphTokens.Colors.colorBlue100),
+                onPrimary = Color(MorphTokens.Colors.colorOnPrimaryDark),
+                primaryContainer = Color(MorphTokens.Colors.colorPrimaryContainerDark),
+                onPrimaryContainer = Color(MorphTokens.Colors.colorOnPrimaryContainerDark),
+                // Secondary
+                secondary = Color(MorphTokens.Colors.colorSecondaryDark),
+                onSecondary = Color(MorphTokens.Colors.colorOnSecondaryDark),
+                secondaryContainer = Color(MorphTokens.Colors.colorSecondaryContainerDark),
+                onSecondaryContainer = Color(MorphTokens.Colors.colorOnSecondaryContainerDark),
+                // Tertiary
+                tertiary = Color(MorphTokens.Colors.colorTertiaryDark),
+                onTertiary = Color(MorphTokens.Colors.colorOnTertiaryDark),
+                tertiaryContainer = Color(MorphTokens.Colors.colorTertiaryContainerDark),
+                onTertiaryContainer = Color(MorphTokens.Colors.colorOnTertiaryContainerDark),
+                // Error
+                error = Color(MorphTokens.Colors.colorErrorDark),
+                onError = Color(MorphTokens.Colors.colorOnErrorDark),
+                errorContainer = Color(MorphTokens.Colors.colorErrorContainerDark),
+                onErrorContainer = Color(MorphTokens.Colors.colorOnErrorContainerDark),
+                // Surface
+                surface = Color(MorphTokens.Colors.colorSurfaceDark),
+                onSurface = Color(MorphTokens.Colors.colorOnSurfaceDark),
+                surfaceVariant = Color(MorphTokens.Colors.colorSurfaceVariantDark),
+                onSurfaceVariant = Color(MorphTokens.Colors.colorOnSurfaceVariantDark),
+                surfaceDim = Color(MorphTokens.Colors.colorSurfaceDimDark),
+                surfaceBright = Color(MorphTokens.Colors.colorSurfaceBrightDark),
+                surfaceContainerLowest = Color(MorphTokens.Colors.colorSurfaceContainerLowestDark),
+                surfaceContainerLow = Color(MorphTokens.Colors.colorSurfaceContainerLowDark),
+                surfaceContainer = Color(MorphTokens.Colors.colorSurfaceContainerDark),
+                surfaceContainerHigh = Color(MorphTokens.Colors.colorSurfaceContainerHighDark),
+                surfaceContainerHighest = Color(MorphTokens.Colors.colorSurfaceContainerHighestDark),
+                // Outline
+                outline = Color(MorphTokens.Colors.colorOutlineDark),
+                outlineVariant = Color(MorphTokens.Colors.colorOutlineVariantDark),
+                // Background
+                background = Color(MorphTokens.Colors.colorBackgroundDark),
+                onBackground = Color(MorphTokens.Colors.colorOnSurfaceDark),
+                // Inverse
+                inverseSurface = Color(MorphTokens.Colors.colorOnSurfaceDark),
+                inverseOnSurface = Color(MorphTokens.Colors.colorSurfaceDark),
+                inversePrimary = Color(MorphTokens.Colors.colorBlue500),
+                // Misc
+                scrim = Color(MorphTokens.Colors.colorScrim),
+                success = Color(MorphTokens.Colors.colorSuccessDark),
+                warning = Color(MorphTokens.Colors.colorWarningDark)
+            )
+        }
+        fun iosDark(): MorphColorPalette = cachedIosDark
 
         /**
          * Pixel (M3) 色板 — 从 Context Theme 读取 M3 语义色。
@@ -222,8 +228,8 @@ data class MorphColorPalette(
                 // Background
                 background = resolveM3Color(context, android.R.attr.colorBackground, fallback.background),
                 onBackground = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, fallback.onBackground),
-                // Inverse (Material 1.12.0 无 colorInverseSurface/colorInverseOnSurface 属性)
-                inverseSurface = fallback.inverseSurface,
+                // Inverse — 部分 Material 版本无 colorInverseSurface/colorInverseOnSurface 属性，使用 fallback
+                inverseSurface = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryInverse, fallback.inverseSurface),
                 inverseOnSurface = fallback.inverseOnSurface,
                 inversePrimary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryInverse, fallback.inversePrimary),
                 // Misc

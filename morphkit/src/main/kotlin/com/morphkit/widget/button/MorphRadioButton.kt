@@ -5,9 +5,11 @@ import android.content.res.Configuration
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatRadioButton
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.core.MorphClickListener
 import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
@@ -100,9 +102,14 @@ class MorphRadioButton @JvmOverloads constructor(
     }
 
     private fun drawIosIndicator(canvas: Canvas) {
-        // ── 指示器位置：垂直居中，水平在原始 paddingLeft 偏移处 ──
-        // 注意：paddingLeft 已被增加以推开文字，此处使用 originalPaddingLeft
-        val cx = ringRadius + ringStrokeWidth / 2 + iosHelper.originalPaddingLeft
+        // ── 指示器位置：垂直居中，水平在原始 paddingStart 偏移处（支持 RTL）──
+        // 注意：paddingStart 已被增加以推开文字，此处使用 originalPaddingStart
+        val indicatorOffset = ringRadius + ringStrokeWidth / 2 + iosHelper.originalPaddingStart
+        val cx = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+            width - indicatorOffset
+        } else {
+            indicatorOffset
+        }
         val cy = height / 2f
 
         ringPaint.strokeWidth = ringStrokeWidth
@@ -131,5 +138,18 @@ class MorphRadioButton @JvmOverloads constructor(
     private fun refreshColorCache() {
         primaryColor = MorphTheme.morphColorPrimary(context)
         surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+    }
+
+    /**
+     * 覆写 setOnClickListener，使用 MorphClickListener 包装提供防抖保护。
+     * 注意：CompoundButton.toggle() 在 performClick() 中独立执行，
+     * 防抖仅影响业务回调的触发频率，不影响选中状态切换。
+     */
+    override fun setOnClickListener(l: OnClickListener?) {
+        if (l == null) {
+            super.setOnClickListener(null)
+        } else {
+            super.setOnClickListener(MorphClickListener { l.onClick(this) })
+        }
     }
 }

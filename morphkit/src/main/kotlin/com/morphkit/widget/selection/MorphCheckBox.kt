@@ -7,9 +7,11 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.View
 import androidx.appcompat.widget.AppCompatCheckBox
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
+import com.morphkit.core.MorphClickListener
 import com.morphkit.theme.MorphColors
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
@@ -99,8 +101,13 @@ class MorphCheckBox @JvmOverloads constructor(
     }
 
     private fun drawIosIndicator(canvas: Canvas) {
-        // 注意：paddingLeft 已被增加以推开文字，此处使用 originalPaddingLeft
-        val left = iosHelper.originalPaddingLeft.toFloat()
+        // 注意：paddingStart 已被增加以推开文字，此处使用 originalPaddingStart（支持 RTL）
+        val indicatorOffset = iosHelper.originalPaddingStart.toFloat()
+        val left = if (layoutDirection == View.LAYOUT_DIRECTION_RTL) {
+            width - indicatorOffset - boxSize
+        } else {
+            indicatorOffset
+        }
         val top = (height - boxSize) / 2f
         val right = left + boxSize
         val bottom = top + boxSize
@@ -166,5 +173,18 @@ class MorphCheckBox @JvmOverloads constructor(
         primaryColor = MorphTheme.morphColorPrimary(context)
         onPrimaryColor = MorphTheme.morphColorOnPrimary(context)
         surfaceVariantColor = MorphTheme.morphColorSurfaceVariant(context)
+    }
+
+    /**
+     * 覆写 setOnClickListener，使用 MorphClickListener 包装提供防抖保护。
+     * 注意：CompoundButton.toggle() 在 performClick() 中独立执行，
+     * 防抖仅影响业务回调的触发频率，不影响选中状态切换。
+     */
+    override fun setOnClickListener(l: OnClickListener?) {
+        if (l == null) {
+            super.setOnClickListener(null)
+        } else {
+            super.setOnClickListener(MorphClickListener { l.onClick(this) })
+        }
     }
 }
