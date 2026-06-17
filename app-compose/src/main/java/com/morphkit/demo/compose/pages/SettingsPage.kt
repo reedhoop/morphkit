@@ -14,46 +14,58 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.morphkit.core.MorphKit
 import com.morphkit.core.StylePolicy
 import com.morphkit.theme.compose.MorphButton
 import com.morphkit.theme.MorphTokens
+import com.morphkit.demo.compose.R
 
 @Composable
 fun SettingsPage(onBack: () -> Unit) {
     val context = LocalContext.current
+    val backContentDescription = stringResource(R.string.back)
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(MorphTokens.Spacing.spacingBase.dp),
+        verticalArrangement = Arrangement.spacedBy(MorphTokens.Spacing.spacingBase.dp)
     ) {
         Text(
-            text = "Settings",
+            text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
         Text(
-            text = "Style Policy",
+            text = stringResource(R.string.settings_style_policy),
             style = MaterialTheme.typography.titleMedium
         )
 
-        listOf(
-            "AUTO" to StylePolicy.AUTO,
-            "IOS" to StylePolicy.IOS,
-            "PIXEL" to StylePolicy.PIXEL,
-        ).forEach { (label, policy) ->
+        val policies = remember {
+            listOf(
+                "AUTO" to StylePolicy.AUTO,
+                "IOS" to StylePolicy.IOS,
+                "PIXEL" to StylePolicy.PIXEL,
+            )
+        }
+
+        policies.forEach { (label, policy) ->
             MorphButton(
-                text = "Switch to $label",
+                text = stringResource(R.string.settings_switch_to, label),
                 onClick = {
                     // StylePolicy can only be set during MorphKit.init(), which runs once.
-                    Toast.makeText(context, "Style: $label (requires restart)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.settings_requires_restart, label),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 },
             )
         }
@@ -61,15 +73,15 @@ fun SettingsPage(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
         Text(
-            text = "Status",
+            text = stringResource(R.string.settings_status),
             style = MaterialTheme.typography.titleMedium
         )
 
-        Text(text = "Initialized: ${MorphKit.isInitialized()}")
-        Text(text = "Theme ResId: ${MorphKit.getFinalThemeResId()}")
+        Text(text = stringResource(R.string.settings_initialized, MorphKit.isInitialized()))
+        Text(text = stringResource(R.string.settings_theme_resid, MorphKit.getFinalThemeResId()))
 
         IconButton(onClick = onBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = backContentDescription)
         }
     }
 }

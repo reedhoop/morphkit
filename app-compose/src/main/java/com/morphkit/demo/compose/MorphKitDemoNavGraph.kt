@@ -32,7 +32,11 @@ fun MorphKitDemoNavGraph() {
         ) {
             composable(Routes.CATALOG) {
                 CatalogPage(
-                    onNavigate = { route -> navController.navigate(route) }
+                    onNavigate = { route ->
+                        navController.navigate(route) {
+                            launchSingleTop = true
+                        }
+                    }
                 )
             }
             composable(Routes.BUTTON) {

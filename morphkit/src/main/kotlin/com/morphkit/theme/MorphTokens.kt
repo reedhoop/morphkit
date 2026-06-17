@@ -488,7 +488,20 @@ object MorphTokens {
     // 动效 Token — 时长（毫秒）与缓动曲线
     // ═══════════════════════════════════════════════════════════════════════
 
-    /** 动效 Token 子集 */
+    /**
+     * 动效 Token 子集。
+     *
+     * 缓动曲线以 CSS cubic-bezier 字符串格式给出（如 `motionEasingStandard`），
+     * 仅供文档参考，无法在 Android/Compose 中直接使用。
+     *
+     * 在 Compose 中使用时，可通过以下方式转换为 [androidx.compose.animation.core.Easing]：
+     * ```kotlin
+     * val easing = Easing { t ->
+     *     // 解析 cubic-bezier 控制点 (x1, y1, x2, y2) 并计算
+     *     CubicBezierEasing(x1, y1, x2, y2).transform(t)
+     * }
+     * ```
+     */
     object Motion {
         /** 极短动画时长 — 微交互反馈（涟漪、开关） */
         const val motionDurationXs = 100L

@@ -1,7 +1,6 @@
 package com.morphkit.demo.view.pages
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.core.MorphKit
 import com.morphkit.core.StylePolicy
+import com.morphkit.demo.view.R
 import com.morphkit.widget.button.MorphButton
 
 class SettingsPage : Fragment() {
@@ -20,8 +20,9 @@ class SettingsPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
-        val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
+        val density = context.resources.displayMetrics.density
+        val dp16 = (16 * density).toInt()
+        val dp8 = (8 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -29,14 +30,14 @@ class SettingsPage : Fragment() {
         }
 
         layout.addView(TextView(context).apply {
-            text = "Settings"
+            text = getString(R.string.settings_title)
             textSize = 22f
             setPadding(0, 0, 0, dp16)
         })
 
         // Style Policy
         layout.addView(TextView(context).apply {
-            text = "Style Policy"
+            text = getString(R.string.settings_style_policy)
             textSize = 18f
             setPadding(0, 0, 0, dp8)
         })
@@ -49,11 +50,15 @@ class SettingsPage : Fragment() {
 
         policies.forEach { (label, policy) ->
             val btn = MorphButton(context).apply {
-                text = "Switch to $label"
+                text = getString(R.string.settings_switch_to, label)
                 setOnClickListener {
                     // StylePolicy can only be set during MorphKit.init(), which runs once.
                     // Display the selected policy as feedback.
-                    Toast.makeText(context, "Style: $label (requires restart)", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        getString(R.string.settings_requires_restart, label),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
             layout.addView(btn, LinearLayout.LayoutParams(
@@ -64,16 +69,16 @@ class SettingsPage : Fragment() {
 
         // Status
         layout.addView(TextView(context).apply {
-            text = "Status"
+            text = getString(R.string.settings_status)
             textSize = 18f
             setPadding(0, dp16, 0, dp8)
         })
 
         layout.addView(TextView(context).apply {
-            text = "Initialized: ${MorphKit.isInitialized()}"
+            text = getString(R.string.settings_initialized, MorphKit.isInitialized())
         })
         layout.addView(TextView(context).apply {
-            text = "Theme ResId: ${MorphKit.getFinalThemeResId()}"
+            text = getString(R.string.settings_theme_resid, MorphKit.getFinalThemeResId())
         })
 
         scrollView.addView(layout)

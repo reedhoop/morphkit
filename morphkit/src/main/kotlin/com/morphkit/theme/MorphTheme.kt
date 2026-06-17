@@ -152,7 +152,7 @@ object MorphTheme {
  * 返回不正确的 density 值。
  */
 @Px
-fun Int.dp(context: Context): Int = TypedValue.applyDimension(
+inline fun Int.dp(context: Context): Int = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP,
     this.toFloat(),
     context.resources.displayMetrics
@@ -162,7 +162,7 @@ fun Int.dp(context: Context): Int = TypedValue.applyDimension(
  * dp 值转像素（Float 版本，Context 感知）。
  */
 @Px
-fun Float.dp(context: Context): Float = TypedValue.applyDimension(
+inline fun Float.dp(context: Context): Float = TypedValue.applyDimension(
     TypedValue.COMPLEX_UNIT_DIP,
     this,
     context.resources.displayMetrics

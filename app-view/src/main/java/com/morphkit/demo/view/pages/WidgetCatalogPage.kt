@@ -1,7 +1,7 @@
 package com.morphkit.demo.view.pages
 
 import android.os.Bundle
-import android.util.TypedValue
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +18,8 @@ class WidgetCatalogPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
+        val density = context.resources.displayMetrics.density
+        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -26,7 +27,7 @@ class WidgetCatalogPage : Fragment() {
         }
 
         val title = TextView(context).apply {
-            text = "MorphKit Widgets"
+            text = getString(R.string.catalog_title)
             textSize = 24f
             setPadding(0, 0, 0, dp16)
         }
@@ -46,7 +47,13 @@ class WidgetCatalogPage : Fragment() {
                 text = "\u25B8 $label"
                 textSize = 18f
                 setPadding(0, dp16, 0, dp16)
-                setOnClickListener { findNavController().navigate(navId) }
+                setOnClickListener {
+                    try {
+                        findNavController().navigate(navId)
+                    } catch (t: Throwable) {
+                        Log.e("WidgetCatalogPage", "navigate failed", t)
+                    }
+                }
             }
             layout.addView(item)
         }

@@ -34,16 +34,27 @@ package com.morphkit.theme
  * @see TextStyle 字号 + 字重组合
  */
 object MorphTypography {
+    /** Large Title — iOS HIG 顶部导航大标题 (34pt Bold) */
     val largeTitle = TextStyle(fontSize = MorphTokens.Typography.fontSizeLargeTitle, weight = FontWeight.EXTRA_BOLD)
+    /** Title 1 — iOS HIG 一级标题 (28pt Bold) */
     val title1 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle1, weight = FontWeight.EXTRA_BOLD)
+    /** Title 2 — iOS HIG 二级标题 (22pt Bold) */
     val title2 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle2, weight = FontWeight.BOLD)
+    /** Title 3 — iOS HIG 三级标题 (20pt Semibold) */
     val title3 = TextStyle(fontSize = MorphTokens.Typography.fontSizeTitle3, weight = FontWeight.BOLD)
+    /** Headline — iOS HIG 标题正文 (17pt Semibold) */
     val headline = TextStyle(fontSize = MorphTokens.Typography.fontSizeHeadline, weight = FontWeight.SEMI_BOLD)
+    /** Body — iOS HIG 正文 (17pt Regular) */
     val body = TextStyle(fontSize = MorphTokens.Typography.fontSizeBody, weight = FontWeight.MEDIUM)
+    /** Callout — iOS HIG 说明文字 (16pt Regular) */
     val callout = TextStyle(fontSize = MorphTokens.Typography.fontSizeCallout, weight = FontWeight.MEDIUM)
+    /** Subheadline — iOS HIG 副标题 (15pt Regular) */
     val subheadline = TextStyle(fontSize = MorphTokens.Typography.fontSizeSubheadline, weight = FontWeight.MEDIUM)
+    /** Footnote — iOS HIG 脚注 (13pt Regular) */
     val footnote = TextStyle(fontSize = MorphTokens.Typography.fontSizeFootnote, weight = FontWeight.MEDIUM)
+    /** Caption 1 — iOS HIG 说明文字 1 (12pt Regular) */
     val caption1 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption1, weight = FontWeight.MEDIUM)
+    /** Caption 2 — iOS HIG 说明文字 2 (11pt Regular) */
     val caption2 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption2, weight = FontWeight.MEDIUM)
 }
 

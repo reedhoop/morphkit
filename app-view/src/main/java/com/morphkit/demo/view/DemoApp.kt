@@ -7,8 +7,12 @@ import com.morphkit.widget.registerDefaultWidgets
 class DemoApp : Application() {
     override fun onCreate() {
         super.onCreate()
-        MorphKit.autoInit(this) {
-            registerDefaultWidgets()
+        try {
+            MorphKit.autoInit(this) {
+                registerDefaultWidgets()
+            }
+        } catch (t: Throwable) {
+            android.util.Log.e("MorphKit", "DemoApp autoInit 失败", t)
         }
     }
 }

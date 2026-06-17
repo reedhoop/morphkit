@@ -73,26 +73,34 @@ object MorphColors {
     }
 
     /**
-     * Create a [android.content.res.ColorStateList] with pressed/disabled states.
+     * Create a [android.content.res.ColorStateList] with pressed/focused/disabled states.
      *
      * - Normal state:  [baseColor] as-is
      * - Pressed state: [baseColor] overlaid with 20% black (light mode) or white (dark mode)
+     * - Focused state: [focusedColor] if provided, otherwise same as pressed state
      * - Disabled state: [baseColor] with alpha reduced to 38%
      *
-     * @param baseColor  The base color for all states
-     * @param isDarkMode Whether the current UI is in dark mode (affects pressed overlay color)
+     * @param baseColor    The base color for all states
+     * @param isDarkMode   Whether the current UI is in dark mode (affects pressed overlay color)
+     * @param focusedColor Optional color for the focused state; defaults to the pressed color
      */
-    fun createColorStateList(baseColor: Int, isDarkMode: Boolean): android.content.res.ColorStateList {
+    fun createColorStateList(
+        baseColor: Int,
+        isDarkMode: Boolean,
+        focusedColor: Int? = null
+    ): android.content.res.ColorStateList {
         val pressedColor = overlayColor(baseColor, if (isDarkMode) Color.WHITE else Color.BLACK, MorphTokens.Interaction.pressOverlayMaxAlpha)
         val disabledColor = adjustAlpha(baseColor, MorphTokens.Interaction.disabledAlpha)
+        val effectiveFocusedColor = focusedColor ?: pressedColor
 
         return android.content.res.ColorStateList(
             arrayOf(
                 intArrayOf(-android.R.attr.state_enabled),
                 intArrayOf(android.R.attr.state_pressed),
+                intArrayOf(android.R.attr.state_focused),
                 intArrayOf()
             ),
-            intArrayOf(disabledColor, pressedColor, baseColor)
+            intArrayOf(disabledColor, pressedColor, effectiveFocusedColor, baseColor)
         )
     }
 

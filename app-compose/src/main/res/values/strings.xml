@@ -1,4 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MorphKit Compose Demo</string>
+
+    <!-- CatalogPage -->
+    <string name="catalog_title">MorphKit Compose</string>
+    <!-- ButtonPage -->
+    <string name="button_title">MorphButton (Compose)</string>
+    <string name="button_primary">Primary Button</string>
+    <string name="button_plain">Plain Button</string>
+    <string name="button_disabled">Disabled Button</string>
+    <!-- ThemePage -->
+    <string name="theme_title">Theme &amp; Colors</string>
+    <string name="theme_palette_title">MorphColorPalette</string>
+    <string name="theme_typography_title">Typography Tokens</string>
+    <string name="theme_spacing_title">Spacing Tokens</string>
+    <string name="theme_color_primary">Primary</string>
+    <string name="theme_color_on_primary">OnPrimary</string>
+    <string name="theme_color_surface">Surface</string>
+    <string name="theme_color_on_surface">OnSurface</string>
+    <string name="theme_color_secondary">Secondary</string>
+    <string name="theme_color_error">Error</string>
+    <!-- SettingsPage -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_style_policy">Style Policy</string>
+    <string name="settings_switch_to">Switch to %1$s</string>
+    <string name="settings_requires_restart">Style: %1$s (requires restart)</string>
+    <string name="settings_status">Status</string>
+    <string name="settings_initialized">Initialized: %1$s</string>
+    <string name="settings_theme_resid">Theme ResId: %1$s</string>
+    <!-- Common -->
+    <string name="back">Back</string>
 </resources>

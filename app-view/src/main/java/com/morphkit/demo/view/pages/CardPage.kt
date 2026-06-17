@@ -1,7 +1,6 @@
 package com.morphkit.demo.view.pages
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.morphkit.demo.view.R
 import com.morphkit.widget.container.MorphCardView
 
 class CardPage : Fragment() {
@@ -17,8 +17,9 @@ class CardPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
-        val dp8 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, context.resources.displayMetrics).toInt()
+        val density = context.resources.displayMetrics.density
+        val dp16 = (16 * density).toInt()
+        val dp8 = (8 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -26,16 +27,16 @@ class CardPage : Fragment() {
         }
 
         layout.addView(TextView(context).apply {
-            text = "MorphCardView"
+            text = getString(R.string.card_title)
             textSize = 22f
             setPadding(0, 0, 0, dp16)
         })
 
         // Standard card
-        layout.addView(TextView(context).apply { text = "Standard Card:" })
+        layout.addView(TextView(context).apply { text = getString(R.string.card_standard) })
         val standardCard = MorphCardView(context).apply {
             val inner = TextView(context).apply {
-                text = "This is a standard MorphCardView with theme styling."
+                text = getString(R.string.card_standard_text)
                 setPadding(dp16, dp16, dp16, dp16)
             }
             addView(inner)
@@ -46,11 +47,11 @@ class CardPage : Fragment() {
         ).apply { topMargin = dp8; bottomMargin = dp16 })
 
         // Glassmorphism card
-        layout.addView(TextView(context).apply { text = "Glassmorphism Card:" })
+        layout.addView(TextView(context).apply { text = getString(R.string.card_glass) })
         val glassCard = MorphCardView(context).apply {
             isGlassmorphism = true
             val inner = TextView(context).apply {
-                text = "This is a glassmorphism MorphCardView with backdrop blur."
+                text = getString(R.string.card_glass_text)
                 setPadding(dp16, dp16, dp16, dp16)
             }
             addView(inner)

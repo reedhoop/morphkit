@@ -1,4 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MorphKit View Demo</string>
+
+    <!-- WidgetCatalogPage -->
+    <string name="catalog_title">MorphKit Widgets</string>
+    <!-- ButtonPage -->
+    <string name="button_title">MorphButton</string>
+    <string name="button_primary">Primary:</string>
+    <string name="button_primary_text">Primary Button</string>
+    <string name="button_primary_toast">Primary clicked</string>
+    <string name="button_plain">Plain:</string>
+    <string name="button_plain_text">Plain Button</string>
+    <string name="button_plain_toast">Plain clicked</string>
+    <string name="button_disabled">Disabled:</string>
+    <string name="button_disabled_text">Disabled Button</string>
+    <string name="button_radio_title">MorphRadioButton</string>
+    <string name="button_option_a">Option A</string>
+    <string name="button_option_b">Option B</string>
+    <!-- TextPage -->
+    <string name="text_title">MorphTextView</string>
+    <string name="text_hello">Hello MorphKit! This is a MorphTextView with automatic theme styling applied.</string>
+    <string name="text_description">MorphTextView supports the full MorphKit theme system, including typography tokens and color schemes.</string>
+    <!-- EditTextPage -->
+    <string name="edit_title">MorphEditText</string>
+    <string name="edit_default">Default:</string>
+    <string name="edit_default_hint">Enter text...</string>
+    <string name="edit_search">Search:</string>
+    <string name="edit_search_hint">Search...</string>
+    <string name="edit_bare">Bare:</string>
+    <string name="edit_bare_hint">Bare input...</string>
+    <!-- CardPage -->
+    <string name="card_title">MorphCardView</string>
+    <string name="card_standard">Standard Card:</string>
+    <string name="card_standard_text">This is a standard MorphCardView with theme styling.</string>
+    <string name="card_glass">Glassmorphism Card:</string>
+    <string name="card_glass_text">This is a glassmorphism MorphCardView with backdrop blur.</string>
+    <!-- SelectionPage -->
+    <string name="selection_check_title">MorphCheckBox</string>
+    <string name="selection_check_notifications">Enable notifications</string>
+    <string name="selection_check_notifications_toast">Notifications: %1$s</string>
+    <string name="selection_check_dark_mode">Dark mode</string>
+    <string name="selection_check_auto_update">Auto-update</string>
+    <string name="selection_radio_title">MorphRadioButton</string>
+    <string name="selection_option_a">Option A</string>
+    <string name="selection_option_b">Option B</string>
+    <string name="selection_option_c">Option C</string>
+    <!-- SettingsPage -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_style_policy">Style Policy</string>
+    <string name="settings_switch_to">Switch to %1$s</string>
+    <string name="settings_requires_restart">Style: %1$s (requires restart)</string>
+    <string name="settings_status">Status</string>
+    <string name="settings_initialized">Initialized: %1$s</string>
+    <string name="settings_theme_resid">Theme ResId: %1$s</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.morphkit.demo.compose.pages
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -14,21 +15,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.morphkit.theme.compose.MorphButton
 import com.morphkit.theme.compose.ButtonStyle
 import com.morphkit.theme.MorphTokens
+import com.morphkit.demo.compose.R
 
 @Composable
 fun ButtonPage(onBack: () -> Unit) {
+    val context = LocalContext.current
+    val backContentDescription = stringResource(R.string.back)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+            .padding(MorphTokens.Spacing.spacingBase.dp),
+        verticalArrangement = Arrangement.spacedBy(MorphTokens.Spacing.spacingBase.dp)
     ) {
         Text(
-            text = "MorphButton (Compose)",
+            text = stringResource(R.string.button_title),
             style = MaterialTheme.typography.headlineMedium
         )
 
@@ -36,28 +43,34 @@ fun ButtonPage(onBack: () -> Unit) {
 
         // Primary button
         MorphButton(
-            text = "Primary Button",
-            onClick = { },
+            text = stringResource(R.string.button_primary),
+            onClick = {
+                Toast.makeText(context, "Primary", Toast.LENGTH_SHORT).show()
+            },
         )
 
         // Plain button
         MorphButton(
-            text = "Plain Button",
-            onClick = { },
+            text = stringResource(R.string.button_plain),
+            onClick = {
+                Toast.makeText(context, "Plain", Toast.LENGTH_SHORT).show()
+            },
             style = ButtonStyle.PLAIN,
         )
 
         // Disabled button
         MorphButton(
-            text = "Disabled Button",
-            onClick = { },
+            text = stringResource(R.string.button_disabled),
+            onClick = {
+                Toast.makeText(context, "Disabled", Toast.LENGTH_SHORT).show()
+            },
             enabled = false,
         )
 
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
         IconButton(onClick = onBack) {
-            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = backContentDescription)
         }
     }
 }

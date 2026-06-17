@@ -1,7 +1,6 @@
 package com.morphkit.demo.view.pages
 
 import android.os.Bundle
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +8,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.morphkit.demo.view.R
 import com.morphkit.widget.text.MorphTextView
 
 class TextPage : Fragment() {
@@ -17,7 +17,8 @@ class TextPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val dp16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16f, context.resources.displayMetrics).toInt()
+        val density = context.resources.displayMetrics.density
+        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -25,13 +26,13 @@ class TextPage : Fragment() {
         }
 
         layout.addView(TextView(context).apply {
-            text = "MorphTextView"
+            text = getString(R.string.text_title)
             textSize = 22f
             setPadding(0, 0, 0, dp16)
         })
 
         val morphText = MorphTextView(context).apply {
-            text = "Hello MorphKit! This is a MorphTextView with automatic theme styling applied."
+            text = getString(R.string.text_hello)
         }
         layout.addView(morphText, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
@@ -39,7 +40,7 @@ class TextPage : Fragment() {
         ).apply { bottomMargin = dp16 })
 
         layout.addView(TextView(context).apply {
-            text = "MorphTextView supports the full MorphKit theme system, including typography tokens and color schemes."
+            text = getString(R.string.text_description)
             textSize = 14f
         })
 

@@ -201,7 +201,7 @@ object MorphStyleResolver {
      * 首次查找失败后缓存为 null（不再重试）。
      * 相比之前的 @Volatile + boolean 标记，lazy 天然保证单次初始化且线程安全。
      */
-    private val dynamicColorMethod: java.lang.reflect.Method? by lazy {
+    private val dynamicColorMethod: java.lang.reflect.Method? by lazy(LazyThreadSafetyMode.PUBLICATION) {
         try {
             val clazz = Class.forName("com.google.android.material.color.DynamicColors")
             clazz.getMethod("isDynamicColorAvailable", Context::class.java)
