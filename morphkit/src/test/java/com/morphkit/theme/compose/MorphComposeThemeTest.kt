@@ -4,6 +4,8 @@ import android.util.Log
 import com.google.common.truth.Truth.assertThat
 import com.morphkit.theme.MorphTokens
 import io.mockk.mockkStatic
+import io.mockk.unmockkAll
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import java.lang.reflect.Modifier
@@ -20,6 +22,11 @@ class MorphComposeThemeTest {
     @Before
     fun setUp() {
         mockkStatic(Log::class)
+    }
+
+    @After
+    fun tearDown() {
+        unmockkAll()
     }
 
     // ── 1. Class existence & correct package ──────────────────────────────

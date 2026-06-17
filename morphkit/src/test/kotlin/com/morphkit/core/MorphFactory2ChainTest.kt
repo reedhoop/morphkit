@@ -13,6 +13,7 @@ import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkAll
 import io.mockk.unmockkStatic
+import io.mockk.verify
 import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.*
 
@@ -80,6 +81,30 @@ class MorphFactory2ChainTest {
 
             val result = factory.onCreateView(null, "TextView", context, attrs)
             assertSame(replacedView, result, "命中替换规则应返回替换控件")
+        }
+
+        @Test
+        fun `命中替换规则_originalFactory仍被调用_保证AppCompat着色`() {
+            val mockApp = mockk<Application>(relaxed = true)
+            every { mockApp.registerActivityLifecycleCallbacks(any()) } just Runs
+
+            val replacedView = mockk<View>(relaxed = true)
+            MorphKit.init(mockApp) {
+                replace("TextView") { _, _ -> replacedView }
+            }
+
+            val originalFactory = mockk<LayoutInflater.Factory2>(relaxed = true)
+            val factory = MorphFactory2(originalFactory)
+            val context = mockk<Context>(relaxed = true)
+            val attrs = mockk<AttributeSet>(relaxed = true)
+
+            val result = factory.onCreateView(null, "TextView", context, attrs)
+            assertSame(replacedView, result)
+
+            // Red Line 2: originalFactory must be called to preserve AppCompat tinting
+            verify(exactly = 1) {
+                originalFactory.onCreateView(any(), "TextView", any(), any())
+            }
         }
     }
 

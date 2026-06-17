@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.morphkit.theme.MorphTokens
+import com.morphkit.demo.compose.Routes
 
 @Composable
 fun CatalogPage(onNavigate: (String) -> Unit) {
@@ -23,7 +24,7 @@ fun CatalogPage(onNavigate: (String) -> Unit) {
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(MorphTokens.Spacing.spacingBase.dp)
     ) {
         Text(
             text = "MorphKit Compose",
@@ -33,9 +34,9 @@ fun CatalogPage(onNavigate: (String) -> Unit) {
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
         val items = listOf(
-            "MorphButton" to "button",
-            "Theme & Colors" to "theme",
-            "Settings" to "settings",
+            "MorphButton" to Routes.BUTTON,
+            "Theme & Colors" to Routes.THEME,
+            "Settings" to Routes.SETTINGS,
         )
 
         items.forEach { (label, route) ->

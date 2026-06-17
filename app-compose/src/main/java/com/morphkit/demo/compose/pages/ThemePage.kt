@@ -1,6 +1,7 @@
 package com.morphkit.demo.compose.pages
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -54,11 +58,14 @@ fun ThemePage(onBack: () -> Unit) {
                 "OnPrimary" to morphColors.onPrimary,
                 "Surface" to morphColors.surface,
                 "OnSurface" to morphColors.onSurface,
+                "Secondary" to morphColors.secondary,
+                "Error" to morphColors.error,
             ).forEach { (label, color) ->
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(
                         modifier = Modifier
                             .size(48.dp)
+                            .border(1.dp, MaterialTheme.colorScheme.outline)
                             .background(color)
                     )
                     Text(text = label, style = MaterialTheme.typography.labelSmall)
@@ -91,7 +98,7 @@ fun ThemePage(onBack: () -> Unit) {
         )
 
         IconButton(onClick = onBack) {
-            Text("← Back")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
     }
 }

@@ -50,6 +50,11 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 -keep class com.morphkit.theme.MorphTokens { *; }
 
+# MorphTypography / TextStyle / FontWeight — 顶层排版类，控件 init 中引用
+-keep class com.morphkit.theme.MorphTypography { *; }
+-keep class com.morphkit.theme.TextStyle { *; }
+-keep class com.morphkit.theme.FontWeight { *; }
+
 # ═══════════════════════════════════════════════════════════════════════════════
 # 4. MorphKit 枚举 — StylePolicy / InteractionMode
 #    枚举在 Kotlin/JVM 中通常被自动 Keep，但显式声明更安全
@@ -76,9 +81,7 @@
 # 6. MorphStyleResolver 反射目标 — DynamicColors.isDynamicColorAvailable
 #    Material 库自带 Keep 规则，此处作为防御性补充
 # ═══════════════════════════════════════════════════════════════════════════════
--keep class com.google.android.material.color.DynamicColors {
-    public static boolean isDynamicColorAvailable(android.content.Context);
-}
+-keep class com.google.android.material.color.DynamicColors { *; }
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 7. LayoutInflater 反射字段 — MorphInstaller 通过反射修改这些字段

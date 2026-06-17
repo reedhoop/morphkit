@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,7 +29,7 @@ fun ButtonPage(onBack: () -> Unit) {
     ) {
         Text(
             text = "MorphButton (Compose)",
-            style = androidx.compose.material3.MaterialTheme.typography.headlineMedium
+            style = MaterialTheme.typography.headlineMedium
         )
 
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
@@ -53,7 +57,7 @@ fun ButtonPage(onBack: () -> Unit) {
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
         IconButton(onClick = onBack) {
-            Text("← Back")
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
         }
     }
 }

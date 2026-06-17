@@ -83,14 +83,14 @@
 # MorphTheme — 所有控件直接引用其方法/属性
 -keep class com.morphkit.theme.MorphTheme { *; }
 
-# MorphTheme$MorphTypography — 排版令牌
--keep class com.morphkit.theme.MorphTheme$MorphTypography { *; }
+# MorphTypography — 排版令牌（顶层类，非 MorphTheme 嵌套）
+-keep class com.morphkit.theme.MorphTypography { *; }
 
-# MorphTheme$TextStyle — data class，可能被序列化
--keep class com.morphkit.theme.MorphTheme$TextStyle { *; }
+# TextStyle — data class，可能被序列化
+-keep class com.morphkit.theme.TextStyle { *; }
 
-# MorphTheme$FontWeight — enum，toTypeface() 方法被广泛调用
--keep class com.morphkit.theme.MorphTheme$FontWeight { *; }
+# FontWeight — enum，toTypeface() 方法被广泛调用
+-keep class com.morphkit.theme.FontWeight { *; }
 
 # ═════════════════════════════════════════════════════════════════════════════
 #  4. 顶层扩展与常量
@@ -145,7 +145,7 @@
 #  7. 通用 Android View 保护
 # ═════════════════════════════════════════════════════════════════════════════
 
-# 任何继承 View 的自定义控件的构造函数必须保留
+# 任何继承 View 的 MorphKit 自定义控件的构造函数必须保留
 -keepclassmembers class * extends android.view.View {
     public <init>(android.content.Context);
     public <init>(android.content.Context, android.util.AttributeSet);

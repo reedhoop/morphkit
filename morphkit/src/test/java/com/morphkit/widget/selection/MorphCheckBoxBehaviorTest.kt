@@ -279,6 +279,42 @@ class MorphCheckBoxBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 7. 防抖 — MorphClickListener debounce protection
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun iosMode_hasOnClickListener_installed() {
+        val checkBox = MorphCheckBox(iosContext)
+        // MorphCompoundButtonHelper.initIosMode() installs MorphClickListener
+        assertThat(checkBox.hasOnClickListeners()).isTrue()
+    }
+
+    @Test
+    fun materialMode_doesNotInstallMorphClickListener() {
+        val checkBox = MorphCheckBox(pixelContext)
+        // Material 模式下不安装 MorphClickListener
+        assertThat(checkBox.hasOnClickListeners()).isFalse()
+    }
+
+    @Test
+    fun rapidPerformClicks_allToggleCorrectly() {
+        val checkBox = MorphCheckBox(iosContext)
+        assertThat(checkBox.isChecked).isFalse()
+
+        // First click toggles to checked
+        checkBox.performClick()
+        assertThat(checkBox.isChecked).isTrue()
+
+        // Second click toggles back
+        checkBox.performClick()
+        assertThat(checkBox.isChecked).isFalse()
+
+        // Third click toggles to checked again
+        checkBox.performClick()
+        assertThat(checkBox.isChecked).isTrue()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法 — 通过反射调用 protected 生命周期方法
     // ═══════════════════════════════════════════════════════════════════════
 

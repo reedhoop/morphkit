@@ -272,6 +272,43 @@ class MorphRadioButtonBehaviorTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 7. 防抖 — MorphClickListener debounce protection
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun iosMode_hasOnClickListener_installed() {
+        val radio = MorphRadioButton(iosContext)
+        // MorphCompoundButtonHelper.initIosMode() installs MorphClickListener
+        assertThat(radio.hasOnClickListeners()).isTrue()
+    }
+
+    @Test
+    fun materialMode_doesNotInstallMorphClickListener() {
+        val radio = MorphRadioButton(pixelContext)
+        // Material 模式下不安装 MorphClickListener 防抖包装
+        assertThat(radio.hasOnClickListeners()).isFalse()
+    }
+
+    @Test
+    fun rapidPerformClicks_withinDebounceWindow_allToggleCorrectly() {
+        val radio = MorphRadioButton(iosContext)
+        assertThat(radio.isChecked).isFalse()
+
+        // First click toggles to checked
+        radio.performClick()
+        assertThat(radio.isChecked).isTrue()
+
+        // Rapid second click — CompoundButton.toggle() fires regardless of debounce
+        // (debounce only guards the empty MorphClickListener block)
+        radio.performClick()
+        assertThat(radio.isChecked).isFalse()
+
+        // Third click toggles back to checked
+        radio.performClick()
+        assertThat(radio.isChecked).isTrue()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 辅助方法 — 通过反射调用 protected 生命周期方法
     // ═══════════════════════════════════════════════════════════════════════
 
