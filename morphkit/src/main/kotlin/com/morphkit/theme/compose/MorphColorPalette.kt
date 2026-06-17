@@ -228,9 +228,9 @@ data class MorphColorPalette(
                 // Background
                 background = resolveM3Color(context, android.R.attr.colorBackground, fallback.background),
                 onBackground = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurface, fallback.onBackground),
-                // Inverse — Material 1.12.0 尚未提供 colorInverseSurface/colorInverseOnSurface 属性，使用 fallback
-                inverseSurface = fallback.inverseSurface,
-                inverseOnSurface = fallback.inverseOnSurface,
+                // Inverse — Material 1.12.0 属性名为 colorSurfaceInverse / colorOnSurfaceInverse
+                inverseSurface = resolveM3Color(context, com.google.android.material.R.attr.colorSurfaceInverse, fallback.inverseSurface),
+                inverseOnSurface = resolveM3Color(context, com.google.android.material.R.attr.colorOnSurfaceInverse, fallback.inverseOnSurface),
                 inversePrimary = resolveM3Color(context, com.google.android.material.R.attr.colorPrimaryInverse, fallback.inversePrimary),
                 // Misc
                 scrim = Color(MorphTokens.Colors.colorScrim),

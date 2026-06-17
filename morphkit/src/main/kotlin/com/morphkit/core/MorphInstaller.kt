@@ -61,6 +61,9 @@ object MorphInstaller {
 
     private val installed = AtomicBoolean(false)
 
+    /** install/reset 复合操作同步锁，防止并发导致回调引用丢失或双重注册 */
+    private val lock = Any()
+
     /** 持有已注册的生命周期回调引用，便于 reset() 时注销，避免双重注册 */
     @Volatile
     private var registeredCallback: Application.ActivityLifecycleCallbacks? = null
@@ -79,7 +82,7 @@ object MorphInstaller {
      *
      * @param application 应用实例
      */
-    fun install(application: Application) {
+    fun install(application: Application) = synchronized(lock) {
         if (!installed.compareAndSet(false, true)) {
             Log.d(TAG, "MorphInstaller.install 已执行过，跳过重复注册")
             return
@@ -174,7 +177,7 @@ object MorphInstaller {
 
     /** 重置安装状态（仅用于测试），注销已注册的生命周期回调 */
     @androidx.annotation.VisibleForTesting
-    internal fun reset() {
+    internal fun reset() = synchronized(lock) {
         registeredCallback?.let { cb ->
             hostApplication?.unregisterActivityLifecycleCallbacks(cb)
         }

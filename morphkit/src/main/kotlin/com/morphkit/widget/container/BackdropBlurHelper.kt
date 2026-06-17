@@ -177,12 +177,13 @@ internal object BackdropBlurHelper {
         if (source.width <= 0 || source.height <= 0) return null
 
         var output: Bitmap? = null
+        // 提前取出 RenderNode 引用，便于 catch 块复位状态
+        val node = blurRenderNode
         return try {
             val w = source.width
             val h = source.height
             output = obtainBitmap(w, h)
 
-            val node = blurRenderNode
             node.setPosition(0, 0, w, h)
 
             val blurEffect = RenderEffect.createBlurEffect(
@@ -209,6 +210,8 @@ internal object BackdropBlurHelper {
         } catch (e: Exception) {
             // RenderEffect 可能因硬件加速关闭等原因抛异常，降级为软件模糊
             output?.let { recycleToPool(it) }
+            // 确保 RenderNode 状态复位，避免下次 beginRecording 抛 IllegalStateException
+            try { node.discardDisplayList() } catch (_: Throwable) {}
             Log.d("MorphKit", "GPU 模糊失败，降级为软件 Stack Blur: ${e.javaClass.simpleName}")
             blurSoftware(source, radius.toInt().coerceAtLeast(1))
         }

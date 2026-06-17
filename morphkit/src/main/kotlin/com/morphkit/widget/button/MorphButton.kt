@@ -202,6 +202,7 @@ class MorphButton @JvmOverloads constructor(
             }
         }
         setTextColor(MorphColors.adjustAlpha(baseTextColor, MorphTokens.Interaction.disabledAlpha))
+        alpha = 1f
     }
 
     override fun setEnabled(enabled: Boolean) {
