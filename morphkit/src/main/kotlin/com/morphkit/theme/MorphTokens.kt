@@ -491,15 +491,22 @@ object MorphTokens {
     /**
      * 动效 Token 子集。
      *
-     * 缓动曲线以 CSS cubic-bezier 字符串格式给出（如 `motionEasingStandard`），
-     * 仅供文档参考，无法在 Android/Compose 中直接使用。
+     * 缓动曲线同时以两种形式提供：
+     * - **CSS cubic-bezier 字符串**（`motionEasing*` 常量）：仅供文档参考与跨平台对齐
+     * - **Float 控制点常量**（`motionEasing*ControlPoints` 数组）：程序化可用，
+     *   格式为 `[x1, y1, x2, y2]`，可直接传入 `CubicBezierEasing(x1, y1, x2, y2)`
+     *   或自定义插值器，无需解析字符串。
      *
-     * 在 Compose 中使用时，可通过以下方式转换为 [androidx.compose.animation.core.Easing]：
+     * 在 Compose 中使用：
      * ```kotlin
-     * val easing = Easing { t ->
-     *     // 解析 cubic-bezier 控制点 (x1, y1, x2, y2) 并计算
-     *     CubicBezierEasing(x1, y1, x2, y2).transform(t)
-     * }
+     * val cp = MorphTokens.Motion.motionEasingStandardControlPoints
+     * val easing = CubicBezierEasing(cp[0], cp[1], cp[2], cp[3])
+     * ```
+     *
+     * 在 View 体系中使用：
+     * ```kotlin
+     * val cp = MorphTokens.Motion.motionEasingStandardControlPoints
+     * val interpolator = PathInterpolator(cp[0], cp[1], cp[2], cp[3])
      * ```
      */
     object Motion {
@@ -513,13 +520,25 @@ object MorphTokens {
         const val motionDurationLg = 350L
         /** 超长动画时长 — 全屏转场、大区域展开 */
         const val motionDurationXl = 500L
-        /** 标准缓动曲线 — 大多数 UI 动画 */
+        /** 标准缓动曲线 — 大多数 UI 动画（CSS 格式，仅供文档参考） */
         const val motionEasingStandard = "cubic-bezier(0.2, 0.0, 0, 1.0)"
-        /** 减速缓动曲线 — 元素进入屏幕 */
+        /** 减速缓动曲线 — 元素进入屏幕（CSS 格式，仅供文档参考） */
         const val motionEasingDecelerate = "cubic-bezier(0.0, 0.0, 0, 1.0)"
-        /** 加速缓动曲线 — 元素离开屏幕 */
+        /** 加速缓动曲线 — 元素离开屏幕（CSS 格式，仅供文档参考） */
         const val motionEasingAccelerate = "cubic-bezier(0.3, 0.0, 1.0, 1.0)"
-        /** 线性缓动曲线 — 持续动画（进度条、旋转） */
+        /** 线性缓动曲线 — 持续动画（进度条、旋转）（CSS 格式，仅供文档参考） */
         const val motionEasingLinear = "cubic-bezier(0.0, 0.0, 1.0, 1.0)"
+
+        // ── 程序化可用的控制点常量（格式 [x1, y1, x2, y2]）──
+        // 与上方 CSS 字符串一一对应，避免调用方解析字符串。
+
+        /** 标准缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
+        val motionEasingStandardControlPoints = floatArrayOf(0.2f, 0.0f, 0.0f, 1.0f)
+        /** 减速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
+        val motionEasingDecelerateControlPoints = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
+        /** 加速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
+        val motionEasingAccelerateControlPoints = floatArrayOf(0.3f, 0.0f, 1.0f, 1.0f)
+        /** 线性缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
+        val motionEasingLinearControlPoints = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f)
     }
 }

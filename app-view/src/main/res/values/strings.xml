@@ -35,6 +35,12 @@
     <string name="edit_search_hint">Search...</string>
     <string name="edit_bare">Bare:</string>
     <string name="edit_bare_hint">Bare input...</string>
+    <string name="edit_password">Password:</string>
+    <string name="edit_password_hint">Enter password...</string>
+    <string name="edit_email">Email:</string>
+    <string name="edit_email_hint">user@example.com</string>
+    <string name="edit_number">Number:</string>
+    <string name="edit_number_hint">123</string>
     <!-- CardPage -->
     <string name="card_title">MorphCardView</string>
     <string name="card_standard">Standard Card:</string>

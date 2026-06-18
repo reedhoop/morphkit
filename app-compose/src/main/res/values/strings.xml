@@ -5,6 +5,9 @@
     <!-- CatalogPage -->
     <string name="catalog_title">MorphKit Compose</string>
     <string name="catalog_item_button">MorphButton</string>
+    <string name="catalog_item_text">Text</string>
+    <string name="catalog_item_card">Card</string>
+    <string name="catalog_item_selection">Selection</string>
     <!-- ButtonPage -->
     <string name="button_title">MorphButton (Compose)</string>
     <string name="button_primary">Primary Button</string>
@@ -35,4 +38,31 @@
     <string name="settings_theme_resid">Theme ResId: %1$s</string>
     <!-- Common -->
     <string name="back">Back</string>
+    <!-- TextPage (Compose) -->
+    <string name="text_title">Text (Compose)</string>
+    <string name="text_body">This Text composable reads its color and typography from MorphTheme, which wraps MaterialTheme with MorphKit color and typography tokens.</string>
+    <string name="text_section_styles">Styles</string>
+    <string name="text_style_display">Display</string>
+    <string name="text_style_headline">Headline</string>
+    <string name="text_style_body">Body</string>
+    <string name="text_style_label">Label</string>
+    <!-- CardPage (Compose) -->
+    <string name="card_title">Card (Compose)</string>
+    <string name="card_standard">Standard Card</string>
+    <string name="card_standard_body">This Card uses MorphTheme colorScheme.surfaceVariant as container, inheriting MorphKit theme colors.</string>
+    <string name="card_elevated">Elevated Card</string>
+    <string name="card_elevated_body">Elevated Card with MorphTheme elevation tokens applied.</string>
+    <string name="card_outlined">Outlined Card</string>
+    <string name="card_outlined_body">Outlined Card with MorphTheme outline color.</string>
+    <!-- SelectionPage (Compose) -->
+    <string name="selection_title">Selection (Compose)</string>
+    <string name="selection_checkbox">CheckBox</string>
+    <string name="selection_check_notifications">Enable notifications</string>
+    <string name="selection_check_dark_mode">Dark mode</string>
+    <string name="selection_radio">RadioButton</string>
+    <string name="selection_option_a">Option A</string>
+    <string name="selection_option_b">Option B</string>
+    <string name="selection_option_c">Option C</string>
+    <string name="selection_checked_toast">Checked: %1$s</string>
+    <string name="selection_selected_toast">Selected: %1$s</string>
 </resources>

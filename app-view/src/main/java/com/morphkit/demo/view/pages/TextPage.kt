@@ -23,7 +23,8 @@ class TextPage : Fragment() {
             setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        // H10 修复：标签使用 MorphTextView 而非原生 TextView，走 MorphFactory2 替换链
+        // 控件功能演示页：显式构造 MorphTextView 以展示其 typography / 颜色能力。
+        // 框架自动替换能力的展示见 XmlDemoPage（XML 布局 + MorphFactory2 责任链）。
         layout.addView(MorphTextView(context).apply {
             text = getString(R.string.text_title)
             textSize = 22f

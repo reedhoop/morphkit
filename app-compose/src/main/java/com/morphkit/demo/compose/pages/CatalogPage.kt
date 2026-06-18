@@ -26,6 +26,9 @@ fun CatalogPage(onNavigate: (String) -> Unit) {
     val themeTitle = stringResource(R.string.theme_title)
     val settingsTitle = stringResource(R.string.settings_title)
     val buttonTitle = stringResource(R.string.catalog_item_button)
+    val textTitle = stringResource(R.string.catalog_item_text)
+    val cardTitle = stringResource(R.string.catalog_item_card)
+    val selectionTitle = stringResource(R.string.catalog_item_selection)
 
     Column(
         modifier = Modifier
@@ -40,9 +43,12 @@ fun CatalogPage(onNavigate: (String) -> Unit) {
 
         Spacer(modifier = Modifier.height(MorphTokens.Spacing.spacingBase.dp))
 
-        val items = remember(themeTitle, settingsTitle, buttonTitle) {
+        val items = remember(themeTitle, settingsTitle, buttonTitle, textTitle, cardTitle, selectionTitle) {
             listOf(
                 buttonTitle to Routes.BUTTON,
+                textTitle to Routes.TEXT,
+                cardTitle to Routes.CARD,
+                selectionTitle to Routes.SELECTION,
                 themeTitle to Routes.THEME,
                 settingsTitle to Routes.SETTINGS,
             )

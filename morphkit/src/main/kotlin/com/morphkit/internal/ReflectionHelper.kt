@@ -52,11 +52,8 @@ internal object ReflectionHelper {
             }
             field
         } catch (e: Exception) {
-            if (isReflectionRestricted()) {
-                Log.w(TAG, "反射获取字段 $fieldName 失败: Android 14+ 限制了框架类私有字段的反射访问 (${e.javaClass.simpleName})")
-            } else {
-                Log.d(TAG, "反射获取字段 $fieldName 不可用: ${e.javaClass.simpleName}")
-            }
+            // minSdk=35 保证 isReflectionRestricted() 始终为 true，无需 else 分支
+            Log.w(TAG, "反射获取字段 $fieldName 失败: Android 14+ 限制了框架类私有字段的反射访问 (${e.javaClass.simpleName})")
             null
         }
     }

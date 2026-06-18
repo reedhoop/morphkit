@@ -44,6 +44,7 @@ class WidgetCatalogPage : Fragment() {
 
         items.forEach { (label, navId) ->
             val item = MorphTextView(context).apply {
+                // L16: 用 Unicode 三角箭头 ▸ 作为导航指示符，避免为 Demo 引入额外矢量资源
                 text = "\u25B8 $label"
                 textSize = 18f
                 setPadding(0, context.dp(16), 0, context.dp(16))
