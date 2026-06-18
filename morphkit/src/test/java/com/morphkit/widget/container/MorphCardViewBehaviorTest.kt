@@ -9,6 +9,7 @@ import com.morphkit.theme.MorphShape
 import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
+import io.mockk.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -390,5 +391,42 @@ class MorphCardViewBehaviorTest {
         val card = MorphCardView(materialContext)
         // Pixel 模式保留 M3 默认 StateListAnimator（非 null）
         assertThat(card.stateListAnimator).isNotNull()
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 10. Bitmap 回收顺序 — Red Line 6 合规
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    @Config(qualifiers = "w400dp-h800dp")
+    fun `onDetachedFromWindow先解除Drawable引用再回收Bitmap`() {
+        val card = MorphCardView(context).apply {
+            layoutParams = android.view.ViewGroup.LayoutParams(200, 200)
+        }
+        // 注入 Bitmap + BitmapDrawable 模拟模糊背景
+        val bitmap = android.graphics.Bitmap.createBitmap(10, 10, android.graphics.Bitmap.Config.ARGB_8888)
+        val drawable = android.graphics.drawable.BitmapDrawable(context.resources, bitmap)
+        val ivField = MorphCardView::class.java.getDeclaredField("blurBackgroundView")
+        ivField.isAccessible = true
+        val iv = android.widget.ImageView(context).apply { setImageDrawable(drawable) }
+        ivField.set(card, iv)
+
+        // 拦截 recycleToPool，在回收时刻捕获 ImageView.drawable 状态
+        var drawableAtRecycle: android.graphics.drawable.Drawable? = null
+        io.mockk.mockkObject(com.morphkit.widget.container.BackdropBlurHelper::class)
+        io.mockk.every { com.morphkit.widget.container.BackdropBlurHelper.recycleToPool(any()) } answers {
+            drawableAtRecycle = iv.drawable
+            // 不实际回收，避免测试结束后 bitmap 被破坏
+        }
+
+        // 触发 detach
+        val detachMethod = android.view.View::class.java.getDeclaredMethod("onDetachedFromWindow")
+        detachMethod.isAccessible = true
+        detachMethod.invoke(card)
+
+        // 断言：回收时 drawable 已为 null（顺序正确：先 setImageDrawable(null) 再 recycle）
+        assertThat(drawableAtRecycle).isNull()
+
+        io.mockk.unmockkObject(com.morphkit.widget.container.BackdropBlurHelper::class)
     }
 }

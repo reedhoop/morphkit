@@ -17,7 +17,7 @@ class DemoApp : Application() {
                 registerDefaultWidgets()
             }
         } catch (t: Throwable) {
-            android.util.Log.e("MorphKit", "DemoApp autoInit 失败", t)
+            android.util.Log.e("MorphKit", "DemoApp autoInit failed", t)
         }
     }
 }

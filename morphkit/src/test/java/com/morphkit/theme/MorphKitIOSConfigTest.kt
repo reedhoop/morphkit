@@ -334,8 +334,7 @@ class MorphKitIOSConfigTest {
         try {
             val field = MorphInstaller::class.java.getDeclaredField("installed")
             field.isAccessible = true
-            val atomicBool = field.get(MorphInstaller) as java.util.concurrent.atomic.AtomicBoolean
-            atomicBool.set(false)
+            field.setBoolean(MorphInstaller, false)
         } catch (e: Exception) {
             // Reflection reset failure — test will fail with a clear error
         }

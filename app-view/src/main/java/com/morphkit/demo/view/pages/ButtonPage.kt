@@ -5,14 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RadioGroup
 import android.widget.ScrollView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.demo.view.R
 import com.morphkit.widget.button.MorphButton
-import com.morphkit.widget.button.MorphRadioButton
 
 class ButtonPage : Fragment() {
 
@@ -62,21 +60,6 @@ class ButtonPage : Fragment() {
             isEnabled = false
         }
         layout.addView(disabledBtn, matchWrapParams(top = dp16, bottom = dp16))
-
-        // MorphRadioButton
-        layout.addView(TextView(context).apply {
-            text = getString(R.string.button_radio_title)
-            textSize = 22f
-            setPadding(0, dp16, 0, dp16)
-        })
-        val radioGroup = RadioGroup(context).apply {
-            orientation = RadioGroup.VERTICAL
-        }
-        val radio1 = MorphRadioButton(context).apply { text = getString(R.string.button_option_a) }
-        val radio2 = MorphRadioButton(context).apply { text = getString(R.string.button_option_b) }
-        radioGroup.addView(radio1)
-        radioGroup.addView(radio2)
-        layout.addView(radioGroup)
 
         scrollView.addView(layout)
         return scrollView

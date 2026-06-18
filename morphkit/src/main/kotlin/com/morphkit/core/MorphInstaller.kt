@@ -6,7 +6,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import com.morphkit.internal.ReflectionHelper
-import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * MorphKit 全局自动注入器。
@@ -59,7 +58,7 @@ object MorphInstaller {
 
     private const val TAG = "MorphKit"
 
-    private val installed = AtomicBoolean(false)
+    private var installed = false
 
     /** install/reset 复合操作同步锁，防止并发导致回调引用丢失或双重注册 */
     private val lock = Any()
@@ -83,9 +82,11 @@ object MorphInstaller {
      * @param application 应用实例
      */
     fun install(application: Application) = synchronized(lock) {
-        if (!installed.compareAndSet(false, true)) {
+        if (installed) {
             Log.d(TAG, "MorphInstaller.install 已执行过，跳过重复注册")
             return
+        } else {
+            installed = true
         }
 
         val callback = object : Application.ActivityLifecycleCallbacks {
@@ -183,6 +184,6 @@ object MorphInstaller {
         }
         registeredCallback = null
         hostApplication = null
-        installed.set(false)
+        installed = false
     }
 }

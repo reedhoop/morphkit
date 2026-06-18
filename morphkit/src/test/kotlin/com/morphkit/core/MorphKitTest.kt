@@ -620,8 +620,7 @@ class MorphKitTest {
         try {
             val field = MorphInstaller::class.java.getDeclaredField("installed")
             field.isAccessible = true
-            val atomicBool = field.get(MorphInstaller) as java.util.concurrent.atomic.AtomicBoolean
-            atomicBool.set(false)
+            field.setBoolean(MorphInstaller, false)
         } catch (e: Exception) {
             // 反射重置失败时忽略
         }

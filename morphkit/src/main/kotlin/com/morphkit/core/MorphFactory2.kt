@@ -138,7 +138,12 @@ class MorphFactory2(
         // 确保 AppCompat 的 VectorDrawable 解析、background tint、
         // AppCompatTextView 等兼容性处理不被绕过。
         // ═══════════════════════════════════════════════════════════════════════
-        val originalView = originalFactory?.onCreateView(parent, name, context, attrs)
+        val originalView = try {
+            originalFactory?.onCreateView(parent, name, context, attrs)
+        } catch (e: Throwable) {
+            Log.e(TAG, "originalFactory 创建控件异常，降级到 MorphKit 替换: $name", e)
+            null
+        }
 
         // ═══════════════════════════════════════════════════════════════════════
         // 阶段 2：检查是否命中替换规则

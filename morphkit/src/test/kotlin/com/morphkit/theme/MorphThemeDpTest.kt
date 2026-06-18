@@ -13,6 +13,7 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
@@ -304,11 +305,5 @@ class MorphThemeDpTest {
         every { context.resources } returns resources
 
         return context
-    }
-
-    private fun assertNotEquals(expected: Int, actual: Int, message: String) {
-        if (expected == actual) {
-            throw AssertionError("$message: expected not equal but both were $expected")
-        }
     }
 }

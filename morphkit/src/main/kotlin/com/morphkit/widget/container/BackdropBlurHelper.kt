@@ -258,12 +258,10 @@ internal object BackdropBlurHelper {
     private object pixelBuffer {
         private const val MAX_CACHE_SIZE = 2
 
-        @Volatile
         private var cached: IntArray? = null
         private var cachedSize: Int = 0
 
         // 二级缓存：保存上一次被替换的数组，支持两种尺寸交替使用
-        @Volatile
         private var secondary: IntArray? = null
         private var secondarySize: Int = 0
 

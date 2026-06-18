@@ -101,23 +101,23 @@ class MorphStyleResolverTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
-    // 用例 B3：AUTO 策略在不支持 Dynamic Color 时回退到 iOS
+    // 用例 B3：AUTO 策略在 DynamicColors 反射不可用时回退到 Pixel
     //
     // 在纯 JVM 测试环境中：
-    // - DynamicColors 类不存在，反射调用失败，降级到 API 级别检测
-    // - Build.VERSION.SDK_INT 默认为 0（returnDefaultValues=true），
-    //   0 < Build.VERSION_CODES.S(31)，因此判定为不支持 Dynamic Color
+    // - DynamicColors 类不存在，反射调用失败
+    // - minSdk=35 (API 31+) 保证 Dynamic Color 硬件能力必然可用，
+    //   无需 SDK_INT 守卫，直接返回 true（C1 修复）
     // ═══════════════════════════════════════════════════════════════════════
 
     @Test
-    fun `AUTO策略_不支持DynamicColor_回退到iOS主题`() {
+    fun `AUTO策略_DynamicColors反射不可用_minSdk35保证返回Pixel主题`() {
         // 纯 JVM 环境下 DynamicColors 反射调用必然失败，
-        // 且 Build.VERSION.SDK_INT 为 0（默认值），低于 S(31)，
-        // 因此 AUTO 策略应回退到 iOS 主题
+        // 但 minSdk=35 保证 API 31+ 始终可用，Dynamic Color 硬件能力必然存在，
+        // 因此 AUTO 策略应返回 Pixel 主题
         val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.AUTO)
         assertEquals(
-            "AUTO 策略在不支持 Dynamic Color 时应回退到 iOS 主题",
-            com.morphkit.R.style.Theme_MorphKit_iOS,
+            "AUTO 策略在 DynamicColors 反射不可用时，minSdk=35 保证应返回 Pixel 主题",
+            com.morphkit.R.style.Theme_MorphKit_Pixel,
             themeResId
         )
     }
