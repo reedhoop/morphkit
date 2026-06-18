@@ -223,7 +223,14 @@ object MorphKit {
 
     private const val TAG = "MorphKit"
 
-    /** 当前配置，初始化后可用。@Volatile 保证跨线程可见性 */
+    /**
+     * 当前配置，初始化后可用。
+     *
+     * M2 文档：`@Volatile` 保证跨线程可见性，但字段的安全访问依赖 [initialized] gate ——
+     * 所有外部访问点（[createView]、[modifyView]）均在 `if (!initialized) return null`
+     * 守卫之后才读取 [config]，确保不会读到未初始化的 lateinit 值。
+     * 写入仅在 [init] 内、[initialized] 置 true 之前完成，且 [init] 由 [initGuard] CAS 保证单次执行。
+     */
     @Volatile
     private lateinit var config: MorphConfig
 

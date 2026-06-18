@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.morphkit.demo.view.R
+import com.morphkit.demo.view.dp
 import com.morphkit.widget.container.MorphCardView
+import com.morphkit.widget.text.MorphTextView
 
 class CardPage : Fragment() {
 
@@ -17,49 +18,46 @@ class CardPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
-        val dp8 = (8 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.card_title)
             textSize = 22f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         })
 
         // Standard card
-        layout.addView(TextView(context).apply { text = getString(R.string.card_standard) })
+        layout.addView(MorphTextView(context).apply { text = getString(R.string.card_standard) })
         val standardCard = MorphCardView(context).apply {
-            val inner = TextView(context).apply {
+            val inner = MorphTextView(context).apply {
                 text = getString(R.string.card_standard_text)
-                setPadding(dp16, dp16, dp16, dp16)
+                setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
             }
             addView(inner)
         }
         layout.addView(standardCard, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dp8; bottomMargin = dp16 })
+        ).apply { topMargin = context.dp(8); bottomMargin = context.dp(16) })
 
         // Glassmorphism card
-        layout.addView(TextView(context).apply { text = getString(R.string.card_glass) })
+        layout.addView(MorphTextView(context).apply { text = getString(R.string.card_glass) })
         val glassCard = MorphCardView(context).apply {
             isGlassmorphism = true
-            val inner = TextView(context).apply {
+            val inner = MorphTextView(context).apply {
                 text = getString(R.string.card_glass_text)
-                setPadding(dp16, dp16, dp16, dp16)
+                setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
             }
             addView(inner)
         }
         layout.addView(glassCard, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dp8; bottomMargin = dp16 })
+        ).apply { topMargin = context.dp(8); bottomMargin = context.dp(16) })
 
         scrollView.addView(layout)
         return scrollView

@@ -95,6 +95,10 @@ object MorphTokens {
         @ColorInt
         val colorOnPrimaryContainerDark: Int = 0xFFD1E8FF.toInt()
 
+        /** 暗色模式主色上的文字/图标色（L7 修复：从语义色别名区移到 primary 色组） */
+        @ColorInt
+        val colorOnPrimaryDark: Int = 0xFF001D3F.toInt()
+
         /** 表面色（页面背景） */
         @ColorInt
         val colorSurface: Int = 0xFFF2F2F7.toInt()
@@ -262,10 +266,6 @@ object MorphTokens {
         /** 警告色 — 别名 [colorOrange500]，与 Dark 模式 [colorWarningDark] 对称 */
         @ColorInt
         val colorWarning: Int = colorOrange500
-
-        /** 暗色模式主色上的文字/图标色 */
-        @ColorInt
-        val colorOnPrimaryDark: Int = 0xFF001D3F.toInt()
 
         // ── Outline 补充（M3 对齐） ──
 

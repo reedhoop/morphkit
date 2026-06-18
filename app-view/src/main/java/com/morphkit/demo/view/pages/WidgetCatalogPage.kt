@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.morphkit.demo.view.R
+import com.morphkit.demo.view.dp
+import com.morphkit.widget.text.MorphTextView
 
 class WidgetCatalogPage : Fragment() {
 
@@ -18,18 +19,16 @@ class WidgetCatalogPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        val title = TextView(context).apply {
+        val title = MorphTextView(context).apply {
             text = getString(R.string.catalog_title)
             textSize = 24f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         }
         layout.addView(title)
 
@@ -43,10 +42,10 @@ class WidgetCatalogPage : Fragment() {
         )
 
         items.forEach { (label, navId) ->
-            val item = TextView(context).apply {
+            val item = MorphTextView(context).apply {
                 text = "\u25B8 $label"
                 textSize = 18f
-                setPadding(0, dp16, 0, dp16)
+                setPadding(0, context.dp(16), 0, context.dp(16))
                 setOnClickListener {
                     try {
                         findNavController().navigate(navId)

@@ -118,6 +118,9 @@ class MorphEditText @JvmOverloads constructor(
     /** 当前显示的背景色（用于动画起始值） */
     private var currentBgColor: Int = 0
 
+    /** 是否已完成首次 attach（init 期间 View 未 attach，应跳过动画直接设色） */
+    private var isAttached: Boolean = false
+
     /** 业务方是否在 XML 中显式设置了自定义背景（Step 6 — 极度克制）。
      *  提升为成员字段，使 applySearchState() 在生命周期回调中也能尊重宿主自定义背景。 */
     private var hasCustomBackground: Boolean = false
@@ -246,9 +249,20 @@ class MorphEditText @JvmOverloads constructor(
     /**
      * 动画过渡焦点背景色（150ms DecelerateInterpolator），
      * 与其他交互组件的动画过渡风格一致。
+     *
+     * L10 修复：init 期间 View 未 attach，启动 ValueAnimator 是无意义开销
+     * （动画更新的是 drawable 颜色，但此时 drawable 尚未设为 background）。
+     * 改为：未 attach 时直接 setColor，跳过动画。
      */
     private fun animateFocusColor(targetColor: Int) {
         focusAnimator?.cancel()
+
+        // 未 attach 时直接设色，跳过动画（L10 修复）
+        if (!isAttached) {
+            currentBgColor = targetColor
+            searchBackgroundDrawable.setColor(targetColor)
+            return
+        }
 
         val startColor = if (currentBgColor != 0) currentBgColor else searchBackgroundColor
 
@@ -309,6 +323,7 @@ class MorphEditText @JvmOverloads constructor(
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        isAttached = true
         if (interactionMode == InteractionMode.IOS) {
             applyStyle()
         }
@@ -324,6 +339,7 @@ class MorphEditText @JvmOverloads constructor(
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        isAttached = false
         focusAnimator?.cancel()
         focusAnimator = null
     }

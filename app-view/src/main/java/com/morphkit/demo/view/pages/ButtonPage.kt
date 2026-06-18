@@ -6,11 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.demo.view.R
+import com.morphkit.demo.view.dp
 import com.morphkit.widget.button.MorphButton
+import com.morphkit.widget.text.MorphTextView
 
 class ButtonPage : Fragment() {
 
@@ -18,32 +19,30 @@ class ButtonPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.button_title)
             textSize = 22f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         })
 
         // Primary button
-        layout.addView(TextView(context).apply { text = getString(R.string.button_primary) })
+        layout.addView(MorphTextView(context).apply { text = getString(R.string.button_primary) })
         val primaryBtn = MorphButton(context).apply {
             text = getString(R.string.button_primary_text)
             setOnClickListener {
                 Toast.makeText(context, getString(R.string.button_primary_toast), Toast.LENGTH_SHORT).show()
             }
         }
-        layout.addView(primaryBtn, matchWrapParams(top = dp16, bottom = dp16))
+        layout.addView(primaryBtn, matchWrapParams(top = context.dp(16), bottom = context.dp(16)))
 
         // Plain button
-        layout.addView(TextView(context).apply { text = getString(R.string.button_plain) })
+        layout.addView(MorphTextView(context).apply { text = getString(R.string.button_plain) })
         val plainBtn = MorphButton(context).apply {
             text = getString(R.string.button_plain_text)
             style = MorphButton.Style.PLAIN
@@ -51,15 +50,15 @@ class ButtonPage : Fragment() {
                 Toast.makeText(context, getString(R.string.button_plain_toast), Toast.LENGTH_SHORT).show()
             }
         }
-        layout.addView(plainBtn, matchWrapParams(top = dp16, bottom = dp16))
+        layout.addView(plainBtn, matchWrapParams(top = context.dp(16), bottom = context.dp(16)))
 
         // Disabled button
-        layout.addView(TextView(context).apply { text = getString(R.string.button_disabled) })
+        layout.addView(MorphTextView(context).apply { text = getString(R.string.button_disabled) })
         val disabledBtn = MorphButton(context).apply {
             text = getString(R.string.button_disabled_text)
             isEnabled = false
         }
-        layout.addView(disabledBtn, matchWrapParams(top = dp16, bottom = dp16))
+        layout.addView(disabledBtn, matchWrapParams(top = context.dp(16), bottom = context.dp(16)))
 
         scrollView.addView(layout)
         return scrollView

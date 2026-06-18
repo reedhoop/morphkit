@@ -8,6 +8,11 @@ import com.morphkit.theme.MorphTokens
  *
  * 定义各组件的圆角半径（单位：dp），与 View 层 [com.morphkit.theme.MorphShape] 对齐。
  *
+ * L9 说明：字段类型为 `Int`（dp 数值），消费方需通过 `.dp` 扩展转换为 `Dp`，
+ * 如 `RoundedCornerShape(shape.cornerRadiusButton.dp)`。
+ * 保留 Int 而非改为 Dp 的原因：与 [MorphTokens.Shapes] Token 层（Int 常量）保持一致，
+ * 避免在 data class 中引入 Dp 依赖导致 Token 层与 Compose 层耦合。
+ *
  * @property cornerRadiusButton 按钮圆角半径（dp）
  * @property cornerRadiusCard 卡片圆角半径（dp）
  * @property cornerRadiusTextField 输入框圆角半径（dp）

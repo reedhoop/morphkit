@@ -225,19 +225,30 @@ internal object BackdropBlurHelper {
      * 使用水平+垂直两遍均值滤波（moving average）近似高斯模糊。
      * 时间复杂度 O(w × h)，与半径无关，适合大半径模糊。
      *
+     * L12 修复：改用 [obtainBitmap] 从对象池获取结果 Bitmap，
+     * 与 GPU 路径对称，避免 `source.copy()` 绕过池化导致内存抖动。
+     * 源像素通过 `getPixels` 读入，再 `setPixels` 写回池化 Bitmap。
+     *
      * @param source 源 Bitmap（不会被修改）
      * @param radius 模糊半径（px），至少 1
-     * @return 模糊后的新 Bitmap
+     * @return 模糊后的新 Bitmap（来自对象池，调用方失败时应 [recycleToPool]）
      */
     private fun blurSoftware(source: Bitmap, radius: Int): Bitmap {
         val w = source.width
         val h = source.height
-        val result = source.copy(source.config ?: Bitmap.Config.ARGB_8888, true)
+        // L12 修复：从对象池获取，而非 source.copy()
+        val result = obtainBitmap(w, h)
 
-        if (radius < 1) return result
+        if (radius < 1) {
+            // 半径为 0 时直接复制源像素到池化 Bitmap
+            val pixels = pixelBuffer.getOrSet(w * h)
+            source.getPixels(pixels, 0, w, 0, 0, w, h)
+            result.setPixels(pixels, 0, w, 0, 0, w, h)
+            return result
+        }
 
         val pixels = pixelBuffer.getOrSet(w * h)
-        result.getPixels(pixels, 0, w, 0, 0, w, h)
+        source.getPixels(pixels, 0, w, 0, 0, w, h)
 
         // 水平方向均值滤波
         stackBlurHorizontal(pixels, w, h, radius)

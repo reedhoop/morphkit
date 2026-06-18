@@ -247,6 +247,7 @@ private fun material3ColorScheme(colors: MorphColorPalette) = androidx.compose.m
     surfaceContainer = colors.surfaceContainer,
     surfaceContainerHigh = colors.surfaceContainerHigh,
     surfaceContainerHighest = colors.surfaceContainerHighest,
+    // L8 文档：M3 规范中 surfaceTint 用于 elevation overlay 着色，取 primary 色
     surfaceTint = colors.primary,
     inverseSurface = colors.inverseSurface,
     inverseOnSurface = colors.inverseOnSurface,

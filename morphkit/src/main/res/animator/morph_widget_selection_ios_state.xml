@@ -32,11 +32,11 @@
     </item>
 
     <!-- 默认态：恢复 alpha + translationZ -->
+    <!-- M10 修复：移除 alpha 的 valueFrom="0.7"，避免从 focused 回到 default 时产生假动画 -->
     <item>
         <set>
             <objectAnimator
                 android:propertyName="alpha"
-                android:valueFrom="0.7"
                 android:valueTo="1.0"
                 android:duration="200"
                 android:interpolator="@android:interpolator/fast_out_slow_in" />

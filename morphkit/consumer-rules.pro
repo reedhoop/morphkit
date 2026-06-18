@@ -85,13 +85,11 @@
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 7. LayoutInflater 反射字段 — MorphInstaller 通过反射修改这些字段
-#    Framework 类不会被 R8 混淆，但显式声明防止未来工具链变更
+#    L5 修复：framework 类（android.jar）不受 R8/ProGuard 管理，
+#    此处仅作文档目的，不声明 -keep 规则（与 proguard-rules.pro §6 表述统一）
 # ═══════════════════════════════════════════════════════════════════════════════
--keepclassmembers class android.view.LayoutInflater {
-    android.view.LayoutInflater$Factory2 mFactory2;
-    android.view.LayoutInflater$Factory mFactory;
-    boolean mFactorySet;
-}
+# (无需 -keep 规则，framework 类不受混淆影响)
+# MorphInstaller 反射访问的字段：mFactory2 / mFactory / mFactorySet
 
 # ═══════════════════════════════════════════════════════════════════════════════
 # 8. MorphFactory2 — 必须保留类名，因为 MorphInstaller 通过 instanceof 检查

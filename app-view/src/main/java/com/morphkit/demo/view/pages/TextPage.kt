@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.morphkit.demo.view.R
+import com.morphkit.demo.view.dp
 import com.morphkit.widget.text.MorphTextView
 
 class TextPage : Fragment() {
@@ -17,18 +17,17 @@ class TextPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        layout.addView(TextView(context).apply {
+        // H10 修复：标签使用 MorphTextView 而非原生 TextView，走 MorphFactory2 替换链
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.text_title)
             textSize = 22f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         })
 
         val morphText = MorphTextView(context).apply {
@@ -37,9 +36,9 @@ class TextPage : Fragment() {
         layout.addView(morphText, LinearLayout.LayoutParams(
             LinearLayout.LayoutParams.MATCH_PARENT,
             LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { bottomMargin = dp16 })
+        ).apply { bottomMargin = context.dp(16) })
 
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.text_description)
             textSize = 14f
         })

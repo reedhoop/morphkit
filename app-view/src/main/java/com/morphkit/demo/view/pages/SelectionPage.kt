@@ -7,12 +7,13 @@ import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.RadioGroup
 import android.widget.ScrollView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.demo.view.R
-import com.morphkit.widget.selection.MorphCheckBox
+import com.morphkit.demo.view.dp
 import com.morphkit.widget.button.MorphRadioButton
+import com.morphkit.widget.selection.MorphCheckBox
+import com.morphkit.widget.text.MorphTextView
 
 class SelectionPage : Fragment() {
 
@@ -20,19 +21,17 @@ class SelectionPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
         // MorphCheckBox
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.selection_check_title)
             textSize = 22f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         })
 
         val check1 = MorphCheckBox(context).apply {
@@ -57,10 +56,10 @@ class SelectionPage : Fragment() {
         layout.addView(check3)
 
         // MorphRadioButton
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.selection_radio_title)
             textSize = 22f
-            setPadding(0, dp16, 0, dp16)
+            setPadding(0, context.dp(16), 0, context.dp(16))
         })
 
         val radioGroup = RadioGroup(context).apply {

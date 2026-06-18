@@ -7,13 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.ScrollView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.morphkit.core.MorphKit
 import com.morphkit.core.StylePolicy
 import com.morphkit.demo.view.R
+import com.morphkit.demo.view.dp
 import com.morphkit.widget.button.MorphButton
+import com.morphkit.widget.text.MorphTextView
 
 class SettingsPage : Fragment() {
 
@@ -21,26 +22,23 @@ class SettingsPage : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
         val context = requireContext()
-        val density = context.resources.displayMetrics.density
-        val dp16 = (16 * density).toInt()
-        val dp8 = (8 * density).toInt()
         val scrollView = ScrollView(context)
         val layout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp16, dp16, dp16, dp16)
+            setPadding(context.dp(16), context.dp(16), context.dp(16), context.dp(16))
         }
 
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_title)
             textSize = 22f
-            setPadding(0, 0, 0, dp16)
+            setPadding(0, 0, 0, context.dp(16))
         })
 
         // Style Policy
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_style_policy)
             textSize = 18f
-            setPadding(0, 0, 0, dp8)
+            setPadding(0, 0, 0, context.dp(8))
         })
 
         val policies = listOf(
@@ -67,20 +65,20 @@ class SettingsPage : Fragment() {
             layout.addView(btn, LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
-            ).apply { bottomMargin = dp8 })
+            ).apply { bottomMargin = context.dp(8) })
         }
 
         // Status
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_status)
             textSize = 18f
-            setPadding(0, dp16, 0, dp8)
+            setPadding(0, context.dp(16), 0, context.dp(8))
         })
 
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_initialized, MorphKit.isInitialized())
         })
-        layout.addView(TextView(context).apply {
+        layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_theme_resid, if (MorphKit.isInitialized()) MorphKit.getFinalThemeResId() else 0)
         })
 

@@ -172,6 +172,39 @@ class MorphStyleResolverTest {
     }
 
     // ═══════════════════════════════════════════════════════════════════════
+    // 用例 B6b：OEM 系统设置读取抛 IllegalArgumentException 时安全回退（M20 修复）
+    // Red Line 4 要求宽泛异常捕获，部分定制 ROM 可能抛非 SecurityException
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OEM系统设置读取IllegalArgumentException时_安全回退到StylePolicy`() {
+        every { Settings.System.getInt(any(), "oem_ui_style", any()) } throws IllegalArgumentException("参数异常")
+
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.PIXEL)
+        assertEquals(
+            "OEM 设置读取 IllegalArgumentException 时应安全回退到 StylePolicy",
+            com.morphkit.R.style.Theme_MorphKit_Pixel,
+            themeResId
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 用例 B6c：OEM 系统设置读取抛 NullPointerException 时安全回退（M20 修复）
+    // ═══════════════════════════════════════════════════════════════════════
+
+    @Test
+    fun `OEM系统设置读取NullPointerException时_安全回退到StylePolicy`() {
+        every { Settings.System.getInt(any(), "oem_ui_style", any()) } throws NullPointerException("contentResolver 为 null")
+
+        val themeResId = MorphStyleResolver.resolve(mockContext, StylePolicy.IOS)
+        assertEquals(
+            "OEM 设置读取 NullPointerException 时应安全回退到 StylePolicy",
+            com.morphkit.R.style.Theme_MorphKit_iOS,
+            themeResId
+        )
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
     // 用例 B7：OEM 未知值回退到 StylePolicy 判定
     // ═══════════════════════════════════════════════════════════════════════
 

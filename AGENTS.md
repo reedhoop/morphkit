@@ -536,10 +536,10 @@ try {
 
 | 文件 | 使用控件 | 状态 |
 |------|----------|------|
-| `morph_widget_button_ios_state.xml` | MorphButton | pressed→alpha 0.8, focused→translationZ 4dp, default→`<set>` 恢复 alpha+translationZ |
+| `morph_widget_button_ios_state.xml` | MorphButton | focused→translationZ 4dp, default→`<set>` 恢复 translationZ（按压反馈由 pressOverlay 接管，无 pressed 态） |
 | `morph_widget_selection_ios_state.xml` | MorphRadioButton, MorphCheckBox | pressed→alpha 0.7, focused→translationZ 2dp, default→`<set>` 恢复 alpha+translationZ |
 
-**关键**：默认态必须用 `<set>` 同时恢复 `alpha` **和** `translationZ`，否则从 focused 退出后 `translationZ` 会残留在非零值。
+**关键**：默认态必须用 `<set>` 同时恢复 `alpha` **和** `translationZ`（selection 控件），或仅恢复 `translationZ`（button 控件，按压反馈由 pressOverlay 接管），否则从 focused 退出后 `translationZ` 会残留在非零值。
 
 ---
 
@@ -571,6 +571,19 @@ try {
 | `MorphCardViewTest.kt` | `src/test/java/com/morphkit/widget/container/` | `widget.container.MorphCardView` |
 | `BackdropBlurHelperTest.kt` | `src/test/java/com/morphkit/widget/container/` | `widget.container.BackdropBlurHelper` |
 | `MorphCheckBoxTest.kt` | `src/test/java/com/morphkit/widget/selection/` | `widget.selection.MorphCheckBox` |
+| `MorphCheckBoxBehaviorTest.kt` | `src/test/java/com/morphkit/widget/selection/` | `widget.selection.MorphCheckBox` 行为 |
+| `MorphButtonBehaviorTest.kt` | `src/test/java/com/morphkit/widget/button/` | `widget.button.MorphButton` 行为 |
+| `MorphRadioButtonBehaviorTest.kt` | `src/test/java/com/morphkit/widget/button/` | `widget.button.MorphRadioButton` 行为 |
+| `MorphTextViewBehaviorTest.kt` | `src/test/java/com/morphkit/widget/text/` | `widget.text.MorphTextView` 行为 |
+| `MorphEditTextBehaviorTest.kt` | `src/test/java/com/morphkit/widget/text/` | `widget.text.MorphEditText` 行为 |
+| `MorphCardViewBehaviorTest.kt` | `src/test/java/com/morphkit/widget/container/` | `widget.container.MorphCardView` 行为 |
+| `BackdropBlurHelperBehaviorTest.kt` | `src/test/java/com/morphkit/widget/container/` | `widget.container.BackdropBlurHelper` 行为 |
+| `MorphComposeThemeBehaviorTest.kt` | `src/test/java/com/morphkit/theme/compose/` | `theme.compose.MorphComposeTheme` 行为 |
+| `MorphButtonComposeTest.kt` | `src/test/java/com/morphkit/theme/compose/` | `theme.compose.MorphButton` |
+| `MorphTypographyTest.kt` | `src/test/kotlin/com/morphkit/theme/` | `theme.MorphTypography` |
+| `MorphShapeTest.kt` | `src/test/kotlin/com/morphkit/theme/` | `theme.MorphShape` |
+| `MorphKitIOSConfigTest.kt` | `src/test/java/com/morphkit/theme/` | `theme.MorphKitIOSConfig` 扩展 |
+| `ReflectionHelperTest.kt` | `src/test/java/com/morphkit/internal/` | `internal.ReflectionHelper` |
 
 测试为本地 JVM 测试，不依赖真机或模拟器。
 

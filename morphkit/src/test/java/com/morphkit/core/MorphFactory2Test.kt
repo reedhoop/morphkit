@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.FrameLayout
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.mockkObject
@@ -57,7 +56,9 @@ class MorphFactory2Test {
     fun `Morph控件抛异常时_降级到originalFactory_不崩溃`() {
         // ── 1. Mock 原生 Factory2（模拟 AppCompat）──
         val mockOriginalFactory: LayoutInflater.Factory2 = mockk(relaxed = true)
-        val fallbackView = FrameLayout(mockk(relaxed = true))
+        // L22 修复：用 mockk<View> 替代真实 FrameLayout(mockk())，
+        // 避免纯 JVM 下实例化真实 View 触发未 mock 的 Android 框架方法
+        val fallbackView: View = mockk(relaxed = true)
         every { mockOriginalFactory.onCreateView(any(), any(), any(), any()) } returns fallbackView
 
         // ── 2. 实例化 MorphFactory2 ──

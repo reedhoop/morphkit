@@ -78,17 +78,13 @@ class MorphButton @JvmOverloads constructor(
             a.recycle()
         }
 
-        // ── 检测业务方是否设置了自定义背景 ──
-        // 在 super 构造函数执行后，background 已被 XML 属性设置
-        // 判断逻辑：如果 background 不是从主题默认样式注入的，则视为自定义背景
-        // 主题默认背景通常是 Material 库的 RippleDrawable 或 StateListDrawable，
-        // 它们的类名以 "android.graphics.drawable." 或 "com.google.android.material." 开头
-        // 业务方自定义的背景（如 GradientDrawable 子类、LayerDrawable 等）不在上述包中
-        val bg = background
-        hasCustomBackground = bg != null
-                && bg !is android.graphics.drawable.ColorDrawable
-                && !bg.javaClass.name.startsWith("android.graphics.drawable.")
-                && !bg.javaClass.name.startsWith("com.google.android.material.")
+        // ── 检测业务方是否设置了自定义背景（L13 修复）──
+        // AGENTS.md §2 Step 6 要求用 XML 属性检查，而非类名嗅探。
+        // 类名嗅探的缺陷：GradientDrawable 等自定义背景会被误判为"非自定义"而被覆盖。
+        // 改为检查 android:background XML 属性是否被显式设置，与 MorphEditText 保持一致。
+        hasCustomBackground = attrs?.getAttributeValue(
+            "http://schemas.android.com/apk/res/android", "background"
+        ) != null
 
         cachedPrimaryColor = MorphTheme.morphColorPrimary(context)
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)
