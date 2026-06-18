@@ -200,7 +200,22 @@ class MorphCardView @JvmOverloads constructor(
         // (elevation shadow, ripple on click, stateListAnimator)
 
         // ── 圆角 ──
-        radius = MorphShape.cornerLarge(context).toFloat()
+        // 优先读取 XML morphCornerRadius 属性；未设置时按交互模式选择默认值
+        // iOS 模式：cornerLarge (16dp)，Pixel 模式：cornerRadiusCardPixel (12dp)
+        val defaultRadius = if (interactionMode == InteractionMode.MATERIAL) {
+            MorphTokens.Shapes.cornerRadiusCardPixel.dp(context)
+        } else {
+            MorphShape.cornerLarge(context)
+        }
+        val customRadius = attrs?.let {
+            val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView, morphDefStyleAttr, 0)
+            try {
+                a.getDimensionPixelSize(R.styleable.MorphCardView_morphCornerRadius, -1)
+            } finally {
+                a.recycle()
+            }
+        } ?: -1
+        radius = (if (customRadius >= 0) customRadius else defaultRadius).toFloat()
 
         // ── 裁剪子 View 到圆角范围内 ──
         // 毛玻璃模式下子 View 不能溢出圆角区域

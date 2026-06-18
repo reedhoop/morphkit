@@ -48,7 +48,7 @@ object MorphTheme {
     /** M3 主色容器色 */
     @ColorInt
     fun morphColorPrimaryContainer(context: Context): Int =
-        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, 0xFFD0BCFF.toInt())
+        MaterialColors.getColor(context, com.google.android.material.R.attr.colorPrimaryContainer, MorphTokens.Colors.colorPrimaryContainer)
 
     /** M3 主色上的文字/图标色 */
     @ColorInt

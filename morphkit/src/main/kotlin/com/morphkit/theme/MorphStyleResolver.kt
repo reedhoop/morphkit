@@ -1,7 +1,6 @@
 package com.morphkit.theme
 
 import android.content.Context
-import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import com.morphkit.R
@@ -75,6 +74,9 @@ object MorphStyleResolver {
      */
     @Volatile
     private var cachedOemStyle: Int? = null
+
+    /** readOemStyle/invalidateCache 复合操作同步锁，消除 check-then-act 竞态 */
+    private val oemStyleLock = Any()
 
     /**
      * 清空 OEM 风格缓存。
@@ -157,16 +159,21 @@ object MorphStyleResolver {
         val cached = cachedOemStyle
         if (cached != null) return cached
 
-        // 首次读取：执行 IPC 并缓存结果
-        val value = try {
-            Settings.System.getInt(context.contentResolver, OEM_UI_STYLE_KEY, OEM_STYLE_DEFAULT)
-        } catch (e: Exception) {
-            // 部分定制 ROM 可能限制 Settings.System 读取权限
-            Log.d(TAG, "读取 OEM 系统设置异常，使用默认值", e)
-            OEM_STYLE_DEFAULT
+        // 首次读取：synchronized 保护 IPC + 写回复合操作，避免并发重复 IPC
+        return synchronized(oemStyleLock) {
+            // 双重检查：可能在等待锁期间已被其他线程填充
+            cachedOemStyle?.let { return@synchronized it }
+
+            val value = try {
+                Settings.System.getInt(context.contentResolver, OEM_UI_STYLE_KEY, OEM_STYLE_DEFAULT)
+            } catch (e: Exception) {
+                // 部分定制 ROM 可能限制 Settings.System 读取权限
+                Log.d(TAG, "读取 OEM 系统设置异常，使用默认值", e)
+                OEM_STYLE_DEFAULT
+            }
+            cachedOemStyle = value
+            value
         }
-        cachedOemStyle = value
-        return value
     }
 
     /**
@@ -176,7 +183,7 @@ object MorphStyleResolver {
      * 1. 优先使用 Material 库的 DynamicColors.isDynamicColorAvailable，
      *    这是最准确的检测方式（考虑了定制 ROM 可能剥夺此功能的情况）。
      * 2. 若 DynamicColors API 不可用（如 material 库版本过低），
-     *    降级为检查 `Build.VERSION.SDK_INT >= S`。
+     *    minSdk=35 保证 API 31+ 始终可用，直接返回 true。
      *
      * @param context 上下文
      * @return Theme 资源 ID
@@ -216,7 +223,7 @@ object MorphStyleResolver {
      *
      * 双重检测策略：
      * 1. 优先调用 DynamicColors.isDynamicColorAvailable()（反射结果已缓存，避免重复查找）
-     * 2. 若反射调用失败，降级为 `Build.VERSION.SDK_INT >= S`
+     * 2. 若反射调用失败，minSdk=35 保证 API 31+ 始终可用，直接返回 true
      *
      * @param context 上下文
      * @return true 表示设备支持 Dynamic Color
@@ -227,10 +234,11 @@ object MorphStyleResolver {
                 val result = method.invoke(null, context)
                 if (result is Boolean) return result
             } catch (e: Exception) {
-                Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 调用失败，降级到 API 级别检测", e)
+                Log.d(TAG, "DynamicColors.isDynamicColorAvailable() 调用失败，降级到 minSdk 保证", e)
             }
         }
 
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+        // minSdk=35 (API 31+)，Dynamic Color 硬件能力必然可用，无需 SDK_INT 守卫
+        return true
     }
 }

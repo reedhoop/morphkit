@@ -103,10 +103,8 @@ class MorphEditText @JvmOverloads constructor(
             applyStyle()
         }
 
-    /** 搜索栏背景 Drawable（复用同一实例） */
-    private val searchBackgroundDrawable = GradientDrawable().apply {
-        cornerRadius = MorphShape.cornerMedium(context).toFloat()
-    }
+    /** 搜索栏背景 Drawable（复用同一实例，在 init 中根据 morphCornerRadius 创建） */
+    private lateinit var searchBackgroundDrawable: GradientDrawable
 
     /** 缓存：搜索栏原始背景色 */
     private var searchBackgroundColor: Int = MorphTheme.morphColorSurfaceVariant(context)
@@ -120,6 +118,10 @@ class MorphEditText @JvmOverloads constructor(
     /** 当前显示的背景色（用于动画起始值） */
     private var currentBgColor: Int = 0
 
+    /** 业务方是否在 XML 中显式设置了自定义背景（Step 6 — 极度克制）。
+     *  提升为成员字段，使 applySearchState() 在生命周期回调中也能尊重宿主自定义背景。 */
+    private var hasCustomBackground: Boolean = false
+
     // ═══════════════════════════════════════════════════════════════════════
     // 初始化
     // ═══════════════════════════════════════════════════════════════════════
@@ -127,6 +129,7 @@ class MorphEditText @JvmOverloads constructor(
     init {
         // ── 读取 XML 属性 ──
         var resolvedMode = InteractionMode.IOS
+        var customCornerRadius = -1f
         attrs?.let {
             val a = context.obtainStyledAttributes(it, R.styleable.MorphEditText, defStyleAttr, 0)
             try {
@@ -135,15 +138,27 @@ class MorphEditText @JvmOverloads constructor(
 
                 val modeValue = a.getInt(R.styleable.MorphEditText_morphInteractionMode, 0)
                 resolvedMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
+
+                // 读取 morphCornerRadius（未设置时为 -1，使用默认 cornerMedium）
+                customCornerRadius = a.getDimensionPixelSize(
+                    R.styleable.MorphEditText_morphCornerRadius, -1
+                ).toFloat()
             } finally {
                 a.recycle()
             }
         }
         interactionMode = resolvedMode
 
+        // ── 初始化搜索栏背景 Drawable（根据 morphCornerRadius 或默认值） ──
+        val cornerRadius = if (customCornerRadius >= 0) customCornerRadius
+        else MorphShape.cornerMedium(context).toFloat()
+        searchBackgroundDrawable = GradientDrawable().apply {
+            setCornerRadius(cornerRadius)
+        }
+
         if (interactionMode == InteractionMode.IOS) {
             // ── 检测业务方是否在 XML 中显式设置了自定义背景（Step 6 — 极度克制） ──
-            val hasCustomBackground = attrs?.getAttributeValue(
+            hasCustomBackground = attrs?.getAttributeValue(
                 "http://schemas.android.com/apk/res/android", "background"
             ) != null
 
@@ -220,6 +235,9 @@ class MorphEditText @JvmOverloads constructor(
      * @param focused 是否处于焦点态
      */
     private fun applySearchState(focused: Boolean) {
+        // 尊重宿主自定义背景：若业务方在 XML 显式设置了 android:background，
+        // 不覆盖其背景（Step 6 — 极度克制）。守卫贯穿生命周期回调。
+        if (hasCustomBackground) return
         val targetColor = if (focused) searchBackgroundFocusedColor else searchBackgroundColor
         animateFocusColor(targetColor)
         background = searchBackgroundDrawable
