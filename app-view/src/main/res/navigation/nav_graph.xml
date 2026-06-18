@@ -14,6 +14,7 @@
         <action android:id="@+id/action_catalog_to_card" app:destination="@id/cardPage" />
         <action android:id="@+id/action_catalog_to_selection" app:destination="@id/selectionPage" />
         <action android:id="@+id/action_catalog_to_settings" app:destination="@id/settingsPage" />
+        <action android:id="@+id/action_catalog_to_xmlDemo" app:destination="@id/xmlDemoPage" />
     </fragment>
 
     <fragment
@@ -45,5 +46,10 @@
         android:id="@+id/settingsPage"
         android:name="com.morphkit.demo.view.pages.SettingsPage"
         android:label="Settings" />
+
+    <fragment
+        android:id="@+id/xmlDemoPage"
+        android:name="com.morphkit.demo.view.pages.XmlDemoPage"
+        android:label="XML Auto-Replace Demo" />
 
 </navigation>

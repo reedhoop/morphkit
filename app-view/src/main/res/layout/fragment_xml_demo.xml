@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    M13 演示页：XML 布局零侵入替换展示
+
+    本布局故意只声明 Android 标准控件（TextView / Button / EditText /
+    RadioButton / CheckBox），不引用任何 com.morphkit.widget.* 类。
+
+    运行时 MorphFactory2 通过 LayoutInflater.Factory2 责任链拦截这些
+    标签名，自动替换为对应的 Morph* 控件：
+        TextView    -> MorphTextView
+        Button      -> MorphButton
+        EditText    -> MorphEditText
+        RadioButton -> MorphRadioButton
+        CheckBox    -> MorphCheckBox
+
+    这是 MorphKit 的核心卖点：业务方 XML 零改动，即可获得 iOS 极简风 /
+    Pixel 原生风的统一视觉与交互。
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- 标题：标准 TextView，运行时被替换为 MorphTextView -->
+        <TextView
+            android:id="@+id/xml_demo_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/xml_demo_title"
+            android:textSize="22sp" />
+
+        <!-- 说明文字：标准 TextView -->
+        <TextView
+            android:id="@+id/xml_demo_intro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp"
+            android:text="@string/xml_demo_intro"
+            android:textSize="14sp" />
+
+        <!-- 分组标题：标准 TextView -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/xml_demo_section_text"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 演示文本：标准 TextView，被替换为 MorphTextView 后自动应用 typography token -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/xml_demo_text_body" />
+
+        <!-- 分组标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/xml_demo_section_button"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 标准按钮：被替换为 MorphButton，自动获得 iOS / Pixel 双模式交互 -->
+        <Button
+            android:id="@+id/xml_demo_button_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/xml_demo_button_primary" />
+
+        <Button
+            android:id="@+id/xml_demo_button_plain"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/xml_demo_button_plain" />
+
+        <!-- 分组标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/xml_demo_section_edit"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 标准 EditText：被替换为 MorphEditText，自动获得焦点背景反馈 -->
+        <EditText
+            android:id="@+id/xml_demo_edit_default"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/xml_demo_edit_default_hint"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/xml_demo_edit_search"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="@string/xml_demo_edit_search_hint"
+            android:inputType="text" />
+
+        <!-- 分组标题 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/xml_demo_section_selection"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <!-- 标准 RadioButton：被替换为 MorphRadioButton，自动获得圆形指示器 + 防抖 -->
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <RadioButton
+                android:id="@+id/xml_demo_radio_a"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/xml_demo_radio_a" />
+
+            <RadioButton
+                android:id="@+id/xml_demo_radio_b"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/xml_demo_radio_b" />
+        </RadioGroup>
+
+        <!-- 标准 CheckBox：被替换为 MorphCheckBox，自动获得圆角方形勾选 + 防抖 -->
+        <CheckBox
+            android:id="@+id/xml_demo_check_notifications"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/xml_demo_check_notifications" />
+
+        <CheckBox
+            android:id="@+id/xml_demo_check_dark_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:text="@string/xml_demo_check_dark_mode" />
+
+        <!-- 替换证据展示区：运行时读取实际控件类名，证明替换已生效 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
+            android:text="@string/xml_demo_section_evidence"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/xml_demo_evidence"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/xml_demo_evidence_loading"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+</ScrollView>

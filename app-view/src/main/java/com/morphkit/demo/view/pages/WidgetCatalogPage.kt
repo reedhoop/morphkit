@@ -33,6 +33,7 @@ class WidgetCatalogPage : Fragment() {
         layout.addView(title)
 
         val items = listOf(
+            getString(R.string.catalog_item_xml_demo) to R.id.action_catalog_to_xmlDemo,
             getString(R.string.catalog_item_button) to R.id.action_catalog_to_button,
             getString(R.string.catalog_item_text) to R.id.action_catalog_to_text,
             getString(R.string.catalog_item_edit) to R.id.action_catalog_to_editText,

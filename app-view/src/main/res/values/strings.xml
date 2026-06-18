@@ -60,4 +60,36 @@
     <string name="settings_status">Status</string>
     <string name="settings_initialized">Initialized: %1$s</string>
     <string name="settings_theme_resid">Theme ResId: %1$s</string>
+
+    <!-- XmlDemoPage (M13: XML 布局零侵入替换展示) -->
+    <string name="catalog_item_xml_demo">XML Auto-Replace Demo</string>
+    <string name="xml_demo_title">XML Auto-Replace Demo</string>
+    <string name="xml_demo_intro">This page declares only standard Android widgets in XML (TextView / Button / EditText / RadioButton / CheckBox). At runtime MorphFactory2 silently replaces them with Morph* widgets — zero code invasion.</string>
+    <string name="xml_demo_section_text">TextView</string>
+    <string name="xml_demo_text_body">This TextView is declared as &lt;TextView&gt; in XML. After MorphFactory2 replacement it becomes MorphTextView and automatically inherits MorphKit typography tokens and color schemes.</string>
+    <string name="xml_demo_section_button">Button</string>
+    <string name="xml_demo_button_primary">Primary Button</string>
+    <string name="xml_demo_button_primary_toast">Primary clicked</string>
+    <string name="xml_demo_button_plain">Plain Button</string>
+    <string name="xml_demo_button_plain_toast">Plain clicked</string>
+    <string name="xml_demo_section_edit">EditText</string>
+    <string name="xml_demo_edit_default_hint">Enter text...</string>
+    <string name="xml_demo_edit_search_hint">Search...</string>
+    <string name="xml_demo_section_selection">RadioButton &amp; CheckBox</string>
+    <string name="xml_demo_radio_a">Option A</string>
+    <string name="xml_demo_radio_a_toast">Option A selected</string>
+    <string name="xml_demo_radio_b">Option B</string>
+    <string name="xml_demo_radio_b_toast">Option B selected</string>
+    <string name="xml_demo_check_notifications">Enable notifications</string>
+    <string name="xml_demo_check_notifications_toast">Notifications: %1$s</string>
+    <string name="xml_demo_check_dark_mode">Dark mode</string>
+    <string name="xml_demo_check_dark_mode_toast">Dark mode: %1$s</string>
+    <string name="xml_demo_section_evidence">Replacement Evidence</string>
+    <string name="xml_demo_evidence_loading">Loading...</string>
+    <string name="xml_demo_evidence_header">Actual runtime class of each widget:</string>
+    <string name="xml_demo_evidence_text">TextView  -> %1$s</string>
+    <string name="xml_demo_evidence_button">Button    -> %1$s</string>
+    <string name="xml_demo_evidence_edit">EditText  -> %1$s</string>
+    <string name="xml_demo_evidence_radio">RadioButton -> %1$s</string>
+    <string name="xml_demo_evidence_check">CheckBox  -> %1$s</string>
 </resources>
