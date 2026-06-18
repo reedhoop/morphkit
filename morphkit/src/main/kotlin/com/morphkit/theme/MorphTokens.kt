@@ -32,7 +32,7 @@ import androidx.annotation.ColorInt
  *
  * | iOS 语义                   | M3 语义属性              | Token 名称              |
  * |---------------------------|-------------------------|------------------------|
- * | tintColor                 | colorPrimary            | [Colors.colorPrimary]          |
+ * | tintColor                 | colorPrimary            | [Colors.colorBlue500]          |
  * | systemBackground          | colorSurface            | [Colors.colorSurface]          |
  * | secondarySystemBackground | colorSurfaceVariant     | [Colors.colorSurfaceVariant]   |
  * | separator                 | colorOutlineVariant     | [Colors.colorOutlineVariant]   |

@@ -1,5 +1,6 @@
 package com.morphkit.demo.view.pages
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -52,11 +53,13 @@ class SettingsPage : Fragment() {
             val btn = MorphButton(context).apply {
                 text = getString(R.string.settings_switch_to, label)
                 setOnClickListener {
-                    // StylePolicy can only be set during MorphKit.init(), which runs once.
-                    // Display the selected policy as feedback.
+                    context.getSharedPreferences("morphkit_demo", Context.MODE_PRIVATE)
+                        .edit()
+                        .putString("pending_style_policy", policy.name)
+                        .apply()
                     Toast.makeText(
                         context,
-                        getString(R.string.settings_requires_restart, label),
+                        getString(R.string.settings_recorded_restart),
                         Toast.LENGTH_SHORT
                     ).show()
                 }

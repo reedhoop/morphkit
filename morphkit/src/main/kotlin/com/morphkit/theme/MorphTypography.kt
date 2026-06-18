@@ -56,6 +56,8 @@ object MorphTypography {
     val caption1 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption1, weight = FontWeight.MEDIUM)
     /** Caption 2 — iOS HIG 说明文字 2 (11pt Regular) */
     val caption2 = TextStyle(fontSize = MorphTokens.Typography.fontSizeCaption2, weight = FontWeight.MEDIUM)
+    /** Button — iOS HIG 按钮文字 (16pt Medium) */
+    val button = TextStyle(fontSize = MorphTokens.Typography.fontSizeButton, weight = FontWeight.MEDIUM)
 }
 
 /**

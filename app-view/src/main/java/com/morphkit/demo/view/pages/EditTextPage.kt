@@ -32,16 +32,6 @@ class EditTextPage : Fragment() {
             setPadding(0, 0, 0, dp16)
         })
 
-        // Default style
-        layout.addView(TextView(context).apply { text = getString(R.string.edit_default) })
-        val defaultEdit = MorphEditText(context).apply {
-            hint = getString(R.string.edit_default_hint)
-        }
-        layout.addView(defaultEdit, LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply { topMargin = dp8; bottomMargin = dp16 })
-
         // Search style
         layout.addView(TextView(context).apply { text = getString(R.string.edit_search) })
         val searchEdit = MorphEditText(context).apply {

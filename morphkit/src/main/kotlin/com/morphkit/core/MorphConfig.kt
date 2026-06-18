@@ -186,6 +186,7 @@ class MorphConfig internal constructor() {
     fun groupReplace(names: List<String>, creator: (Context, AttributeSet) -> View) {
         require(names.isNotEmpty()) { "groupReplace: names 不能为空列表" }
         names.forEach { name ->
+            require(name.isNotBlank()) { "groupReplace: name 不能为空" }
             _replaceMap[name] = creator
         }
     }

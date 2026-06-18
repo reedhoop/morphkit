@@ -2,6 +2,7 @@ package com.morphkit.widget.container
 
 import com.google.common.truth.Truth.assertThat
 import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
 import android.util.Log
 import org.junit.After
 import org.junit.Before
@@ -23,7 +24,7 @@ class BackdropBlurHelperTest {
 
     @After
     fun tearDown() {
-        // no-op
+        unmockkStatic(Log::class)
     }
 
     @Test

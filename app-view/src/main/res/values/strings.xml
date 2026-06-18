@@ -56,6 +56,7 @@
     <string name="settings_style_policy">Style Policy</string>
     <string name="settings_switch_to">Switch to %1$s</string>
     <string name="settings_requires_restart">Style: %1$s (requires restart)</string>
+    <string name="settings_recorded_restart">已记录，重启后生效</string>
     <string name="settings_status">Status</string>
     <string name="settings_initialized">Initialized: %1$s</string>
     <string name="settings_theme_resid">Theme ResId: %1$s</string>

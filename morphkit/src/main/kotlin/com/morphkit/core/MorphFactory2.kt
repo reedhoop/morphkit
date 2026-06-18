@@ -1,10 +1,12 @@
 package com.morphkit.core
 
 import android.content.Context
+import android.content.ContextWrapper
 import android.util.AttributeSet
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.view.ContextThemeWrapper
 import com.morphkit.R
 import java.util.concurrent.atomic.AtomicBoolean
@@ -79,12 +81,53 @@ class MorphFactory2(
         originalFactory = factory
     }
 
+    /**
+     * 从 Context 包装链中懒加载解析 AppCompat delegate 作为 originalFactory。
+     *
+     * setContentView() 在 super.onCreate() 之后调用，此时 AppCompatDelegate 已初始化。
+     * 遍历 ContextWrapper 链找到 AppCompatActivity，获取其 delegate（实现了 Factory2）。
+     *
+     * @return 解析到的 Factory2，或 null（非 AppCompatActivity / delegate 未实现 Factory2 / 异常）
+     */
+    private fun tryResolveAppCompatDelegate(context: Context): LayoutInflater.Factory2? {
+        return try {
+            var ctx: Context? = context
+            while (ctx is ContextWrapper) {
+                if (ctx is AppCompatActivity) {
+                    val delegate = ctx.delegate
+                    if (delegate is LayoutInflater.Factory2) return delegate
+                }
+                ctx = ctx.baseContext
+            }
+            null
+        } catch (e: Throwable) {
+            Log.d(TAG, "懒加载 AppCompat delegate 失败: ${e.javaClass.simpleName}")
+            null
+        }
+    }
+
     override fun onCreateView(
         parent: View?,
         name: String,
         context: Context,
         attrs: AttributeSet
     ): View? {
+
+        // ═══════════════════════════════════════════════════════════════════════
+        // 阶段 0：懒加载 AppCompat Delegate（H14 修复）
+        //
+        // MorphFactory2 在 onActivityPreCreated 注入，此时 originalFactory=null。
+        // 而 AppCompat delegate 的补充发生在 onActivityCreated（setContentView 之后）。
+        // 导致 setContentView() 期间未命中替换规则的控件返回 null，丢失 AppCompat 能力。
+        //
+        // 修复：在 onCreateView 开头，当 originalFactory 仍为 null 时，
+        // 从 Context 链中懒加载解析 AppCompat delegate。
+        // 因为 setContentView() 在 super.onCreate() 之后调用，
+        // 此时 AppCompatDelegate 已初始化完成。
+        // ═══════════════════════════════════════════════════════════════════════
+        if (originalFactory == null) {
+            originalFactory = tryResolveAppCompatDelegate(context)
+        }
 
         val themedContext = wrapContextIfNeeded(context)
 

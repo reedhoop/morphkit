@@ -584,7 +584,7 @@ try {
 | MockK | 1.13.5 | Kotlin Mock 库（`mockkStatic(Log::class)` 避免 "not mocked" 错误） |
 | Truth | 1.1.5 | 可读性断言 |
 | Robolectric | 4.10.3 | Android 框架模拟 |
-| kotlin-test-junit5 | 2.1.21 | Kotlin 测试互操作 |
+| kotlin-test-junit5 | 2.0.21 | Kotlin 测试互操作 |
 
 **测试中 MorphClickListener 时间源**：`MorphClickListener` 提供 `internal constructor(debounceInterval, timeSource, block)` 用于测试注入，避免 `SystemClock.elapsedRealtime()` 在 JVM 测试中返回 0 的问题。
 

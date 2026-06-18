@@ -1,5 +1,6 @@
 package com.morphkit.demo.compose.pages
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -60,10 +61,13 @@ fun SettingsPage(onBack: () -> Unit) {
             MorphButton(
                 text = stringResource(R.string.settings_switch_to, label),
                 onClick = {
-                    // StylePolicy can only be set during MorphKit.init(), which runs once.
+                    context.getSharedPreferences("morphkit_demo", Context.MODE_PRIVATE)
+                        .edit()
+                        .putString("pending_style_policy", policy.name)
+                        .apply()
                     Toast.makeText(
                         context,
-                        context.getString(R.string.settings_requires_restart, label),
+                        context.getString(R.string.settings_recorded_restart),
                         Toast.LENGTH_SHORT
                     ).show()
                 },

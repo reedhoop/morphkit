@@ -89,7 +89,7 @@ fun MorphTheme(
 ) {
     val isDark = isSystemInDarkTheme()
     val context = LocalContext.current
-    val resolvedStyle = resolveStyle(themeStyle)
+    val resolvedStyle = remember(themeStyle) { resolveStyle(themeStyle, context) }
 
     // ── 颜色选择：iOS 从 Token，Pixel 从 Context Theme（支持暗色降级） ──
     // resolveStyle() 保证返回 IOS 或 PIXEL，不会返回 AUTO
@@ -171,10 +171,8 @@ fun MorphTheme(
     }
 }
 
-@Composable
-private fun resolveStyle(style: StylePolicy): StylePolicy {
+private fun resolveStyle(style: StylePolicy, context: Context): StylePolicy {
     if (style != StylePolicy.AUTO) return style
-    val context = LocalContext.current
     return resolveAutoStyle(context)
 }
 
@@ -219,7 +217,7 @@ private fun morphTypography(): Typography {
  * 每个 M3 角色与 MorphColorPalette 字段一一对应，消除以往 secondary/tertiary 复用 primary、
  * surfaceContainer 系列缺失、onError 误用 onPrimary 等问题。
  */
-private fun material3ColorScheme(colors: MorphColorPalette) = androidx.compose.material3.ColorScheme(
+private fun material3ColorScheme(colors: MorphColorPalette) = androidx.compose.material3.lightColorScheme().copy(
     primary = colors.primary,
     onPrimary = colors.onPrimary,
     primaryContainer = colors.primaryContainer,
