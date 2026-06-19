@@ -76,7 +76,7 @@ class SettingsPage : Fragment() {
         })
 
         layout.addView(MorphTextView(context).apply {
-            text = getString(R.string.settings_initialized, MorphKit.isInitialized())
+            text = getString(R.string.settings_initialized, MorphKit.isInitialized().toString())
         })
         layout.addView(MorphTextView(context).apply {
             text = getString(R.string.settings_theme_resid, if (MorphKit.isInitialized()) MorphKit.getFinalThemeResId() else 0)

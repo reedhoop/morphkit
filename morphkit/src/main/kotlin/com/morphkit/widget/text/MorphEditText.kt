@@ -351,7 +351,7 @@ class MorphEditText @JvmOverloads constructor(
     /** 测试专用：分发焦点变化事件 */
     @VisibleForTesting
     internal fun dispatchFocusChangedForTest(focused: Boolean) {
-        onFocusChanged(focused, 0, null)
+        onFocusChanged(focused, View.FOCUS_FORWARD, null)
     }
 
     /** 测试专用：分发 onAttachedToWindow */
