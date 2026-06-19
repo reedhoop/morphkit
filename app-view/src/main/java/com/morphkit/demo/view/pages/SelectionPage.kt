@@ -39,7 +39,7 @@ class SelectionPage : Fragment() {
             setOnCheckedChangeListener { _, isChecked ->
                 Toast.makeText(
                     context,
-                    getString(R.string.selection_check_notifications_toast, isChecked),
+                    getString(R.string.selection_check_notifications_toast, isChecked.toString()),
                     Toast.LENGTH_SHORT
                 ).show()
             }
