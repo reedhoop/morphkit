@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
@@ -64,8 +63,6 @@ class XmlDemoPage : Fragment() {
             val msg = getString(R.string.xml_demo_check_dark_mode_toast, checked.toString())
             Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
         }
-        view.findViewById<EditText>(R.id.xml_demo_edit_default)
-        view.findViewById<EditText>(R.id.xml_demo_edit_search)
     }
 
     /**
