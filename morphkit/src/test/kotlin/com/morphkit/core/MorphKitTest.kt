@@ -72,9 +72,9 @@ class MorphKitTest {
     @BeforeEach
     fun setUp() {
         // 重置 MorphKit 单例状态，确保每个测试从干净状态开始
-        resetMorphKit()
+        MorphKitTestHelper.resetMorphKit()
         // 重置 MorphInstaller 防重入标志
-        resetMorphInstaller()
+        MorphKitTestHelper.resetMorphInstaller()
 
         // Mock Application：拦截 registerActivityLifecycleCallbacks（MorphInstaller.install 需要）
         mockApp = mockk<Application>(relaxed = true)
@@ -88,7 +88,7 @@ class MorphKitTest {
     fun tearDown() {
         // 清理 mockkObject(MorphKit) 的 mock，避免影响其他测试
         try { unmockkObject(MorphKit) } catch (_: Exception) {}
-        resetMorphKit()
+        MorphKitTestHelper.resetMorphKit()
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -588,41 +588,4 @@ class MorphKitTest {
     // 辅助方法
     // ═══════════════════════════════════════════════════════════════════════
 
-    /**
-     * 通过反射重置 MorphKit 单例的内部状态。
-     *
-     * 由于 [MorphKit] 是 Kotlin `object` 单例，其 `initialized` 和 `config`
-     * 字段在测试间需要重置，否则第二次 `init` 会抛 `IllegalStateException`。
-     * 此方法通过反射将 `initialized` AtomicBoolean 置为 false、`config` 置为未初始化状态。
-     */
-    private fun resetMorphKit() {
-        try {
-            // Reset initGuard (AtomicBoolean) — 防止重复初始化的守卫
-            val initGuardField = MorphKit::class.java.getDeclaredField("initGuard")
-            initGuardField.isAccessible = true
-            (initGuardField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean).set(false)
-
-            // Reset initialized (@Volatile Boolean) — 初始化完成标志
-            val initializedField = MorphKit::class.java.getDeclaredField("initialized")
-            initializedField.isAccessible = true
-            initializedField.setBoolean(MorphKit, false)
-
-            val configField = MorphKit::class.java.getDeclaredField("config")
-            configField.isAccessible = true
-            // 将 lateinit config 重置为未初始化状态
-            configField.set(MorphKit, null)
-        } catch (e: Exception) {
-            // 反射重置失败时忽略，测试可能因此失败并给出明确错误信息
-        }
-    }
-
-    private fun resetMorphInstaller() {
-        try {
-            val field = MorphInstaller::class.java.getDeclaredField("installed")
-            field.isAccessible = true
-            field.setBoolean(MorphInstaller, false)
-        } catch (e: Exception) {
-            // 反射重置失败时忽略
-        }
-    }
 }

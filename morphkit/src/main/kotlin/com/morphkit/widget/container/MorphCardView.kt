@@ -70,9 +70,6 @@ class MorphCardView @JvmOverloads constructor(
     defStyleAttr: Int = R.attr.morphCardStyle
 ) : MaterialCardView(context, attrs, defStyleAttr) {
 
-    /** 缓存 defStyleAttr 供 readXmlAttributes 使用（构造函数参数在方法中不可访问） */
-    private val morphDefStyleAttr: Int = defStyleAttr
-
     /**
      * 标记业务方是否在 XML 中显式设置了自定义背景属性。
      *
@@ -162,16 +159,34 @@ class MorphCardView @JvmOverloads constructor(
     // ═══════════════════════════════════════════════════════════════════════
 
     init {
-        // ── 读取交互模式（在其他属性之前，以决定是否应用 iOS 特定覆盖） ──
+        // ── 单次 obtainStyledAttributes 读取全部自定义属性（M2 修复）──
+        // 原实现分 3 次调用 obtainStyledAttributes（interactionMode / cornerRadius /
+        // glassmorphism），在 RecyclerView 场景下产生不必要的 TypedArray 分配开销。
+        // 合并为单次调用，一次读取所有属性后 recycle。
+        var resolvedMode = InteractionMode.IOS
+        var customCornerRadius = -1
+        var resolvedGlassmorphism = false
+        var resolvedBlurRadius = DEFAULT_BLUR_RADIUS
+
         attrs?.let {
             val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView, defStyleAttr, 0)
             try {
                 val modeValue = a.getInt(R.styleable.MorphCardView_morphInteractionMode, 0)
-                interactionMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
+                resolvedMode = if (modeValue == 1) InteractionMode.MATERIAL else InteractionMode.IOS
+                customCornerRadius = a.getDimensionPixelSize(
+                    R.styleable.MorphCardView_morphCornerRadius, -1
+                )
+                resolvedGlassmorphism = a.getBoolean(
+                    R.styleable.MorphCardView_isGlassmorphism, false
+                )
+                resolvedBlurRadius = a.getFloat(
+                    R.styleable.MorphCardView_glassmorphismBlurRadius, DEFAULT_BLUR_RADIUS
+                )
             } finally {
                 a.recycle()
             }
         }
+        interactionMode = resolvedMode
 
         if (interactionMode == InteractionMode.IOS) {
             // ── 关闭 Material 默认阴影动画 ──
@@ -207,23 +222,16 @@ class MorphCardView @JvmOverloads constructor(
         } else {
             MorphShape.cornerLarge(context)
         }
-        val customRadius = attrs?.let {
-            val a = context.obtainStyledAttributes(it, R.styleable.MorphCardView, morphDefStyleAttr, 0)
-            try {
-                a.getDimensionPixelSize(R.styleable.MorphCardView_morphCornerRadius, -1)
-            } finally {
-                a.recycle()
-            }
-        } ?: -1
-        radius = (if (customRadius >= 0) customRadius else defaultRadius).toFloat()
+        radius = (if (customCornerRadius >= 0) customCornerRadius else defaultRadius).toFloat()
 
         // ── 裁剪子 View 到圆角范围内 ──
         // 毛玻璃模式下子 View 不能溢出圆角区域
         clipChildren = true
         clipToPadding = true
 
-        // ── 读取 XML 属性 ──
-        attrs?.let { readXmlAttributes(it) }
+        // ── 应用从 XML 读取的毛玻璃属性 ──
+        isGlassmorphism = resolvedGlassmorphism
+        blurRadius = resolvedBlurRadius
 
         // ── 检测业务方是否显式设置了自定义背景属性（Step 6 — 极度克制） ──
         hasCustomCardBackgroundColor = attrs?.getAttributeValue(
@@ -235,23 +243,6 @@ class MorphCardView @JvmOverloads constructor(
 
         // ── 应用视觉状态 ──
         applyVisualState()
-    }
-
-    /**
-     * 从 XML AttributeSet 读取 MorphCardView 自定义属性。
-     */
-    private fun readXmlAttributes(attrs: AttributeSet) {
-        val ta = context.obtainStyledAttributes(attrs, R.styleable.MorphCardView, morphDefStyleAttr, 0)
-        try {
-            isGlassmorphism = ta.getBoolean(
-                R.styleable.MorphCardView_isGlassmorphism, false
-            )
-            blurRadius = ta.getFloat(
-                R.styleable.MorphCardView_glassmorphismBlurRadius, DEFAULT_BLUR_RADIUS
-            )
-        } finally {
-            ta.recycle()
-        }
     }
 
     // ═══════════════════════════════════════════════════════════════════════

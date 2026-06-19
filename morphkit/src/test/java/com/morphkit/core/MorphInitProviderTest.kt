@@ -44,15 +44,15 @@ class MorphInitProviderTest {
         mockApp = mockk<Application>(relaxed = true)
         every { mockApp.registerActivityLifecycleCallbacks(any()) } returns Unit
 
-        resetMorphInstaller()
-        resetMorphKit()
+        MorphKitTestHelper.resetMorphInstaller()
+        MorphKitTestHelper.resetMorphKit()
     }
 
     @After
     fun tearDown() {
         unmockkAll()
-        resetMorphInstaller()
-        resetMorphKit()
+        MorphKitTestHelper.resetMorphInstaller()
+        MorphKitTestHelper.resetMorphKit()
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -128,33 +128,4 @@ class MorphInitProviderTest {
     // 辅助方法
     // ═══════════════════════════════════════════════════════════════════════
 
-    private fun resetMorphInstaller() {
-        try {
-            val field = MorphInstaller::class.java.getDeclaredField("installed")
-            field.isAccessible = true
-            field.setBoolean(MorphInstaller, false)
-        } catch (e: Exception) {
-            // 反射重置失败时忽略
-        }
-    }
-
-    private fun resetMorphKit() {
-        try {
-            // Reset initGuard (AtomicBoolean) — 防止重复初始化的守卫
-            val initGuardField = MorphKit::class.java.getDeclaredField("initGuard")
-            initGuardField.isAccessible = true
-            (initGuardField.get(MorphKit) as java.util.concurrent.atomic.AtomicBoolean).set(false)
-
-            // Reset initialized (@Volatile Boolean) — 初始化完成标志
-            val initializedField = MorphKit::class.java.getDeclaredField("initialized")
-            initializedField.isAccessible = true
-            initializedField.setBoolean(MorphKit, false)
-
-            val configField = MorphKit::class.java.getDeclaredField("config")
-            configField.isAccessible = true
-            configField.set(MorphKit, null)
-        } catch (e: Exception) {
-            // 反射重置失败时忽略
-        }
-    }
 }

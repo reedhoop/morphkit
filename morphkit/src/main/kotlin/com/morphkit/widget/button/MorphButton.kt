@@ -90,10 +90,6 @@ class MorphButton @JvmOverloads constructor(
         cachedOnPrimaryColor = MorphTheme.morphColorOnPrimary(context)
         cachedSurfaceColor = MorphTheme.morphColorSurface(context)
 
-        val typo = MorphTypography.body
-        textSize = typo.fontSize
-        typeface = typo.weight.toTypeface()
-
         when (interactionMode) {
             InteractionMode.IOS -> initIosMode()
             InteractionMode.MATERIAL -> initMaterialMode()
@@ -104,6 +100,13 @@ class MorphButton @JvmOverloads constructor(
 
     private fun initIosMode() {
         shapeDrawable.cornerRadius = cornerRadius
+
+        // ── iOS 模式排版覆盖：MorphTypography.body 替代 M3 默认 textAppearance ──
+        // MATERIAL 模式保留 M3 Widget.Material3.Button 提供的默认 textAppearance，
+        // 不覆盖 textSize/typeface，避免破坏 M3 设计规范。
+        val typo = MorphTypography.body
+        textSize = typo.fontSize
+        typeface = typo.weight.toTypeface()
 
         // ── 仅在业务方未设置自定义背景时才替换 ──
         if (!hasCustomBackground) {

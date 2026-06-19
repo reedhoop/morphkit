@@ -531,14 +531,16 @@ object MorphTokens {
 
         // ── 程序化可用的控制点常量（格式 [x1, y1, x2, y2]）──
         // 与上方 CSS 字符串一一对应，避免调用方解析字符串。
+        // 使用 List<Float> 而非 FloatArray 保证不可变性（M4 修复），
+        // 防止外部通过 array[index] = 修改设计 Token 的唯一真相源。
 
-        /** 标准缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
-        val motionEasingStandardControlPoints = floatArrayOf(0.2f, 0.0f, 0.0f, 1.0f)
-        /** 减速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
-        val motionEasingDecelerateControlPoints = floatArrayOf(0.0f, 0.0f, 0.0f, 1.0f)
-        /** 加速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
-        val motionEasingAccelerateControlPoints = floatArrayOf(0.3f, 0.0f, 1.0f, 1.0f)
-        /** 线性缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用 */
-        val motionEasingLinearControlPoints = floatArrayOf(0.0f, 0.0f, 1.0f, 1.0f)
+        /** 标准缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用，不可变 */
+        val motionEasingStandardControlPoints: List<Float> = listOf(0.2f, 0.0f, 0.0f, 1.0f)
+        /** 减速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用，不可变 */
+        val motionEasingDecelerateControlPoints: List<Float> = listOf(0.0f, 0.0f, 0.0f, 1.0f)
+        /** 加速缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用，不可变 */
+        val motionEasingAccelerateControlPoints: List<Float> = listOf(0.3f, 0.0f, 1.0f, 1.0f)
+        /** 线性缓动曲线控制点 [x1, y1, x2, y2] — 程序化可用，不可变 */
+        val motionEasingLinearControlPoints: List<Float> = listOf(0.0f, 0.0f, 1.0f, 1.0f)
     }
 }

@@ -24,7 +24,7 @@ import org.robolectric.annotation.Config
  * 验证其初始化默认值、毛玻璃模式切换、交互模式、圆角半径和背景色等核心行为。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [35])
+@Config(sdk = [34])
 class MorphCardViewBehaviorTest {
 
     private lateinit var context: Context

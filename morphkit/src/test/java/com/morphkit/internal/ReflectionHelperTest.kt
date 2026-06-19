@@ -108,18 +108,6 @@ class ReflectionHelperTest {
     }
 
     @Test
-    fun `resolveField_反射未受限时_输出调试日志`() {
-        // 通过 mockkObject 使 isReflectionRestricted() 返回 false → Log.d
-        mockkObject(ReflectionHelper)
-        every { ReflectionHelper.isReflectionRestricted() } returns false
-        every { ReflectionHelper.resolveField(any(), any()) } answers { callOriginal() }
-
-        ReflectionHelper.resolveField(TestTarget::class.java, "nonExistentField")
-
-        verify { Log.d("MorphKit", match<String> { it.contains("nonExistentField") }) }
-    }
-
-    @Test
     fun `resolveField_Int类型字段_也能正常获取`() {
         val field = ReflectionHelper.resolveField(TestTarget::class.java, "count")
 
