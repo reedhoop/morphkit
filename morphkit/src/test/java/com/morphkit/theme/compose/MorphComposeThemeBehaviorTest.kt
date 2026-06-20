@@ -17,7 +17,7 @@ import org.robolectric.annotation.Config
  * 验证 CompositionLocal 传递、颜色/形状/交互模式正确性。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class MorphComposeThemeBehaviorTest {
 
     @get:Rule

@@ -68,8 +68,12 @@ class MorphFactory2(
     private val hostThemeChecked = AtomicBoolean(false)
     @Volatile private var hostHasMorphAttr = false
 
+    /** themedContextCache 最大条目数 — 超出时清空，防止异常场景下无限增长 */
+    private const val MAX_CACHE_SIZE = 8
+
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
     // 使用 ConcurrentHashMap 消除 check-then-act 竞态，支持多 Context 并发缓存
+    // 正常 App 生命周期中条目数量有限（通常只有几个 Activity），MAX_CACHE_SIZE 作为安全阀
     private val themedContextCache = java.util.concurrent.ConcurrentHashMap<Context, Context>()
 
     /**
@@ -206,6 +210,10 @@ class MorphFactory2(
         if (hostHasMorphAttr) return context
 
         // 使用 ConcurrentHashMap 原子缓存，消除 check-then-act 竞态
+        // 安全阀：缓存条目超过 MAX_CACHE_SIZE 时清空，防止异常场景无限增长
+        if (themedContextCache.size >= MAX_CACHE_SIZE) {
+            themedContextCache.clear()
+        }
         return themedContextCache.computeIfAbsent(context) {
             ContextThemeWrapper(it, finalThemeResId)
         }

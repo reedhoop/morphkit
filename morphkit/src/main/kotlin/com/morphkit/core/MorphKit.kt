@@ -411,6 +411,37 @@ object MorphKit {
     }
 
     /**
+     * 追加控件注册规则到已初始化的配置。
+     *
+     * **解决双初始化冲突**：Android 系统保证 [MorphInitProvider.onCreate] 在
+     * [Application.onCreate] 之前执行，MorphInitProvider 已调用 [autoInit] 完成
+     * 引擎基础初始化（占用 initGuard）。宿主在 Application.onCreate() 中若再调用
+     * [autoInit] / [init] 会抛出 IllegalStateException，导致控件注册规则丢失。
+     *
+     * 此方法绕过 initGuard，直接在已初始化的 [config] 上追加 replace / modify 规则。
+     * 若 [block] 中通过 [MorphConfig.stylePolicy] 修改了风格策略，将自动重新解析 Theme。
+     *
+     * 若 MorphKit 尚未初始化（如 MorphInitProvider 未执行），则回退到 [autoInit]
+     * 完成完整初始化。
+     *
+     * @param application 应用实例，用于 Theme 重新解析
+     * @param block 在现有 [MorphConfig] 上执行的 DSL 块
+     */
+    fun registerWidgets(application: Application, block: MorphConfig.() -> Unit) {
+        if (!initialized) {
+            // MorphInitProvider 未执行（如测试环境），走完整初始化
+            autoInit(application, block)
+            return
+        }
+        val oldPolicy = config.policy
+        config.block()
+        // 若策略变更，重新解析 Theme
+        if (config.policy != oldPolicy) {
+            _finalThemeResId = MorphStyleResolver.resolve(application, config.policy)
+        }
+    }
+
+    /**
      * 创建替换控件。
      *
      * 查找 [originalName] 是否命中 [MorphConfig.replaceMap] 中的替换规则：

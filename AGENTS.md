@@ -221,11 +221,13 @@ if (!hasCustomBackground) {
 
 ### Step 7: 注册与混淆
 
-**注册映射**：在 `MorphKit.autoInit()` 或宿主配置中注册类名映射：
+**注册映射**：在 `MorphKit.registerWidgets()` 或宿主配置中注册类名映射：
 
 ```kotlin
-MorphKit.config {
-    replace("SeekBar", "MorphSeekBar")
+// 宿主 Application.onCreate() 中调用
+// MorphInitProvider 已完成引擎基础初始化，此处追加控件替换规则
+MorphKit.registerWidgets(this) {
+    replace("SeekBar") { ctx, attrs -> MorphSeekBar(ctx, attrs) }
 }
 ```
 

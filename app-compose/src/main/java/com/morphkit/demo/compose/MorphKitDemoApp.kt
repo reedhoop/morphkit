@@ -12,12 +12,12 @@ class MorphKitDemoApp : Application() {
             val pendingPolicy = getSharedPreferences("morphkit_demo", MODE_PRIVATE)
                 .getString("pending_style_policy", null)
                 ?.let { runCatching { StylePolicy.valueOf(it) }.getOrNull() }
-            MorphKit.autoInit(this) {
+            MorphKit.registerWidgets(this) {
                 pendingPolicy?.let { stylePolicy(it) }
                 registerDefaultWidgets()
             }
         } catch (t: Throwable) {
-            android.util.Log.e("MorphKit", "MorphKitDemoApp autoInit failed", t)
+            android.util.Log.e("MorphKit", "MorphKitDemoApp registerWidgets failed", t)
         }
     }
 }

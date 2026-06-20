@@ -18,7 +18,7 @@ import org.robolectric.annotation.Config
  * 覆盖初始化默认值、样式切换、提示文字颜色、XML 属性读取、焦点反馈等关键逻辑。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class MorphEditTextBehaviorTest {
 
     private lateinit var context: android.content.Context

@@ -20,7 +20,7 @@ import org.robolectric.annotation.Config
  * 在 Robolectric + Compose Test Rule 环境下验证核心行为。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class MorphButtonComposeTest {
 
     @get:Rule

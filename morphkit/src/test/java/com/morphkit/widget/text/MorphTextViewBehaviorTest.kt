@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
  * 覆盖初始化默认值、文字颜色级别、textStyle 重映射、交互模式等关键逻辑。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class MorphTextViewBehaviorTest {
 
     private lateinit var context: Context

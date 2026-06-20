@@ -25,7 +25,7 @@ import org.robolectric.annotation.Config
  * 因此本测试天然覆盖了软件降级逻辑。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class BackdropBlurHelperBehaviorTest {
 
     private lateinit var context: android.content.Context

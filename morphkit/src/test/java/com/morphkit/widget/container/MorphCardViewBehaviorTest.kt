@@ -10,6 +10,7 @@ import com.morphkit.theme.MorphTheme
 import com.morphkit.theme.MorphTokens
 import com.morphkit.theme.dp
 import io.mockk.*
+import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,7 +25,7 @@ import org.robolectric.annotation.Config
  * 验证其初始化默认值、毛玻璃模式切换、交互模式、圆角半径和背景色等核心行为。
  */
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [34])
+@Config(sdk = [35])
 class MorphCardViewBehaviorTest {
 
     private lateinit var context: Context
@@ -42,6 +43,12 @@ class MorphCardViewBehaviorTest {
             materialContext,
             com.morphkit.R.style.Theme_MorphKit_iOS
         )
+    }
+
+    @After
+    fun tearDown() {
+        // 确保 mockkObject 状态不泄漏到后续测试
+        io.mockk.unmockkObject(com.morphkit.widget.container.BackdropBlurHelper::class)
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -85,9 +92,10 @@ class MorphCardViewBehaviorTest {
     }
 
     @Test
-    fun `default stateListAnimator is null`() {
+    fun `default stateListAnimator is set for iOS focus compensation`() {
         val card = MorphCardView(context)
-        assertThat(card.stateListAnimator).isNull()
+        // iOS 模式设置 StateListAnimator 提供键盘焦点补偿（Red Line 3）
+        assertThat(card.stateListAnimator).isNotNull()
     }
 
     @Test
@@ -380,7 +388,7 @@ class MorphCardViewBehaviorTest {
     }
 
     @Test
-    fun `MATERIAL模式卡片不设置自定义StateListAnimator`() {
+    fun `MATERIAL模式卡片保留M3默认StateListAnimator`() {
         val materialContext = ContextThemeWrapper(
             ContextThemeWrapper(
                 RuntimeEnvironment.getApplication(),
@@ -389,7 +397,7 @@ class MorphCardViewBehaviorTest {
             com.morphkit.R.style.Theme_MorphKit_Pixel
         )
         val card = MorphCardView(materialContext)
-        // Pixel 模式保留 M3 默认 StateListAnimator（非 null）
+        // Pixel 模式不覆盖 StateListAnimator，保留 M3 默认值（非 null）
         assertThat(card.stateListAnimator).isNotNull()
     }
 
@@ -426,7 +434,5 @@ class MorphCardViewBehaviorTest {
 
         // 断言：回收时 drawable 已为 null（顺序正确：先 setImageDrawable(null) 再 recycle）
         assertThat(drawableAtRecycle).isNull()
-
-        io.mockk.unmockkObject(com.morphkit.widget.container.BackdropBlurHelper::class)
     }
 }

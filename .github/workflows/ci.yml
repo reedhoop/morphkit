@@ -1,7 +1,9 @@
 name: CI
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -40,7 +42,7 @@ jobs:
         run: ./gradlew assemble test -x lint
 
       - name: Run Lint
-        run: ./gradlew lintDebug --continue
+        run: ./gradlew lintDebug
 
       - name: Upload test reports
         if: always()

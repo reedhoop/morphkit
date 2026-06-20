@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    M17 修复：公共颜色定义抽离到独立 colors.xml，
-    app-view 和 app-compose 的 themes.xml 引用此处，避免复制粘贴。
+    Demo 模块公共颜色定义。
+    app-view 和 app-compose 各自维护一份相同定义，
+    因为 AGP 不支持跨 application 模块的资源合并。
 -->
 <resources>
     <color name="purple_200">#FFBB86FC</color>

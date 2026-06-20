@@ -229,6 +229,9 @@ class MorphEditText @JvmOverloads constructor(
 
     /** 应用裸输入样式 */
     private fun applyBareState() {
+        // 尊重宿主自定义背景：若业务方在 XML 显式设置了 android:background，
+        // 不覆盖其背景（Step 6 — 极度克制）。守卫贯穿生命周期回调。
+        if (hasCustomBackground) return
         background = null
     }
 

@@ -7,7 +7,7 @@ annotation = "1.9.1"
 composeBom = "2025.05.01"
 junit4 = "4.13.2"
 mockk = "1.13.5"
-robolectric = "4.10.3"
+robolectric = "4.14.1"
 truth = "1.1.5"
 junitJupiter = "5.10.2"
 
