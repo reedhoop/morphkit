@@ -19,7 +19,7 @@ import android.util.Log
  *
  * 若需控件替换能力，宿主须在 `Application.onCreate()` 中手动调用：
  * ```
- * MorphKit.init(this) {
+ * MorphKit.registerWidgets(this) {
  *     registerDefaultWidgets()
  * }
  * ```
@@ -65,7 +65,7 @@ class MorphInitProvider : android.content.ContentProvider() {
             }
 
             MorphKit.autoInit(application) {
-                // widget 层注册逻辑由宿主在 Application.onCreate() 中通过 MorphKit.init { registerDefaultWidgets() } 提供
+                // widget 层注册逻辑由宿主在 Application.onCreate() 中通过 MorphKit.registerWidgets { registerDefaultWidgets() } 提供
                 // core 层不能依赖 widget 层，此处 autoInit 仅完成引擎基础初始化
             }
 

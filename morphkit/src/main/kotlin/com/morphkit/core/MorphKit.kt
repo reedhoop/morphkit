@@ -426,6 +426,9 @@ object MorphKit {
      *
      * @param application 应用实例，用于 Theme 重新解析
      * @param block 在现有 [MorphConfig] 上执行的 DSL 块
+     *
+     * **线程约束**：此方法须在主线程调用（通常在 Application.onCreate() 中）。
+     * [config.block] 与 [_finalThemeResId] 赋值非原子操作，多线程并发调用可能导致策略与 Theme 不一致。
      */
     fun registerWidgets(application: Application, block: MorphConfig.() -> Unit) {
         if (!initialized) {

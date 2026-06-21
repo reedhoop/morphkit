@@ -46,7 +46,7 @@ import com.morphkit.widget.registerDefaultWidgets
  * 在 [Application.onCreate] 中调用此扩展函数，一行代码完成所有 iOS 风格控件的
  * 全局注册与 Factory2 注入。内部按以下顺序执行：
  *
- * 1. 调用 [MorphKit.init] 初始化引擎并执行 DSL 配置
+ * 1. 调用 [MorphKit.registerWidgets] 追加控件注册规则到已初始化的引擎
  * 2. 在 DSL 块中注册所有 **硬替换** 规则（groupReplace / replace）
  * 3. 在 DSL 块中注册所有 **软修改兜底** 规则（modify）
  * 4. 打印确认日志
@@ -68,7 +68,7 @@ import com.morphkit.widget.registerDefaultWidgets
  * 且全限定名较长，分开注册更便于阅读和维护。
  */
 fun Application.initIOSStyle() {
-    MorphKit.init(this) {
+    MorphKit.registerWidgets(this) {
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         //  风格策略：强制 iOS 极简风（禁止 AUTO 降级到 Pixel）
         // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
