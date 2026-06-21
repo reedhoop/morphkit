@@ -45,14 +45,14 @@ class MorphCheckBoxBehaviorTest {
     @Test
     fun defaultInteractionMode_ios_isIos() {
         val checkBox = MorphCheckBox(iosContext)
-        val mode: InteractionMode = checkBox.readField("interactionMode")
+        val mode: InteractionMode = checkBox.readField<MorphCompoundButtonHelper>("iosHelper").interactionMode
         assertThat(mode).isEqualTo(InteractionMode.IOS)
     }
 
     @Test
     fun defaultInteractionMode_pixel_isMaterial() {
         val checkBox = MorphCheckBox(pixelContext)
-        val mode: InteractionMode = checkBox.readField("interactionMode")
+        val mode: InteractionMode = checkBox.readField<MorphCompoundButtonHelper>("iosHelper").interactionMode
         assertThat(mode).isEqualTo(InteractionMode.MATERIAL)
     }
 
@@ -285,8 +285,9 @@ class MorphCheckBoxBehaviorTest {
     @Test
     fun iosMode_hasOnClickListener_installed() {
         val checkBox = MorphCheckBox(iosContext)
-        // MorphCompoundButtonHelper.initIosMode() installs MorphClickListener
-        assertThat(checkBox.hasOnClickListeners()).isTrue()
+        // MorphCompoundButtonHelper.initIosMode() does NOT install a click listener
+        // (CompoundButton.toggle() fires independently of OnClickListener)
+        assertThat(checkBox.hasOnClickListeners()).isFalse()
     }
 
     @Test

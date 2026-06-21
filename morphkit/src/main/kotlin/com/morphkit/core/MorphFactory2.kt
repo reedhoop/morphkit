@@ -69,7 +69,7 @@ class MorphFactory2(
     @Volatile private var hostHasMorphAttr = false
 
     /** themedContextCache 最大条目数 — 超出时清空，防止异常场景下无限增长 */
-    private const val MAX_CACHE_SIZE = 8
+    private val MAX_CACHE_SIZE = 8
 
     // 缓存 ContextThemeWrapper，避免复杂布局下重复创建
     // 使用 ConcurrentHashMap 消除 check-then-act 竞态，支持多 Context 并发缓存

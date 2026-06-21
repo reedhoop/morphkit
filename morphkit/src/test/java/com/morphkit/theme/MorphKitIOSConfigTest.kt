@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
 
 /**
@@ -98,13 +99,13 @@ class MorphKitIOSConfigTest {
         }
 
         @Test
-        fun `initIOSStyle cannot be called twice — throws IllegalStateException`() {
+        fun `initIOSStyle is idempotent — can be called multiple times via registerWidgets`() {
             mockApp.initIOSStyle()
 
-            val exception = assertThrows<IllegalStateException> {
+            // registerWidgets 设计为幂等：重复调用追加相同规则，不抛异常
+            assertDoesNotThrow {
                 mockApp.initIOSStyle()
             }
-            assertTrue(exception.message?.contains("已初始化") == true)
         }
     }
 

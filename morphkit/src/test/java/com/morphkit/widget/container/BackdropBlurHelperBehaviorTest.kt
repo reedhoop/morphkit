@@ -287,9 +287,9 @@ class BackdropBlurHelperBehaviorTest {
         val smallRadius = BackdropBlurHelper.blur(source, 2f)!!
         val largeRadius = BackdropBlurHelper.blur(source, 15f)!!
 
-        // 大半径在边界处的红色通道应更小（更多蓝色混入）
-        val smallR = Color.red(smallRadius.getPixel(20, 5))
-        val largeR = Color.red(largeRadius.getPixel(20, 5))
+        // 大半径在红色区域中心处的红色通道应更小（更多蓝色混入）
+        val smallR = Color.red(smallRadius.getPixel(10, 5))
+        val largeR = Color.red(largeRadius.getPixel(10, 5))
         assertThat(largeR).isLessThan(smallR)
     }
 
@@ -393,13 +393,13 @@ class BackdropBlurHelperBehaviorTest {
         val result = BackdropBlurHelper.blur(source, 3f)
         assertThat(result).isNotNull()
 
-        // 中心像素的红色通道应小于 255（被白色稀释）
-        val centerRed = Color.red(result!!.getPixel(10, 0))
-        assertThat(centerRed).isLessThan(255)
+        // 中心像素的绿色通道应小于 255（红色像素 green=0，被白色 green=255 稀释后取均值）
+        val centerGreen = Color.green(result!!.getPixel(10, 0))
+        assertThat(centerGreen).isGreaterThan(0)
 
-        // 邻近像素应混入少量红色
-        val neighborRed = Color.red(result.getPixel(12, 0))
-        assertThat(neighborRed).isGreaterThan(0)
+        // 邻近像素应混入少量红色（green 通道从 255 向 0 靠近）
+        val neighborGreen = Color.green(result.getPixel(12, 0))
+        assertThat(neighborGreen).isLessThan(255)
     }
 
     @Test
@@ -414,13 +414,13 @@ class BackdropBlurHelperBehaviorTest {
         val result = BackdropBlurHelper.blur(source, 3f)
         assertThat(result).isNotNull()
 
-        // 中心像素红色通道被稀释
-        val centerRed = Color.red(result!!.getPixel(0, 10))
-        assertThat(centerRed).isLessThan(255)
+        // 中心像素绿色通道被稀释（红色 green=0，白色 green=255，混合后 green > 0）
+        val centerGreen = Color.green(result!!.getPixel(0, 10))
+        assertThat(centerGreen).isGreaterThan(0)
 
-        // 上下邻近像素应混入红色
-        val neighborRed = Color.red(result.getPixel(0, 12))
-        assertThat(neighborRed).isGreaterThan(0)
+        // 上下邻近像素应混入红色（green 通道从 255 向 0 靠近）
+        val neighborGreen = Color.green(result.getPixel(0, 12))
+        assertThat(neighborGreen).isLessThan(255)
     }
 
     @Test

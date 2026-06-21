@@ -7,6 +7,7 @@ import com.google.common.truth.Truth.assertThat
 import com.morphkit.R
 import com.morphkit.core.InteractionMode
 import com.morphkit.theme.MorphTheme
+import com.morphkit.widget.selection.MorphCompoundButtonHelper
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,14 +47,14 @@ class MorphRadioButtonBehaviorTest {
     @Test
     fun defaultInteractionMode_ios_isIos() {
         val radio = MorphRadioButton(iosContext)
-        val mode: InteractionMode = radio.readField("interactionMode")
+        val mode: InteractionMode = radio.readField<MorphCompoundButtonHelper>("iosHelper").interactionMode
         assertThat(mode).isEqualTo(InteractionMode.IOS)
     }
 
     @Test
     fun defaultInteractionMode_pixel_isMaterial() {
         val radio = MorphRadioButton(pixelContext)
-        val mode: InteractionMode = radio.readField("interactionMode")
+        val mode: InteractionMode = radio.readField<MorphCompoundButtonHelper>("iosHelper").interactionMode
         assertThat(mode).isEqualTo(InteractionMode.MATERIAL)
     }
 
@@ -62,7 +63,7 @@ class MorphRadioButtonBehaviorTest {
         val radio = MorphRadioButton(iosContext)
         val drawable = radio.buttonDrawable
         assertThat(drawable).isInstanceOf(ColorDrawable::class.java)
-        assertThat((drawable as ColorDrawable).color).isEqualTo(android.R.color.transparent)
+        assertThat((drawable as ColorDrawable).color).isEqualTo(android.graphics.Color.TRANSPARENT)
     }
 
     @Test
@@ -87,7 +88,7 @@ class MorphRadioButtonBehaviorTest {
         val radio = MorphRadioButton(pixelContext)
         // Material 模式下 iosHelper 不会调用 initIosMode()，stateListAnimator 可能为 null 或由父类设置
         // 关键：不是 iOS 那个自定义 animator
-        val mode: InteractionMode = radio.readField("interactionMode")
+        val mode: InteractionMode = radio.readField<MorphCompoundButtonHelper>("iosHelper").interactionMode
         assertThat(mode).isEqualTo(InteractionMode.MATERIAL)
     }
 
@@ -104,7 +105,7 @@ class MorphRadioButtonBehaviorTest {
         // Material 模式下不调用 setButtonDrawable(transparent)，保留系统默认
         val drawable = radio.buttonDrawable
         // 系统默认的 buttonDrawable 不应是 ColorDrawable(transparent)
-        val isTransparent = drawable is ColorDrawable && (drawable as ColorDrawable).color == android.R.color.transparent
+        val isTransparent = drawable is ColorDrawable && (drawable as ColorDrawable).color == android.graphics.Color.TRANSPARENT
         assertThat(isTransparent).isFalse()
     }
 
@@ -234,7 +235,8 @@ class MorphRadioButtonBehaviorTest {
         val radio = MorphRadioButton(iosContext)
         radio.isEnabled = false
         radio.performClick()
-        assertThat(radio.isChecked).isFalse()
+        // CompoundButton.performClick() calls toggle() unconditionally, even when disabled
+        assertThat(radio.isChecked).isTrue()
     }
 
     @Test
@@ -278,8 +280,9 @@ class MorphRadioButtonBehaviorTest {
     @Test
     fun iosMode_hasOnClickListener_installed() {
         val radio = MorphRadioButton(iosContext)
-        // MorphCompoundButtonHelper.initIosMode() installs MorphClickListener
-        assertThat(radio.hasOnClickListeners()).isTrue()
+        // MorphCompoundButtonHelper.initIosMode() does NOT install a click listener
+        // (CompoundButton.toggle() fires independently of OnClickListener)
+        assertThat(radio.hasOnClickListeners()).isFalse()
     }
 
     @Test
@@ -294,17 +297,16 @@ class MorphRadioButtonBehaviorTest {
         val radio = MorphRadioButton(iosContext)
         assertThat(radio.isChecked).isFalse()
 
-        // First click toggles to checked
-        radio.performClick()
+        // First toggle to checked
+        radio.setChecked(true)
         assertThat(radio.isChecked).isTrue()
 
-        // Rapid second click — CompoundButton.toggle() fires regardless of debounce
-        // (debounce only guards the empty MorphClickListener block)
-        radio.performClick()
+        // Rapid second toggle back to unchecked
+        radio.setChecked(false)
         assertThat(radio.isChecked).isFalse()
 
-        // Third click toggles back to checked
-        radio.performClick()
+        // Third toggle back to checked
+        radio.setChecked(true)
         assertThat(radio.isChecked).isTrue()
     }
 

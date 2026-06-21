@@ -294,7 +294,7 @@ class MorphCardView @JvmOverloads constructor(
         }
 
         // 极细边框 — 0.5dp，颜色为 iOS 分组分割线灰（仅在业务方未自定义时覆盖）
-        strokeWidth = strokeWidthPx.toInt()
+        strokeWidth = strokeWidthPx.toInt().coerceAtLeast(1)
         if (!hasCustomStrokeColor) {
             strokeColor = cachedStrokeColor
         }

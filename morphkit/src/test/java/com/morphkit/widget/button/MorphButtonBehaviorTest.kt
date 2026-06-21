@@ -141,7 +141,8 @@ class MorphButtonBehaviorTest {
     @Test
     fun materialMode_doesNotReplaceBackground() {
         val button = MorphButton(pixelContext)
-        assertThat(button.testHasCustomBackground).isTrue()
+        // Material mode does NOT set shapeDrawable as background (it preserves M3 default)
+        assertThat(button.background).isNotSameInstanceAs(button.testShapeDrawable)
     }
 
     // ═══════════════════════════════════════════════════════════════════════

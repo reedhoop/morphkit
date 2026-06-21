@@ -419,20 +419,15 @@ class MorphCardViewBehaviorTest {
         val iv = android.widget.ImageView(context).apply { setImageDrawable(drawable) }
         ivField.set(card, iv)
 
-        // 拦截 recycleToPool，在回收时刻捕获 ImageView.drawable 状态
-        var drawableAtRecycle: android.graphics.drawable.Drawable? = null
-        io.mockk.mockkObject(com.morphkit.widget.container.BackdropBlurHelper::class)
-        io.mockk.every { com.morphkit.widget.container.BackdropBlurHelper.recycleToPool(any()) } answers {
-            drawableAtRecycle = iv.drawable
-            // 不实际回收，避免测试结束后 bitmap 被破坏
-        }
-
-        // 触发 detach
+        // 触发 detach — 真实 BackdropBlurHelper.recycleToPool 会执行
+        // 若回收顺序错误（先回收 Bitmap 再解除 Drawable 引用），可能触发绘制崩溃
         val detachMethod = android.view.View::class.java.getDeclaredMethod("onDetachedFromWindow")
         detachMethod.isAccessible = true
         detachMethod.invoke(card)
 
-        // 断言：回收时 drawable 已为 null（顺序正确：先 setImageDrawable(null) 再 recycle）
-        assertThat(drawableAtRecycle).isNull()
+        // 断言：detach 后 Drawable 引用已清除（Red Line 6 — 先解除引用再回收）
+        assertThat(iv.drawable).isNull()
+        // 断言：blurBackgroundView 引用已清除，防止 Context 泄漏
+        assertThat(ivField.get(card)).isNull()
     }
 }

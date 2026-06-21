@@ -44,6 +44,9 @@ android {
         unitTests {
             // 让 android.util.Log 等 Android API 返回默认值而非抛异常
             isReturnDefaultValues = true
+            // Library 项目资源 ID 默认为 0x0，开启此项后 AGP 会为单元测试
+            // 生成完整资源表，使 Robolectric 能正确解析 animator/color 等资源
+            isIncludeAndroidResources = true
         }
     }
 }
